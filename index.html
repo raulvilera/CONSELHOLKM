@@ -282,7 +282,7 @@
 
     <script>
         // URL do Web App do Google Apps Script - SUBSTITUA PELA SUA URL
-        const WEB_APP_URL = 'https://script.google.com/macros/s/SEU_SCRIPT_ID/exec';
+        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzi80OPDqyaniPctzxwaXS35YoM1XMebuuFCyEZbhw3a4i7SE_bNg8r61vhLunjQSNo/exec';
         
         // Elementos DOM
         const classSelect = document.getElementById('class-select');
@@ -314,7 +314,7 @@
             try {
                 showLoading('Carregando turmas...');
                 
-                const response = await fetch(`${WEB_APP_URL}?action=getTurmas`);
+                const response = await fetch(`${"https://script.google.com/macros/s/AKfycbzi80OPDqyaniPctzxwaXS35YoM1XMebuuFCyEZbhw3a4i7SE_bNg8r61vhLunjQSNo/exec"}?action=getTurmas`);
                 const turmas = await response.json();
                 
                 classSelect.innerHTML = '<option value="">-- Selecione uma turma --</option>';
@@ -348,7 +348,7 @@
             studentSelect.innerHTML = '<option value="">Carregando alunos...</option>';
             
             try {
-                const response = await fetch(`${WEB_APP_URL}?action=getAlunos&turma=${encodeURIComponent(selectedClass)}`);
+                const response = await fetch(`${"https://script.google.com/macros/s/AKfycbzi80OPDqyaniPctzxwaXS35YoM1XMebuuFCyEZbhw3a4i7SE_bNg8r61vhLunjQSNo/exec"}?action=getAlunos&turma=${encodeURIComponent(selectedClass)}`);
                 const result = await response.json();
                 
                 if (result.error) {
@@ -396,7 +396,7 @@
             showLoading('Carregando dados do aluno...');
             
             try {
-                const response = await fetch(`${WEB_APP_URL}?action=getDadosAluno&turma=${encodeURIComponent(selectedClass)}&aluno=${encodeURIComponent(selectedStudent)}`);
+                const response = await fetch(`${"https://script.google.com/macros/s/AKfycbzi80OPDqyaniPctzxwaXS35YoM1XMebuuFCyEZbhw3a4i7SE_bNg8r61vhLunjQSNo/exec"}?action=getDadosAluno&turma=${encodeURIComponent(selectedClass)}&aluno=${encodeURIComponent(selectedStudent)}`);
                 const dados = await response.json();
                 
                 if (dados.error) {
@@ -508,4 +508,5 @@
         });
     </script>
 </body>
+
 </html>
