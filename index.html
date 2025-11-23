@@ -287,7 +287,7 @@ async function loadClasses() {
     showLoading("Carregando turmas...");
 
     try {
-        const res = await fetch(`${WEB_APP_URL}?action=getTurmas`);
+        const res = await fetch(`${"https://script.google.com/macros/s/AKfycbyHozvX6WTZFdCRm02Fc4Vi8jT7XZvKALEdjE0btRFHaZ3CMa4idigmMQH-x23x2h4t/exe"}?action=getTurmas`);
         const data = await res.json(); // Espera um objeto { turmas: [...] }
 
         // 1. Verifica se houve erro retornado pelo Apps Script
@@ -327,7 +327,7 @@ async function loadStudents() {
     showLoading("Carregando alunos...");
 
     try {
-        const res = await fetch(`${WEB_APP_URL}?action=getAlunos&turma=${encodeURIComponent(turma)}`);
+        const res = await fetch(`${"https://script.google.com/macros/s/AKfycbyHozvX6WTZFdCRm02Fc4Vi8jT7XZvKALEdjE0btRFHaZ3CMa4idigmMQH-x23x2h4t/exe"}?action=getAlunos&turma=${encodeURIComponent(turma)}`);
         const data = await res.json(); // Espera um objeto { alunos: [...] } ou { error: "..." }
 
         // 1. Verifica se houve erro retornado pelo Apps Script
@@ -366,7 +366,7 @@ async function loadStudentData() {
 
     try {
         const res =
-            await fetch(`${WEB_APP_URL}?action=getDadosAluno&turma=${encodeURIComponent(turma)}&aluno=${encodeURIComponent(aluno)}`);
+            await fetch(`${"https://script.google.com/macros/s/AKfycbyHozvX6WTZFdCRm02Fc4Vi8jT7XZvKALEdjE0btRFHaZ3CMa4idigmMQH-x23x2h4t/exe"}?action=getDadosAluno&turma=${encodeURIComponent(turma)}&aluno=${encodeURIComponent(aluno)}`);
 
         const data = await res.json();
 
@@ -395,4 +395,5 @@ studentSelect.addEventListener("change", loadStudentData);
 
 </body>
 </html>
+
 
