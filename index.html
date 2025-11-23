@@ -286,7 +286,7 @@
     <script>
         // URL do Web App do Google Apps Script - SUBSTITUA PELA SUA URL
         // IMPORTANTE: Você deve implantar o código do Apps Script e substituir esta URL.
-        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyrOgaZQx07uQAE2mW5CEGSoSXrGZoh62c3AoZ13Eq8YEfzA2l9dsAwQCKMglZoto5K/exec';
+        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbz4sF13Z5qGp1iHBysXGTyPb0-L4KQnO1PiITUz3JNJg23NNY_yvl7Lr8UvuijF7x4f/exec';
         
         // Elementos DOM
         const classSelect = document.getElementById('class-select');
@@ -387,7 +387,7 @@
             try {
                 showLoading('Carregando turmas...');
                 
-                const response = await fetch(`${"https://script.google.com/macros/s/AKfycbyrOgaZQx07uQAE2mW5CEGSoSXrGZoh62c3AoZ13Eq8YEfzA2l9dsAwQCKMglZoto5K/exec"}?action=getTurmas`);
+                const response = await fetch(`${"https://script.google.com/macros/s/AKfycbz4sF13Z5qGp1iHBysXGTyPb0-L4KQnO1PiITUz3JNJg23NNY_yvl7Lr8UvuijF7x4f/exec"}?action=getTurmas`);
                 const turmas = await response.json();
                 
                 classSelect.innerHTML = '<option value="">-- Selecione uma turma --</option>';
@@ -421,7 +421,7 @@
             try {
                 showLoading(`Carregando alunos de ${selectedClass}...`);
                 
-                const response = await fetch(`${"https://script.google.com/macros/s/AKfycbyrOgaZQx07uQAE2mW5CEGSoSXrGZoh62c3AoZ13Eq8YEfzA2l9dsAwQCKMglZoto5K/exec"}?action=getAlunos&turma=${encodeURIComponent(selectedClass)}`);
+                const response = await fetch(`${"https://script.google.com/macros/s/AKfycbz4sF13Z5qGp1iHBysXGTyPb0-L4KQnO1PiITUz3JNJg23NNY_yvl7Lr8UvuijF7x4f/exec"}?action=getAlunos&turma=${encodeURIComponent(selectedClass)}`);
                 const alunos = await response.json();
 
                 if (alunos.error) {
@@ -458,7 +458,7 @@
             try {
                 showLoading(`Carregando dados de ${aluno} (${turma})...`);
                 
-                const response = await fetch(`${"https://script.google.com/macros/s/AKfycbyrOgaZQx07uQAE2mW5CEGSoSXrGZoh62c3AoZ13Eq8YEfzA2l9dsAwQCKMglZoto5K/exec"}?action=getDadosAluno&turma=${encodeURIComponent(turma)}&aluno=${encodeURIComponent(aluno)}`);
+                const response = await fetch(`${"https://script.google.com/macros/s/AKfycbz4sF13Z5qGp1iHBysXGTyPb0-L4KQnO1PiITUz3JNJg23NNY_yvl7Lr8UvuijF7x4f/exec"}?action=getDadosAluno&turma=${encodeURIComponent(turma)}&aluno=${encodeURIComponent(aluno)}`);
                 const data = await response.json();
 
                 if (data.error) {
@@ -489,5 +489,6 @@
     </script>
 </body>
 </html>
+
 
 
