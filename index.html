@@ -86,7 +86,7 @@ h1 {
 }
 
 /* ==============================
-   SUBTITLE COM EFEITO DE SULCO BRANCO
+   SUBTITLE COM EFEITO DE SULCO GRAVADO
 ================================= */
 .subtitle {
     font-size: 1.4rem;
@@ -94,24 +94,15 @@ h1 {
     display: inline-block;
     padding: 8px 20px;
     margin-top: 10px;
-}
-
-.subtitle::before {
-    content: "DESEMPENHO ESCOLAR";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
+    color: transparent;
     text-shadow: 
         0 -1px 0 rgba(0,0,0,0.7),
-        0 1px 0 rgba(255,255,255,0.3);
+        0 1px 0 rgba(255,255,255,0.2);
     letter-spacing: 1px;
     font-weight: 600;
+    background: linear-gradient(145deg, #1a2b3c, #000000);
+    -webkit-background-clip: text;
+    background-clip: text;
 }
 
 /* ==============================
@@ -387,7 +378,7 @@ select:focus {
 
     <header>
         <h1>CONSELHO DE CLASSE</h1>
-        <p class="subtitle">Desempenho Escolar</p>
+        <p class="subtitle">DESEMPENHO ESCOLAR</p>
     </header>
 
     <div class="controls">
@@ -423,7 +414,7 @@ select:focus {
 ===============================================*/
 // Mantenha a URL do seu Web App aqui.
 const WEB_APP_URL =
-    "https://script.google.com/macros/s/AKfycbyf-vnAuRRmD6oknTYT3Zjg99keYmCK2Ny3c8GJMmsE8u40PofxaU6hOYNbUhaybRz5/exec";
+    "https://script.google.com/macros/s/AKfycbyaOAQ4x5HoxPq1aXZXR5VoFksQl8Al3Dnl99YOICztyQTlSKUSo5R-6IirX5t61pHt/exec";
 
 /* ============================================
    ELEMENTOS DOM
@@ -631,5 +622,3 @@ studentSelect.addEventListener("change", loadStudentData);
 
 </body>
 </html>
-
-
