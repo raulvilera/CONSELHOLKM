@@ -197,6 +197,7 @@ select {
 /* ============================================
    CONFIGURAÇÃO – SUA URL DO WEB APP
 ===============================================*/
+// Mantenha a URL do seu Web App aqui.
 const WEB_APP_URL =
     "https://script.google.com/macros/s/AKfycbyJkKJ0ESoGUEJv0MYlozDSZXrVznMQgC6vCUUADFEc8y_wH11vQBNL3Lf0d7fgIF_o/exec";
 
@@ -255,14 +256,17 @@ function renderResults(data) {
             const media = bimestreData.medias[disc];
             const falta = bimestreData.faltas[disc];
 
-            const displayMedia = media !== null ? Number(media).toFixed(1) : "-";
+            // Garante que a média seja exibida corretamente, mesmo se for null/vazia
+            const displayMedia = (media !== null && media !== "") ? Number(media).toFixed(1) : "-";
+            // Garante que a falta seja exibida corretamente, mesmo se for null/vazia
+            const displayFalta = (falta !== null && falta !== "") ? falta : 0;
 
             contentHTML += `
                 <div class="subject-row">
                     <span>${disc}</span>
                     <span>
                         Média: <b class="${getGradeClass(media)}">${displayMedia}</b> |
-                        Faltas: <b>${falta}</b>
+                        Faltas: <b>${displayFalta}</b>
                     </span>
                 </div>`;
         }
@@ -277,14 +281,22 @@ function renderResults(data) {
 }
 
 /* ============================================
-   CARREGAR LISTA DE TURMAS
+   CARREGAR LISTA DE TURMAS (CORRIGIDO)
 ===============================================*/
 async function loadClasses() {
     showLoading("Carregando turmas...");
 
     try {
         const res = await fetch(`${WEB_APP_URL}?action=getTurmas`);
-        const turmas = await res.json();
+        const data = await res.json(); // Espera um objeto { turmas: [...] }
+
+        // 1. Verifica se houve erro retornado pelo Apps Script
+        if (data.error) {
+            return showError(`Erro ao carregar turmas: ${data.error}`);
+        }
+
+        // 2. Acessa a propriedade 'turmas' do objeto retornado
+        const turmas = data.turmas;
 
         classSelect.innerHTML = `<option value="">-- Selecione --</option>`;
         turmas.forEach(t => {
@@ -293,12 +305,14 @@ async function loadClasses() {
 
         hideLoading();
     } catch (e) {
-        showError("Erro ao carregar turmas.");
+        // Este catch pega erros de rede ou de parsing do JSON
+        showError("Erro ao carregar turmas. Verifique a URL do Web App e a publicação do Apps Script.");
+        console.error("Erro na requisição de turmas:", e);
     }
 }
 
 /* ============================================
-   CARREGAR LISTA DE ALUNOS
+   CARREGAR LISTA DE ALUNOS (CORRIGIDO)
 ===============================================*/
 async function loadStudents() {
     const turma = classSelect.value;
@@ -314,9 +328,16 @@ async function loadStudents() {
 
     try {
         const res = await fetch(`${WEB_APP_URL}?action=getAlunos&turma=${encodeURIComponent(turma)}`);
-        const alunos = await res.json();
+        const data = await res.json(); // Espera um objeto { alunos: [...] } ou { error: "..." }
 
-        if (alunos.error) return showError(alunos.error);
+        // 1. Verifica se houve erro retornado pelo Apps Script
+        if (data.error) {
+            studentSelect.innerHTML = `<option value="">-- Erro ao carregar --</option>`;
+            return showError(`Erro ao carregar alunos: ${data.error}`);
+        }
+        
+        // 2. Acessa a propriedade 'alunos' do objeto retornado
+        const alunos = data.alunos;
 
         studentSelect.innerHTML = `<option value="">-- Selecione o aluno --</option>`;
         alunos.forEach(a => {
@@ -326,12 +347,14 @@ async function loadStudents() {
         studentSelect.disabled = false;
         hideLoading();
     } catch (e) {
-        showError("Erro ao carregar alunos.");
+        studentSelect.innerHTML = `<option value="">-- Erro ao carregar --</option>`;
+        showError("Erro ao carregar alunos. Verifique a conexão ou o Apps Script.");
+        console.error("Erro na requisição de alunos:", e);
     }
 }
 
 /* ============================================
-   CARREGAR DADOS DO ALUNO
+   CARREGAR DADOS DO ALUNO (CORRIGIDO)
 ===============================================*/
 async function loadStudentData() {
     const turma = classSelect.value;
@@ -347,13 +370,17 @@ async function loadStudentData() {
 
         const data = await res.json();
 
-        if (data.error) return showError(data.error);
+        // 1. Verifica se houve erro retornado pelo Apps Script
+        if (data.error) {
+            return showError(`Erro ao carregar dados do aluno: ${data.error}`);
+        }
 
         renderResults(data);
         hideLoading();
 
     } catch (e) {
-        showError("Erro ao carregar dados do aluno.");
+        showError("Erro ao carregar dados do aluno. Verifique a conexão ou o Apps Script.");
+        console.error("Erro na requisição de dados do aluno:", e);
     }
 }
 
@@ -368,4 +395,3 @@ studentSelect.addEventListener("change", loadStudentData);
 
 </body>
 </html>
-
