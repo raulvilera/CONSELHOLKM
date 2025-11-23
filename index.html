@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Conselho de Classe</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #34495e;
+            --success-color: #2ecc71;
+            --warning-color: #f39c12;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            border-radius: 8px 8px 0 0;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .controls {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            align-items: flex-end;
+        }
+        
+        .form-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+        
+        select, input {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+            background-color: white;
+            transition: border 0.3s;
+        }
+        
+        select:focus, input:focus {
+            border-color: var(--secondary-color);
+            outline: none;
+        }
+        
+        .btn {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+        }
+        
+        .btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .btn:disabled {
+            background-color: #bdc3c7;
+            cursor: not-allowed;
+        }
+        
+        .student-info {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+        
+        .student-name {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+        
+        .student-class {
+            color: var(--dark-color);
+            font-weight: 500;
+        }
+        
+        .results {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .bimester-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            overflow: hidden;
+            transition: transform 0.3s;
+        }
+        
+        .bimester-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .bimester-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        .bimester-content {
+            padding: 15px;
+        }
+        
+        .subject-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .subject-row:last-child {
+            border-bottom: none;
+        }
+        
+        .subject-name {
+            font-weight: 500;
+        }
+        
+        .grade {
+            font-weight: 600;
+        }
+        
+        .grade-high {
+            color: var(--success-color);
+        }
+        
+        .grade-medium {
+            color: var(--warning-color);
+        }
+        
+        .grade-low {
+            color: var(--accent-color);
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: var(--dark-color);
+        }
+        
+        .error {
+            background-color: #ffeaea;
+            color: var(--accent-color);
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .no-data {
+            text-align: center;
+            padding: 20px;
+            color: #7f8c8d;
+            font-style: italic;
+        }
+        
+        @media (max-width: 768px) {
+            .controls {
+                flex-direction: column;
+            }
+            
+            .form-group {
+                width: 100%;
+            }
+            
+            .results {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Painel Conselho de Classe</h1>
+            <p class="subtitle">Acompanhamento de Desempenho Escolar</p>
+        </header>
+        
+        <div class="controls">
+            <div class="form-group">
+                <label for="class-select">Selecione a Turma:</label>
+                <select id="class-select">
+                    <option value="">-- Selecione uma turma --</option>
+                    <!-- As opções serão preenchidas dinamicamente -->
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="student-select">Selecione o Aluno:</label>
+                <select id="student-select" disabled>
+                    <option value="">-- Primeiro selecione uma turma --</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <button id="load-data" class="btn" disabled>Carregar Dados</button>
+            </div>
+        </div>
+        
+        <div id="student-info" class="student-info" style="display: none;">
+            <h2 class="student-name" id="student-name-display">Nome do Aluno</h2>
+            <p class="student-class" id="student-class-display">Turma</p>
+        </div>
+        
+        <div id="results" class="results">
+            <!-- Os cards de bimestre serão inseridos aqui dinamicamente -->
+        </div>
+        
+        <div class="footer">
+            <p>Sistema de Acompanhamento Escolar &copy; 2023</p>
+        </div>
+    </div>
+
+    <script>
+        // URL do Web App do Google Apps Script - SUBSTITUA PELA SUA URL
+        const WEB_APP_URL = 'https://script.google.com/macros/s/SEU_SCRIPT_ID/exec';
+        
+        // Elementos DOM
+        const classSelect = document.getElementById('class-select');
+        const studentSelect = document.getElementById('student-select');
+        const loadButton = document.getElementById('load-data');
+        const studentInfo = document.getElementById('student-info');
+        const studentNameDisplay = document.getElementById('student-name-display');
+        const studentClassDisplay = document.getElementById('student-class-display');
+        const resultsContainer = document.getElementById('results');
+        
+        // Lista de disciplinas (deve corresponder à ordem das colunas na planilha)
+        const DISCIPLINAS = [
+            'Língua Portuguesa',
+            'Matemática', 
+            'História',
+            'Geografia',
+            'Ciências',
+            'Artes',
+            'Educação Física',
+            'Inglês',
+            'Espanhol',
+            'Filosofia',
+            'Sociologia',
+            'Biologia'
+        ];
+        
+        // Preencher o seletor de turmas
+        async function populateClassSelect() {
+            try {
+                showLoading('Carregando turmas...');
+                
+                const response = await fetch(`${WEB_APP_URL}?action=getTurmas`);
+                const turmas = await response.json();
+                
+                classSelect.innerHTML = '<option value="">-- Selecione uma turma --</option>';
+                turmas.forEach(turma => {
+                    const option = document.createElement('option');
+                    option.value = turma;
+                    option.textContent = turma;
+                    classSelect.appendChild(option);
+                });
+                
+                hideLoading();
+            } catch (error) {
+                console.error('Erro ao carregar turmas:', error);
+                showError('Erro ao carregar a lista de turmas');
+            }
+        }
+        
+        // Carregar nomes dos alunos quando uma turma for selecionada
+        classSelect.addEventListener('change', async function() {
+            const selectedClass = this.value;
+            
+            if (!selectedClass) {
+                studentSelect.disabled = true;
+                studentSelect.innerHTML = '<option value="">-- Primeiro selecione uma turma --</option>';
+                loadButton.disabled = true;
+                return;
+            }
+            
+            studentSelect.disabled = true;
+            loadButton.disabled = true;
+            studentSelect.innerHTML = '<option value="">Carregando alunos...</option>';
+            
+            try {
+                const response = await fetch(`${WEB_APP_URL}?action=getAlunos&turma=${encodeURIComponent(selectedClass)}`);
+                const result = await response.json();
+                
+                if (result.error) {
+                    studentSelect.innerHTML = `<option value="">${result.error}</option>`;
+                    return;
+                }
+                
+                studentSelect.innerHTML = '<option value="">-- Selecione um aluno --</option>';
+                result.forEach(aluno => {
+                    const option = document.createElement('option');
+                    option.value = aluno;
+                    option.textContent = aluno;
+                    studentSelect.appendChild(option);
+                });
+                
+                studentSelect.disabled = false;
+                
+            } catch (error) {
+                console.error('Erro ao carregar alunos:', error);
+                studentSelect.innerHTML = '<option value="">Erro ao carregar alunos</option>';
+            }
+        });
+        
+        // Habilitar botão quando aluno for selecionado
+        studentSelect.addEventListener('change', function() {
+            loadButton.disabled = !this.value;
+        });
+        
+        // Carregar dados do aluno
+        loadButton.addEventListener('click', async function() {
+            const selectedClass = classSelect.value;
+            const selectedStudent = studentSelect.value;
+            
+            if (!selectedClass || !selectedStudent) {
+                alert('Por favor, selecione uma turma e um aluno.');
+                return;
+            }
+            
+            // Mostrar informações do aluno
+            studentInfo.style.display = 'block';
+            studentNameDisplay.textContent = selectedStudent;
+            studentClassDisplay.textContent = selectedClass;
+            
+            // Limpar resultados anteriores
+            showLoading('Carregando dados do aluno...');
+            
+            try {
+                const response = await fetch(`${WEB_APP_URL}?action=getDadosAluno&turma=${encodeURIComponent(selectedClass)}&aluno=${encodeURIComponent(selectedStudent)}`);
+                const dados = await response.json();
+                
+                if (dados.error) {
+                    showError(dados.error);
+                    return;
+                }
+                
+                displayStudentData(dados.dados);
+                
+            } catch (error) {
+                console.error('Erro ao carregar dados:', error);
+                showError('Erro ao carregar dados do aluno. Tente novamente.');
+            }
+        });
+        
+        // Exibir dados do aluno
+        function displayStudentData(bimesterData) {
+            resultsContainer.innerHTML = '';
+            
+            if (!bimesterData || Object.keys(bimesterData).length === 0) {
+                resultsContainer.innerHTML = '<div class="no-data">Nenhum dado encontrado para este aluno.</div>';
+                return;
+            }
+            
+            for (const bimester in bimesterData) {
+                const card = document.createElement('div');
+                card.className = 'bimester-card';
+                
+                const header = document.createElement('div');
+                header.className = 'bimester-header';
+                header.textContent = bimester;
+                
+                const content = document.createElement('div');
+                content.className = 'bimester-content';
+                
+                const medias = bimesterData[bimester].medias;
+                const faltas = bimesterData[bimester].faltas;
+                
+                DISCIPLINAS.forEach(disciplina => {
+                    const media = medias[disciplina];
+                    const falta = faltas[disciplina];
+                    
+                    // Verificar se existem dados para esta disciplina
+                    if (media !== undefined && media !== null) {
+                        const row = document.createElement('div');
+                        row.className = 'subject-row';
+                        
+                        const subjectSpan = document.createElement('span');
+                        subjectSpan.className = 'subject-name';
+                        subjectSpan.textContent = disciplina;
+                        
+                        const gradeSpan = document.createElement('span');
+                        gradeSpan.className = 'grade';
+                        
+                        // Determinar a classe CSS baseada na nota
+                        if (media >= 7) {
+                            gradeSpan.classList.add('grade-high');
+                        } else if (media >= 5) {
+                            gradeSpan.classList.add('grade-medium');
+                        } else {
+                            gradeSpan.classList.add('grade-low');
+                        }
+                        
+                        gradeSpan.textContent = `${media.toFixed(1)} | ${falta || 0} faltas`;
+                        
+                        row.appendChild(subjectSpan);
+                        row.appendChild(gradeSpan);
+                        content.appendChild(row);
+                    }
+                });
+                
+                // Se não houver disciplinas com dados neste bimestre
+                if (content.children.length === 0) {
+                    const noDataRow = document.createElement('div');
+                    noDataRow.className = 'subject-row';
+                    noDataRow.innerHTML = '<span class="subject-name">Nenhum dado disponível</span>';
+                    content.appendChild(noDataRow);
+                }
+                
+                card.appendChild(header);
+                card.appendChild(content);
+                resultsContainer.appendChild(card);
+            }
+        }
+        
+        // Funções auxiliares para exibir estados
+        function showLoading(message = 'Carregando...') {
+            resultsContainer.innerHTML = `<div class="loading">${message}</div>`;
+        }
+        
+        function hideLoading() {
+            const loadingElement = resultsContainer.querySelector('.loading');
+            if (loadingElement) {
+                loadingElement.remove();
+            }
+        }
+        
+        function showError(message) {
+            resultsContainer.innerHTML = `<div class="error">${message}</div>`;
+        }
+        
+        function showNoData() {
+            resultsContainer.innerHTML = '<div class="no-data">Nenhum dado disponível</div>';
+        }
+        
+        // Inicializar a página
+        document.addEventListener('DOMContentLoaded', function() {
+            populateClassSelect();
+        });
+    </script>
+</body>
+</html>
