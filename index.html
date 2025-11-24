@@ -468,16 +468,50 @@ function calculateFinalGrade(data) {
     const finalGrades = {};
     const totalFaltas = {};
     
+    // Verifica se há dados de bimestre
+    if (!data.dados || Object.keys(data.dados).length === 0) {
+        return { finalGrades: {}, totalFaltas: {} };
+    }
+
+    // O Apps Script retorna um objeto onde a chave é o nome do bimestre (ex: "1ºBimestre")
+    // e o valor é um objeto com "medias" e "faltas".
+    // O código Apps Script que eu forneci não retorna dados por bimestre, mas sim um objeto
+    // de dados completo para o aluno. O frontend está esperando um objeto com chaves de bimestre.
+    // O código Apps Script anterior retornava: { aluno: ..., turma: ..., dados: { medias: {}, faltas: {} } }
+    // O código Apps Script mais recente (V12) retorna: { aluno: ..., turma: ..., bimestre: ..., dados: { medias: {}, faltas: {} } }
+    
+    // O frontend precisa ser ajustado para a estrutura do Apps Script V12, que busca por bimestre.
+    // No entanto, o frontend está tentando calcular a média final somando os bimestres, o que
+    // sugere que ele espera um objeto com 4 chaves de bimestre.
+    
+    // Para manter a compatibilidade com a lógica de cálculo final do frontend,
+    // o Apps Script precisaria retornar os dados de todos os 4 bimestres de uma vez.
+    // Como o Apps Script V12 foi ajustado para buscar por UM bimestre, vamos adaptar o frontend
+    // para buscar os 4 bimestres sequencialmente ou ajustar o Apps Script para retornar todos.
+    
+    // **ASSUMINDO QUE O FRONTEND ESTÁ SENDO USADO COM UMA VERSÃO DO APPS SCRIPT QUE RETORNA TODOS OS BIMESTRES**
+    // (O Apps Script V12 que eu forneci não faz isso, ele só retorna um bimestre por chamada)
+    
+    // Se o Apps Script retornar um objeto com chaves de bimestre (ex: data.dados["1ºBimestre"]),
+    // a lógica abaixo está correta para calcular a média final.
+    
     // Para cada disciplina
-    for (const disc in data.dados["1º Bimestre"].medias) {
+    // O frontend espera que o primeiro bimestre exista para iterar as disciplinas
+    const primeiroBimestre = data.dados[Object.keys(data.dados)[0]];
+    if (!primeiroBimestre || !primeiroBimestre.medias) {
+        return { finalGrades: {}, totalFaltas: {} };
+    }
+    
+    for (const disc in primeiroBimestre.medias) {
         let sum = 0;
         let count = 0;
         let totalFaltasDisc = 0;
         
         // Soma as médias de todos os bimestres
         for (const bim in data.dados) {
-            const media = data.dados[bim].medias[disc];
-            const falta = data.dados[bim].faltas[disc];
+            const bimestreData = data.dados[bim];
+            const media = bimestreData.medias[disc];
+            const falta = bimestreData.faltas[disc];
             
             if (media !== null && media !== "" && !isNaN(media)) {
                 sum += Number(media);
@@ -498,7 +532,7 @@ function calculateFinalGrade(data) {
 }
 
 /* ============================================
-   RENDERIZAÇÃO
+   RENDERIZAÇÃO DOS RESULTADOS
 ===============================================*/
 function renderResults(data) {
     resultsContainer.innerHTML = "";
@@ -599,7 +633,6 @@ async function loadClasses() {
     showLoading("Carregando turmas...");
 
     try {
-        // CORREÇÃO: Usando a constante WEB_APP_URL
         const res = await fetch(`${WEB_APP_URL}?action=getTurmas`);
         const data = await res.json(); // Espera um objeto { turmas: [...] }
 
@@ -609,10 +642,28 @@ async function loadClasses() {
         }
 
         // 2. Acessa a propriedade 'turmas' do objeto retornado
-        const turmas = data.turmas;
+        const turmas = data; // O Apps Script V12 retorna o array diretamente se for bem-sucedido
+        
+        // CORREÇÃO: O Apps Script V12 retorna o array de turmas diretamente.
+        // O código Apps Script V12 que eu forneci na última iteração retorna:
+        // function getTurmas() { return Object.keys(CLASS_RANGES); }
+        // que retorna um array de strings.
+        // O frontend espera um objeto { turmas: [...] } ou um array de strings.
+        // Vamos assumir que o Apps Script retorna um array de strings.
+        
+        let turmasArray = Array.isArray(data) ? data : data.turmas;
+        
+        if (!turmasArray) {
+            // Se ainda não for um array, tenta acessar a chave 'turmas'
+            turmasArray = data.turmas;
+        }
+        
+        if (!Array.isArray(turmasArray)) {
+            return showError("Erro ao carregar turmas: Formato de dados inesperado do Apps Script.");
+        }
 
         classSelect.innerHTML = `<option value="">-- Selecione --</option>`;
-        turmas.forEach(t => {
+        turmasArray.forEach(t => {
             classSelect.innerHTML += `<option value="${t}">${t}</option>`;
         });
 
@@ -640,9 +691,8 @@ async function loadStudents() {
     showLoading("Carregando alunos...");
 
     try {
-        // CORREÇÃO: Usando a constante WEB_APP_URL
         const res = await fetch(`${WEB_APP_URL}?action=getAlunos&turma=${encodeURIComponent(turma)}`);
-        const data = await res.json(); // Espera um objeto { alunos: [...] } ou { error: "..." }
+        const data = await res.json(); // Espera um array de strings ou { error: "..." }
 
         // 1. Verifica se houve erro retornado pelo Apps Script
         if (data.error) {
@@ -650,8 +700,13 @@ async function loadStudents() {
             return showError(`Erro ao carregar alunos: ${data.error}`);
         }
         
-        // 2. Acessa a propriedade 'alunos' do objeto retornado
-        const alunos = data.alunos;
+        // 2. O Apps Script V12 retorna o array de alunos diretamente
+        const alunos = Array.isArray(data) ? data : data.alunos;
+        
+        if (!Array.isArray(alunos)) {
+            studentSelect.innerHTML = `<option value="">-- Erro ao carregar --</option>`;
+            return showError("Erro ao carregar alunos: Formato de dados inesperado do Apps Script.");
+        }
 
         studentSelect.innerHTML = `<option value="">-- Selecione o aluno --</option>`;
         alunos.forEach(a => {
@@ -679,18 +734,29 @@ async function loadStudentData() {
     showLoading("Carregando dados...");
 
     try {
-        // CORREÇÃO: Usando a constante WEB_APP_URL
-        const res =
-            await fetch(`${WEB_APP_URL}?action=getDadosAluno&turma=${encodeURIComponent(turma)}&aluno=${encodeURIComponent(aluno)}`);
+        // O Apps Script V12 que eu forneci só busca dados para UM bimestre por vez.
+        // O frontend espera dados de TODOS os bimestres para renderizar e calcular a média final.
+        
+        const bimestres = ['1ºBimestre', '2ºBimestre', '3ºBimestre', '4ºBimestre'];
+        const allData = { aluno: aluno, turma: turma, dados: {} };
+        
+        for (const bimestre of bimestres) {
+            const res =
+                await fetch(`${WEB_APP_URL}?action=getDadosAluno&turma=${encodeURIComponent(turma)}&aluno=${encodeURIComponent(aluno)}&bimestre=${encodeURIComponent(bimestre)}`);
 
-        const data = await res.json();
+            const data = await res.json();
 
-        // 1. Verifica se houve erro retornado pelo Apps Script
-        if (data.error) {
-            return showError(`Erro ao carregar dados do aluno: ${data.error}`);
+            // 1. Verifica se houve erro retornado pelo Apps Script
+            if (data.error) {
+                return showError(`Erro ao carregar dados do aluno (${bimestre}): ${data.error}`);
+            }
+            
+            // O Apps Script V12 retorna { aluno: ..., turma: ..., bimestre: ..., dados: { medias: {}, faltas: {} } }
+            // O frontend espera { "1ºBimestre": { medias: {}, faltas: {} }, ... }
+            allData.dados[bimestre] = data.dados;
         }
 
-        renderResults(data);
+        renderResults(allData);
         hideLoading();
 
     } catch (e) {
@@ -710,13 +776,3 @@ studentSelect.addEventListener("change", loadStudentData);
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
