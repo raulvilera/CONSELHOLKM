@@ -230,17 +230,9 @@
         }
         
         @media (max-width: 768px) {
-            .controls {
-                flex-direction: column;
-            }
-            
-            .form-group {
-                width: 100%;
-            }
-            
-            .results {
-                grid-template-columns: 1fr;
-            }
+            .controls { flex-direction: column; }
+            .form-group { width: 100%; }
+            .results { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -281,14 +273,14 @@
         </div>
         
         <div class="footer">
-            <p>Sistema de Acompanhamento Escolar &copy; 2023</p>
+            <p>Sistema de Acompanhamento Escolar &copy; 2024</p>
         </div>
     </div>
 
     <script>
-        // URL do Web App do Google Apps Script - SUBSTITUA PELA SUA URL
+        // URL DO WEB APP
         const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwSqxXbAOWl9KYXFdRZcoWhfAn_yvD4vlK52e7kOgWG_q8God_mvMQBjnImWPDoq2NX/exec';
-        
+
         // Elementos DOM
         const classSelect = document.getElementById('class-select');
         const studentSelect = document.getElementById('student-select');
@@ -297,20 +289,17 @@
         const studentNameDisplay = document.getElementById('student-name-display');
         const studentClassDisplay = document.getElementById('student-class-display');
         const resultsContainer = document.getElementById('results');
-        
-        // Preencher o seletor de turmas
+
+        /* ===================== CARREGAR TURMAS ===================== */
         async function populateClassSelect() {
             try {
                 showLoading('Carregando turmas...');
                 
                 const response = await fetch(`${WEB_APP_URL}?action=getTurmas`);
-                
-                if (!response.ok) {
-                    throw new Error(`Erro HTTP: ${response.status}`);
-                }
-                
                 const turmas = await response.json();
-                
+
+                if (turmas.error) throw new Error(turmas.error);
+
                 classSelect.innerHTML = '<option value="">-- Selecione uma turma --</option>';
                 turmas.forEach(turma => {
                     const option = document.createElement('option');
@@ -318,209 +307,148 @@
                     option.textContent = turma;
                     classSelect.appendChild(option);
                 });
-                
+
                 hideLoading();
-            } catch (error) {
-                console.error('Erro ao carregar turmas:', error);
-                showError('Erro ao carregar turmas. Verifique a URL do Web App e a publicação do Apps Script.');
+            } catch (err) {
+                showError("Erro ao carregar turmas.");
             }
         }
-        
-        // Carregar nomes dos alunos quando uma turma for selecionada
-        classSelect.addEventListener('change', async function() {
-            const selectedClass = this.value;
-            
-            if (!selectedClass) {
-                studentSelect.disabled = true;
+
+        /* ===================== CARREGAR ALUNOS ===================== */
+        classSelect.addEventListener('change', async function () {
+            const turma = this.value;
+
+            studentSelect.disabled = true;
+            loadButton.disabled = true;
+
+            if (!turma) {
                 studentSelect.innerHTML = '<option value="">-- Primeiro selecione uma turma --</option>';
-                loadButton.disabled = true;
-                studentInfo.style.display = 'none';
                 showNoData();
                 return;
             }
-            
-            studentSelect.disabled = true;
-            loadButton.disabled = true;
-            studentSelect.innerHTML = '<option value="">Carregando alunos...</option>';
-            
+
+            studentSelect.innerHTML = '<option>Carregando alunos...</option>';
+
             try {
-                const response = await fetch(`${WEB_APP_URL}?action=getAlunos&turma=${encodeURIComponent(selectedClass)}`);
-                
-                if (!response.ok) {
-                    throw new Error(`Erro HTTP: ${response.status}`);
-                }
-                
-                const result = await response.json();
-                
-                if (result.error) {
-                    studentSelect.innerHTML = `<option value="">${result.error}</option>`;
-                    return;
-                }
-                
+                const response = await fetch(`${WEB_APP_URL}?action=getAlunos&turma=${encodeURIComponent(turma)}`);
+                const alunos = await response.json();
+
+                if (alunos.error) throw new Error(alunos.error);
+
                 studentSelect.innerHTML = '<option value="">-- Selecione um aluno --</option>';
-                result.forEach(aluno => {
+
+                alunos.forEach(a => {
                     const option = document.createElement('option');
-                    option.value = aluno;
-                    option.textContent = aluno;
+                    option.value = a;
+                    option.textContent = a;
                     studentSelect.appendChild(option);
                 });
-                
+
                 studentSelect.disabled = false;
-                
-            } catch (error) {
-                console.error('Erro ao carregar alunos:', error);
+
+            } catch (err) {
                 studentSelect.innerHTML = '<option value="">Erro ao carregar alunos</option>';
             }
         });
-        
-        // Habilitar botão quando aluno for selecionado
-        studentSelect.addEventListener('change', function() {
+
+        /* Habilitar botão */
+        studentSelect.addEventListener('change', function () {
             loadButton.disabled = !this.value;
         });
-        
-        // Carregar dados do aluno
-        loadButton.addEventListener('click', async function() {
-            const selectedClass = classSelect.value;
-            const selectedStudent = studentSelect.value;
-            
-            if (!selectedClass || !selectedStudent) {
-                alert('Por favor, selecione uma turma e um aluno.');
-                return;
-            }
-            
-            // Mostrar informações do aluno
-            studentInfo.style.display = 'block';
-            studentNameDisplay.textContent = selectedStudent;
-            studentClassDisplay.textContent = selectedClass;
-            
-            // Limpar resultados anteriores
-            showLoading('Carregando dados do aluno...');
-            
+
+        /* ===================== CARREGAR DADOS DO ALUNO ===================== */
+        loadButton.addEventListener('click', async function () {
+            const turma = classSelect.value;
+            const aluno = studentSelect.value;
+
+            showLoading("Carregando dados...");
+
             try {
-                const response = await fetch(`${WEB_APP_URL}?action=getDadosAluno&turma=${encodeURIComponent(selectedClass)}&aluno=${encodeURIComponent(selectedStudent)}`);
-                
-                if (!response.ok) {
-                    throw new Error(`Erro HTTP: ${response.status}`);
-                }
-                
+                const response = await fetch(`${WEB_APP_URL}?action=getDadosAluno&turma=${encodeURIComponent(turma)}&aluno=${encodeURIComponent(aluno)}`);
                 const dados = await response.json();
-                
-                if (dados.error) {
-                    showError(dados.error);
-                    return;
-                }
-                
+
+                if (dados.error) throw new Error(dados.error);
+
+                studentInfo.style.display = 'block';
+                studentNameDisplay.textContent = aluno;
+                studentClassDisplay.textContent = turma;
+
                 displayStudentData(dados.dados);
-                
-            } catch (error) {
-                console.error('Erro ao carregar dados:', error);
-                showError('Erro ao carregar dados do aluno. Tente novamente.');
+
+            } catch (err) {
+                showError("Erro ao carregar dados do aluno.");
             }
         });
-        
-        // Exibir dados do aluno
-        function displayStudentData(bimesterData) {
-            resultsContainer.innerHTML = '';
-            
-            if (!bimesterData || Object.keys(bimesterData).length === 0) {
-                resultsContainer.innerHTML = '<div class="no-data">Nenhum dado encontrado para este aluno.</div>';
-                return;
-            }
-            
-            for (const bimester in bimesterData) {
+
+        /* ===================== EXIBIR DADOS DO ALUNO ===================== */
+        function displayStudentData(bimestres) {
+            resultsContainer.innerHTML = "";
+
+            for (const b in bimestres) {
                 const card = document.createElement('div');
-                card.className = 'bimester-card';
-                
+                card.className = "bimester-card";
+
                 const header = document.createElement('div');
-                header.className = 'bimester-header';
-                header.textContent = bimester;
-                
+                header.className = "bimester-header";
+                header.textContent = b;
+
                 const content = document.createElement('div');
-                content.className = 'bimester-content';
-                
-                const medias = bimesterData[bimester].medias;
-                const faltas = bimesterData[bimester].faltas;
-                
-                // Ordenar disciplinas alfabeticamente
-                const disciplinas = Object.keys(medias).sort();
-                
-                if (disciplinas.length === 0) {
-                    const noDataRow = document.createElement('div');
-                    noDataRow.className = 'subject-row';
-                    noDataRow.innerHTML = '<span class="subject-name">Nenhum dado disponível</span>';
-                    content.appendChild(noDataRow);
-                } else {
-                    disciplinas.forEach(disciplina => {
-                        const media = medias[disciplina];
-                        const falta = faltas[disciplina] || 0;
-                        
-                        const row = document.createElement('div');
-                        row.className = 'subject-row';
-                        
-                        const subjectSpan = document.createElement('span');
-                        subjectSpan.className = 'subject-name';
-                        subjectSpan.textContent = disciplina;
-                        
-                        const gradeSpan = document.createElement('span');
-                        gradeSpan.className = 'grade';
-                        
-                        // Determinar a classe CSS baseada na nota
-                        if (media !== null && media !== undefined) {
-                            if (media >= 7) {
-                                gradeSpan.classList.add('grade-high');
-                            } else if (media >= 5) {
-                                gradeSpan.classList.add('grade-medium');
-                            } else {
-                                gradeSpan.classList.add('grade-low');
-                            }
-                            
-                            gradeSpan.textContent = `${media.toFixed(1)} | ${falta} faltas`;
-                        } else {
-                            gradeSpan.textContent = `-- | ${falta} faltas`;
-                            gradeSpan.classList.add('grade-low');
-                        }
-                        
-                        row.appendChild(subjectSpan);
-                        row.appendChild(gradeSpan);
-                        content.appendChild(row);
-                    });
-                }
-                
+                content.className = "bimester-content";
+
+                const disciplinas = Object.keys(bimestres[b].medias);
+
+                disciplinas.forEach(d => {
+                    const row = document.createElement("div");
+                    row.className = "subject-row";
+
+                    const nome = document.createElement("span");
+                    nome.className = "subject-name";
+                    nome.textContent = d;
+
+                    const media = bimestres[b].medias[d];
+                    const faltas = bimestres[b].faltas[d];
+
+                    const grade = document.createElement("span");
+                    grade.className = "grade";
+
+                    if (media !== null) {
+                        if (media >= 7) grade.classList.add("grade-high");
+                        else if (media >= 5) grade.classList.add("grade-medium");
+                        else grade.classList.add("grade-low");
+
+                        grade.textContent = `${media.toFixed(1)} | ${faltas} faltas`;
+                    } else {
+                        grade.classList.add("grade-low");
+                        grade.textContent = `-- | ${faltas} faltas`;
+                    }
+
+                    row.appendChild(nome);
+                    row.appendChild(grade);
+                    content.appendChild(row);
+                });
+
                 card.appendChild(header);
                 card.appendChild(content);
                 resultsContainer.appendChild(card);
             }
         }
-        
-        // Funções auxiliares para exibir estados
-        function showLoading(message = 'Carregando...') {
-            resultsContainer.innerHTML = `<div class="loading">${message}</div>`;
+
+        /* ===================== FUNÇÕES DE AUXÍLIO ===================== */
+        function showLoading(msg) {
+            resultsContainer.innerHTML = `<div class="loading">${msg}</div>`;
         }
-        
         function hideLoading() {
-            const loadingElement = resultsContainer.querySelector('.loading');
-            if (loadingElement) {
-                loadingElement.remove();
-            }
+            resultsContainer.innerHTML = "";
         }
-        
-        function showError(message) {
-            resultsContainer.innerHTML = `<div class="error">${message}</div>`;
+        function showError(msg) {
+            resultsContainer.innerHTML = `<div class="error">${msg}</div>`;
         }
-        
         function showNoData() {
             resultsContainer.innerHTML = '<div class="no-data">Selecione uma turma e um aluno para visualizar os dados</div>';
         }
-        
-        // Inicializar a página
-        document.addEventListener('DOMContentLoaded', function() {
-            populateClassSelect();
-        });
+
+        /* ===================== INICIAR ===================== */
+        document.addEventListener("DOMContentLoaded", populateClassSelect);
     </script>
 </body>
 </html>
-
-
-
-
-
