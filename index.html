@@ -37,7 +37,7 @@
         header {
             background: linear-gradient(135deg, var(--primary-color), #1a252f);
             color: white;
-            padding: 25px 0;
+            padding: 18px 0;
             text-align: center;
             border-radius: 12px 12px 0 0;
             margin-bottom: 25px;
@@ -57,15 +57,9 @@
         }
         
         h1 {
-            font-size: 2.4rem;
-            margin-bottom: 12px;
+            font-size: 2.2rem;
             text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
-        }
-        
-        .subtitle {
-            font-size: 1.2rem;
-            opacity: 0.95;
-            font-weight: 300;
+            margin: 0;
         }
         
         .navigation {
@@ -168,22 +162,23 @@
         
         .form-group {
             flex: 1;
-            min-width: 280px;
+            min-width: 200px;
         }
         
         .form-group.turma {
-            flex: 1.2;
-            min-width: 320px;
+            flex: 0.6;
+            min-width: 180px;
+            max-width: 200px;
         }
         
         .form-group.aluno {
-            flex: 1.5;
-            min-width: 350px;
+            flex: 1.8;
+            min-width: 380px;
         }
         
         .form-group.btn-container {
-            flex: 0.8;
-            min-width: 200px;
+            flex: 0.5;
+            min-width: 160px;
         }
         
         label {
@@ -430,6 +425,7 @@
             
             .form-group, .form-group.turma, .form-group.aluno, .form-group.btn-container {
                 min-width: 100%;
+                max-width: 100%;
                 width: 100%;
             }
         }
@@ -440,11 +436,7 @@
             }
             
             h1 {
-                font-size: 2rem;
-            }
-            
-            .subtitle {
-                font-size: 1.1rem;
+                font-size: 1.8rem;
             }
             
             .navigation {
@@ -475,7 +467,6 @@
     <div class="container">
         <header>
             <h1>CONSELHO DE CLASSE E SÉRIE</h1>
-            <p class="subtitle">Acompanhamento de Desempenho Escolar</p>
         </header>
         
         <div class="navigation">
@@ -809,4 +800,3 @@
     </script>
 </body>
 </html>
-
