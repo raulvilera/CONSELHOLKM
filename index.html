@@ -54,6 +54,75 @@
             opacity: 0.9;
         }
         
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+            padding: 0 10px;
+        }
+        
+        .nav-btn {
+            padding: 10px 20px;
+            font-size: 1rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            box-shadow: 
+                0 4px 0 #1a5276,
+                0 6px 8px rgba(0,0,0,0.2);
+            background: linear-gradient(145deg, #3498db, #2980b9);
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            min-width: 120px;
+            width: auto;
+        }
+        
+        .nav-btn:hover {
+            background: linear-gradient(145deg, #3cb0fd, #3498db);
+            transform: translateY(-2px);
+            box-shadow: 
+                0 6px 0 #1a5276,
+                0 8px 12px rgba(0,0,0,0.3);
+        }
+        
+        .nav-btn:active {
+            transform: translateY(3px);
+            box-shadow: 
+                0 1px 0 #1a5276,
+                0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .nav-btn:disabled {
+            background: linear-gradient(145deg, #bdc3c7, #95a5a6);
+            box-shadow: 
+                0 3px 0 #7f8c8d,
+                0 5px 6px rgba(0,0,0,0.1);
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .nav-btn:disabled:active {
+            transform: none;
+            box-shadow: 
+                0 3px 0 #7f8c8d,
+                0 5px 6px rgba(0,0,0,0.1);
+        }
+        
+        .nav-btn.prev {
+            background: linear-gradient(145deg, #e74c3c, #c0392b);
+            box-shadow: 
+                0 4px 0 #a93226,
+                0 6px 8px rgba(0,0,0,0.2);
+        }
+        
+        .nav-btn.prev:hover {
+            background: linear-gradient(145deg, #ec7063, #e74c3c);
+        }
+        
         .controls {
             background-color: white;
             padding: 20px;
@@ -91,6 +160,24 @@
         select:focus, input:focus {
             border-color: var(--secondary-color);
             outline: none;
+        }
+        
+        /* Estilo para lista suspensa com cores alternadas */
+        #student-select option:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        
+        #student-select option:nth-child(odd) {
+            background-color: #ffffff;
+        }
+        
+        #student-select option:hover {
+            background-color: #e3f2fd !important;
+        }
+        
+        #student-select option:checked {
+            background-color: #bbdefb !important;
+            font-weight: bold;
         }
         
         .btn {
@@ -233,6 +320,13 @@
             .controls { flex-direction: column; }
             .form-group { width: 100%; }
             .results { grid-template-columns: 1fr; }
+            .navigation { flex-direction: row; gap: 10px; }
+            .nav-btn { 
+                width: 48%; 
+                min-width: auto;
+                padding: 10px 15px;
+                font-size: 0.9rem;
+            }
         }
     </style>
 </head>
@@ -242,6 +336,11 @@
             <h1>CONSELHO DE CLASSE E SÉRIE</h1>
             <p class="subtitle">Acompanhamento de Desempenho Escolar</p>
         </header>
+        
+        <div class="navigation">
+            <button id="prev-btn" class="nav-btn prev" disabled>← VOLTAR</button>
+            <button id="next-btn" class="nav-btn next" disabled>AVANÇAR →</button>
+        </div>
         
         <div class="controls">
             <div class="form-group">
@@ -289,6 +388,13 @@
         const studentNameDisplay = document.getElementById('student-name-display');
         const studentClassDisplay = document.getElementById('student-class-display');
         const resultsContainer = document.getElementById('results');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+
+        // Variáveis globais para navegação
+        let currentStudents = [];
+        let currentStudentIndex = -1;
+        let currentTurma = '';
 
         /* ===================== CARREGAR TURMAS ===================== */
         async function populateClassSelect() {
@@ -320,6 +426,8 @@
 
             studentSelect.disabled = true;
             loadButton.disabled = true;
+            prevBtn.disabled = true;
+            nextBtn.disabled = true;
 
             if (!turma) {
                 studentSelect.innerHTML = '<option value="">-- Primeiro selecione uma turma --</option>';
@@ -337,7 +445,11 @@
 
                 studentSelect.innerHTML = '<option value="">-- Selecione um aluno --</option>';
 
-                alunos.forEach(a => {
+                // Armazena a lista de alunos para navegação
+                currentStudents = alunos;
+                currentTurma = turma;
+
+                alunos.forEach((a, index) => {
                     const option = document.createElement('option');
                     option.value = a;
                     option.textContent = a;
@@ -351,15 +463,58 @@
             }
         });
 
-        /* Habilitar botão */
+        /* Habilitar botão quando aluno for selecionado */
         studentSelect.addEventListener('change', function () {
-            loadButton.disabled = !this.value;
+            const hasStudent = !!this.value;
+            loadButton.disabled = !hasStudent;
+            
+            // Atualiza índice atual quando aluno é selecionado manualmente
+            if (hasStudent) {
+                currentStudentIndex = currentStudents.indexOf(this.value);
+                updateNavigationButtons();
+            } else {
+                currentStudentIndex = -1;
+                prevBtn.disabled = true;
+                nextBtn.disabled = true;
+            }
         });
 
+        /* ===================== NAVEGAÇÃO ENTRE ALUNOS ===================== */
+        function updateNavigationButtons() {
+            prevBtn.disabled = currentStudentIndex <= 0;
+            nextBtn.disabled = currentStudentIndex >= currentStudents.length - 1;
+        }
+
+        async function navigateStudents(direction) {
+            if (direction === 'prev' && currentStudentIndex > 0) {
+                currentStudentIndex--;
+            } else if (direction === 'next' && currentStudentIndex < currentStudents.length - 1) {
+                currentStudentIndex++;
+            } else {
+                return;
+            }
+
+            // Atualiza o select para refletir o aluno atual
+            studentSelect.value = currentStudents[currentStudentIndex];
+            
+            // Carrega os dados do aluno automaticamente
+            await loadStudentData();
+            updateNavigationButtons();
+        }
+
+        prevBtn.addEventListener('click', () => navigateStudents('prev'));
+        nextBtn.addEventListener('click', () => navigateStudents('next'));
+
         /* ===================== CARREGAR DADOS DO ALUNO ===================== */
-        loadButton.addEventListener('click', async function () {
+        loadButton.addEventListener('click', loadStudentData);
+
+        async function loadStudentData() {
             const turma = classSelect.value;
             const aluno = studentSelect.value;
+
+            // Atualiza o índice atual
+            currentStudentIndex = currentStudents.indexOf(aluno);
+            updateNavigationButtons();
 
             showLoading("Carregando dados...");
 
@@ -378,54 +533,107 @@
             } catch (err) {
                 showError("Erro ao carregar dados do aluno.");
             }
-        });
+        }
 
         /* ===================== EXIBIR DADOS DO ALUNO ===================== */
-        function displayStudentData(bimestres) {
+        function displayStudentData(dados) {
             resultsContainer.innerHTML = "";
 
-            for (const b in bimestres) {
+            // Verifica se a estrutura de dados é a esperada
+            if (!dados || !dados.notas) {
+                showError("Estrutura de dados inválida.");
+                return;
+            }
+
+            // Cria cards para cada bimestre
+            for (let bimestre = 1; bimestre <= 4; bimestre++) {
+                if (!dados.notas[bimestre]) continue;
+
                 const card = document.createElement('div');
                 card.className = "bimester-card";
 
                 const header = document.createElement('div');
                 header.className = "bimester-header";
-                header.textContent = b;
+                header.textContent = `${bimestre}º Bimestre`;
 
                 const content = document.createElement('div');
                 content.className = "bimester-content";
 
-                const disciplinas = Object.keys(bimestres[b].medias);
+                // Itera pelas disciplinas
+                Object.keys(dados.notas[bimestre]).forEach(disciplinaIndex => {
+                    const nota = dados.notas[bimestre][disciplinaIndex];
+                    const falta = dados.faltas[bimestre][disciplinaIndex];
 
-                disciplinas.forEach(d => {
                     const row = document.createElement("div");
                     row.className = "subject-row";
 
                     const nome = document.createElement("span");
                     nome.className = "subject-name";
-                    nome.textContent = d;
-
-                    const media = bimestres[b].medias[d];
-                    const faltas = bimestres[b].faltas[d];
+                    nome.textContent = `Disciplina ${parseInt(disciplinaIndex) + 1}`;
 
                     const grade = document.createElement("span");
                     grade.className = "grade";
 
-                    if (media !== null) {
-                        if (media >= 7) grade.classList.add("grade-high");
-                        else if (media >= 5) grade.classList.add("grade-medium");
+                    if (nota !== null) {
+                        if (nota >= 7) grade.classList.add("grade-high");
+                        else if (nota >= 5) grade.classList.add("grade-medium");
                         else grade.classList.add("grade-low");
 
-                        grade.textContent = `${media.toFixed(1)} | ${faltas} faltas`;
+                        grade.textContent = `${nota.toFixed(1)} | ${falta || 0} faltas`;
                     } else {
                         grade.classList.add("grade-low");
-                        grade.textContent = `-- | ${faltas} faltas`;
+                        grade.textContent = `-- | ${falta || 0} faltas`;
                     }
 
                     row.appendChild(nome);
                     row.appendChild(grade);
                     content.appendChild(row);
                 });
+
+                // Adiciona conceito 5º se disponível
+                if (dados.conceito5 && Object.keys(dados.conceito5).length > 0) {
+                    const conceitoRow = document.createElement("div");
+                    conceitoRow.className = "subject-row";
+                    conceitoRow.style.backgroundColor = "#f8f9fa";
+                    conceitoRow.style.marginTop = "10px";
+                    conceitoRow.style.padding = "10px";
+                    conceitoRow.style.borderRadius = "4px";
+                    conceitoRow.style.fontWeight = "bold";
+
+                    const conceitoLabel = document.createElement("span");
+                    conceitoLabel.className = "subject-name";
+                    conceitoLabel.textContent = "Média Final (Conceito 5º)";
+                    conceitoLabel.style.color = "#2c3e50";
+
+                    const conceitoValue = document.createElement("span");
+                    conceitoValue.className = "grade";
+                    
+                    // Calcula média geral do bimestre
+                    let soma = 0;
+                    let count = 0;
+                    Object.keys(dados.conceito5).forEach(key => {
+                        if (dados.conceito5[key] !== null) {
+                            soma += dados.conceito5[key];
+                            count++;
+                        }
+                    });
+                    
+                    const mediaGeral = count > 0 ? (soma / count) : null;
+                    
+                    if (mediaGeral !== null) {
+                        if (mediaGeral >= 7) conceitoValue.classList.add("grade-high");
+                        else if (mediaGeral >= 5) conceitoValue.classList.add("grade-medium");
+                        else conceitoValue.classList.add("grade-low");
+                        conceitoValue.textContent = mediaGeral.toFixed(1);
+                    } else {
+                        conceitoValue.classList.add("grade-low");
+                        conceitoValue.textContent = "--";
+                    }
+
+                    conceitoRow.appendChild(conceitoLabel);
+                    conceitoRow.appendChild(conceitoValue);
+                    content.appendChild(conceitoRow);
+                }
 
                 card.appendChild(header);
                 card.appendChild(content);
@@ -437,12 +645,17 @@
         function showLoading(msg) {
             resultsContainer.innerHTML = `<div class="loading">${msg}</div>`;
         }
+        
         function hideLoading() {
-            resultsContainer.innerHTML = "";
+            // Não limpa completamente, apenas remove o loading
+            const loading = resultsContainer.querySelector('.loading');
+            if (loading) loading.remove();
         }
+        
         function showError(msg) {
             resultsContainer.innerHTML = `<div class="error">${msg}</div>`;
         }
+        
         function showNoData() {
             resultsContainer.innerHTML = '<div class="no-data">Selecione uma turma e um aluno para visualizar os dados</div>';
         }
@@ -452,19 +665,3 @@
     </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
