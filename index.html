@@ -1,989 +1,978 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
- <meta charset="UTF-8">
- <meta name="viewport" content="width=device-width, initial-scale=1.0">
- <title>Painel Conselho de Classe</title>
- <style>
- :root {
- --primary-color: #2c3e50;
- --secondary-color: #3498db;
- --accent-color: #e74c3c;
- --light-color: #ecf0f1;
- --dark-color: #34495e;
- --success-color: #2ecc71;
- --warning-color: #f39c12;
- }
-
- * {
- margin: 0;
- padding: 0;
- box-sizing: border-box;
- font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
- }
-
- body {
- background-color: #f5f7fa;
- color: #333;
- line-height: 1.6;
- }
-
- .container {
- max-width: 1400px;
- margin: 0 auto;
- padding: 20px;
- }
-
- header {
- background: linear-gradient(135deg, var(--primary-color), #1a252f);
- color: white;
- padding: 18px 0;
- text-align: center;
- border-radius: 12px 12px 0 0;
- margin-bottom: 25px;
- box-shadow: 0 6px 15px rgba(0,0,0,0.15);
- position: relative;
- overflow: hidden;
- }
-
- header::before {
- content: '';
- position: absolute;
- top: 0;
- left: 0;
- right: 0;
- height: 4px;
- background: linear-gradient(90deg, var(--secondary-color), var(--accent-color));
- }
-
- h1 {
- font-size: 2.2rem;
- text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
- margin: 0;
- }
-
- .navigation {
- display: flex;
- justify-content: space-between;
- margin: 25px 0;
- padding: 0 15px;
- }
-
- .nav-btn {
- padding: 12px 25px;
- font-size: 1.1rem;
- font-weight: bold;
- border: none;
- border-radius: 8px;
- cursor: pointer;
- transition: all 0.3s ease;
- position: relative;
- box-shadow:
- 0 5px 0 #1a5276,
- 0 8px 15px rgba(0,0,0,0.2);
- background: linear-gradient(145deg, #3498db, #2980b9);
- color: white;
- text-transform: uppercase;
- letter-spacing: 1px;
- min-width: 140px;
- }
-
- .nav-btn:hover {
- background: linear-gradient(145deg, #3cb0fd, #3498db);
- transform: translateY(-3px);
- box-shadow:
- 0 8px 0 #1a5276,
- 0 12px 20px rgba(0,0,0,0.25);
- }
-
- .nav-btn:active {
- transform: translateY(4px);
- box-shadow:
- 0 1px 0 #1a5276,
- 0 3px 8px rgba(0,0,0,0.2);
- }
-
- .nav-btn:disabled {
- background: linear-gradient(145deg, #bdc3c7, #95a5a6);
- box-shadow:
- 0 4px 0 #7f8c8d,
- 0 6px 10px rgba(0,0,0,0.1);
- cursor: not-allowed;
- transform: none;
- }
-
- .nav-btn:disabled:active {
- transform: none;
- box-shadow:
- 0 4px 0 #7f8c8d,
- 0 6px 10px rgba(0,0,0,0.1);
- }
-
- .nav-btn.prev {
- background: linear-gradient(145deg, #e74c3c, #c0392b);
- box-shadow:
- 0 5px 0 #a93226,
- 0 8px 15px rgba(0,0,0,0.2);
- }
-
- .nav-btn.prev:hover {
- background: linear-gradient(145deg, #ec7063, #e74c3c);
- }
-
- .controls-panel {
- background: linear-gradient(135deg, #f8f9fa, #e9ecef);
- padding: 25px;
- border-radius: 12px;
- box-shadow:
- 0 8px 25px rgba(0,0,0,0.1),
- 0 4px 6px rgba(0,0,0,0.05),
- inset 0 1px 0 rgba(255,255,255,0.8);
- margin-bottom: 25px;
- display: flex;
- flex-wrap: wrap;
- gap: 25px;
- align-items: flex-end;
- position: relative;
- border: 1px solid rgba(255,255,255,0.5);
- }
-
- .controls-panel::after {
- content: '';
- position: absolute;
- bottom: -12px;
- left: 2%;
- right: 2%;
- height: 18px;
- background: linear-gradient(to bottom, rgba(0,0,0,0.6), transparent);
- border-radius: 50%;
- filter: blur(8px);
- z-index: -1;
- }
-
- .form-group {
- flex: 1;
- min-width: 200px;
- }
-
- .form-group.turma {
- flex: none;
- min-width: 150px;
- width: auto;
- }
-
- .form-group.aluno {
- flex: none;
- min-width: 350px;
- width: auto;
- }
-
- .form-group.btn-container {
- flex: 0.3;
- min-width: 140px;
- max-width: 160px;
- }
-
- label {
- display: block;
- margin-bottom: 10px;
- font-weight: 700;
- color: var(--dark-color);
- font-size: 1.05rem;
- text-shadow: 0 1px 1px rgba(255,255,255,0.8);
- }
-
- select, input {
- padding: 14px 18px;
- border: 1px solid #ced4da;
- border-radius: 8px;
- font-size: 1.05rem;
- background: linear-gradient(to bottom, #ffffff, #f8f9fa);
- transition: all 0.3s ease;
- box-shadow:
- inset 0 2px 4px rgba(0,0,0,0.05),
- 0 2px 4px rgba(0,0,0,0.05);
- position: relative;
- color: #495057;
- }
-
- /* Estilos específicos para os campos de seleção */
- #class-select {
- width: auto;
- min-width: 150px;
- }
-
- #student-select {
- width: auto;
- min-width: 350px;
- }
-
- select:focus, input:focus {
- border-color: var(--secondary-color);
- outline: none;
- box-shadow:
- inset 0 2px 4px rgba(0,0,0,0.05),
- 0 0 0 3px rgba(52, 152, 219, 0.2),
- 0 2px 8px rgba(0,0,0,0.1);
- background: linear-gradient(to bottom, #ffffff, #fefefe);
- }
-
- /* Estilo para quando uma turma é selecionada - APENAS O CAMPO */
- #class-select.turma-selecionada {
- background: #ffeb3b !important;
- color: #333 !important;
- font-weight: bold !important;
- }
-
- /* Estilo para lista suspensa de turmas com cores alternadas claro/branco */
- #class-select option:nth-child(even) {
- background-color: #f0f8ff;
- }
-
- #class-select option:nth-child(odd) {
- background-color: #ffffff;
- }
-
- #class-select option:hover {
- background-color: #e1f0ff !important;
- }
-
- #class-select option:checked {
- background-color: #ffeb3b !important;
- color: #000000 !important;
- font-weight: bold !important;
- }
-
- /* Estilo para quando um aluno é selecionado - APENAS O CAMPO */
- #student-select.aluno-selecionado {
- background: #1a237e !important;
- color: #ffffff !important;
- font-weight: bold !important;
- }
-
- /* Estilo para lista suspensa de alunos - TODOS OS NOMES EM NEGRITO E PRETOS */
- #student-select option {
- font-weight: bold !important;
- color: #000000 !important;
- }
-
- #student-select option:nth-child(even) {
- background-color: #f0f8ff;
- }
-
- #student-select option:nth-child(odd) {
- background-color: #ffffff;
- }
-
- #student-select option:hover {
- background-color: #e1f0ff !important;
- }
-
- #student-select option:checked {
- background-color: #d0e7ff !important;
- font-weight: bold;
- color: #000000 !important;
- }
-
- .btn {
- background: linear-gradient(135deg, var(--secondary-color), #2980b9);
- color: white;
- border: none;
- padding: 12px 20px;
- border-radius: 8px;
- cursor: pointer;
- font-size: 1rem;
- font-weight: 600;
- transition: all 0.3s ease;
- box-shadow:
- 0 4px 6px rgba(0,0,0,0.1),
- 0 2px 4px rgba(0,0,0,0.06);
- width: 100%;
- text-transform: uppercase;
- letter-spacing: 0.5px;
- }
-
- .btn:hover {
- background: linear-gradient(135deg, #3cb0fd, #3498db);
- transform: translateY(-2px);
- box-shadow:
- 0 6px 12px rgba(0,0,0,0.15),
- 0 4px 6px rgba(0,0,0,0.1);
- }
-
- .btn:active {
- transform: translateY(1px);
- box-shadow:
- 0 2px 4px rgba(0,0,0,0.1),
- 0 1px 2px rgba(0,0,0,0.06);
- }
-
- .btn:disabled {
- background: linear-gradient(135deg, #bdc3c7, #95a5a6);
- cursor: not-allowed;
- transform: none;
- box-shadow:
- 0 2px 4px rgba(0,0,0,0.05);
- }
-
- .student-info {
- background: linear-gradient(135deg, #ffffff, #f8f9fa);
- padding: 25px;
- border-radius: 10px;
- box-shadow: 0 4px 15px rgba(0,0,0,0.08);
- margin-bottom: 25px;
- display: none;
- border-left: 5px solid var(--secondary-color);
- }
-
- .student-name {
- font-size: 1.7rem;
- color: var(--primary-color);
- margin-bottom: 8px;
- font-weight: 900;
- }
-
- .student-class {
- color: var(--dark-color);
- font-weight: 600;
- font-size: 1.1rem;
- opacity: 0.9;
- }
-
- .results {
- display: grid;
- grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
- gap: 25px;
- margin-bottom: 25px;
- }
-
- .bimester-card {
- background: linear-gradient(135deg, #ffffff, #f8f9fa);
- border-radius: 10px;
- box-shadow: 0 4px 15px rgba(0,0,0,0.08);
- overflow: hidden;
- transition: all 0.3s ease;
- border: 1px solid rgba(0,0,0,0.05);
- }
-
- .bimester-card:hover {
- transform: translateY(-8px);
- box-shadow: 0 12px 25px rgba(0,0,0,0.15);
- }
-
- .bimester-header {
- background: linear-gradient(135deg, var(--primary-color), #34495e);
- color: white;
- padding: 18px;
- text-align: center;
- font-weight: 700;
- font-size: 1.2rem;
- text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
- }
-
- .bimester-content {
- padding: 20px;
- max-height: 450px;
- overflow-y: auto;
- }
-
- .subject-row {
- display: flex;
- justify-content: space-between;
- padding: 12px 0;
- border-bottom: 1px solid #e9ecef;
- transition: background-color 0.2s;
- }
-
- .subject-row:hover {
- background-color: #f8f9fa;
- border-radius: 4px;
- padding-left: 8px;
- padding-right: 8px;
- }
-
- .subject-row:last-child {
- border-bottom: none;
- }
-
- .subject-name {
- font-weight: 600;
- flex: 1;
- color: #495057;
- }
-
- .grade {
- font-weight: 700;
- min-width: 140px;
- text-align: right;
- font-size: 1.05rem;
- }
-
- .grade-high {
- color: var(--success-color);
- }
-
- .grade-medium {
- color: var(--warning-color);
- }
-
- .grade-low {
- color: var(--accent-color);
- }
-
- .footer {
- text-align: center;
- margin-top: 40px;
- color: #6c757d;
- font-size: 0.95rem;
- padding: 20px;
- border-top: 1px solid #e9ecef;
- }
-
- .loading {
- text-align: center;
- padding: 30px;
- color: var(--dark-color);
- font-size: 1.1rem;
- }
-
- .error {
- background: linear-gradient(135deg, #ffeaea, #ffdada);
- color: var(--accent-color);
- padding: 20px;
- border-radius: 8px;
- margin: 25px 0;
- text-align: center;
- border-left: 4px solid var(--accent-color);
- font-weight: 600;
- }
-
- .no-data {
- text-align: center;
- padding: 40px;
- color: #6c757d;
- font-style: italic;
- font-size: 1.1rem;
- background: linear-gradient(135deg, #f8f9fa, #e9ecef);
- border-radius: 10px;
- box-shadow: 0 4px 6px rgba(0,0,0,0.05);
- }
-
- @media (max-width: 1024px) {
- .controls-panel {
- flex-direction: column;
- gap: 20px;
- }
-
- .form-group, .form-group.turma, .form-group.aluno, .form-group.btn-container {
- min-width: 100%;
- max-width: 100%;
- width: 100%;
- }
-
- .form-group.aluno {
- flex: 1;
- }
-
- #class-select, #student-select {
- width: 100%;
- }
- }
-
- @media (max-width: 768px) {
- .container {
- padding: 15px;
- }
-
- h1 {
- font-size: 1.8rem;
- }
-
- .navigation {
- flex-direction: column;
- gap: 15px;
- }
-
- .nav-btn {
- width: 100%;
- min-width: auto;
- }
-
- .results {
- grid-template-columns: 1fr;
- }
-
- .controls-panel {
- padding: 20px;
- }
-
- select, input {
- padding: 12px 15px;
- }
- }
- </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Conselho de Classe</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #34495e;
+            --success-color: #2ecc71;
+            --warning-color: #f39c12;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary-color), #1a252f);
+            color: white;
+            padding: 18px 0;
+            text-align: center;
+            border-radius: 12px 12px 0 0;
+            margin-bottom: 25px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--secondary-color), var(--accent-color));
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+            margin: 0;
+        }
+        
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin: 25px 0;
+            padding: 0 15px;
+        }
+        
+        .nav-btn {
+            padding: 12px 25px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            box-shadow: 
+                0 5px 0 #1a5276,
+                0 8px 15px rgba(0,0,0,0.2);
+            background: linear-gradient(145deg, #3498db, #2980b9);
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            min-width: 140px;
+        }
+        
+        .nav-btn:hover {
+            background: linear-gradient(145deg, #3cb0fd, #3498db);
+            transform: translateY(-3px);
+            box-shadow: 
+                0 8px 0 #1a5276,
+                0 12px 20px rgba(0,0,0,0.25);
+        }
+        
+        .nav-btn:active {
+            transform: translateY(4px);
+            box-shadow: 
+                0 1px 0 #1a5276,
+                0 3px 8px rgba(0,0,0,0.2);
+        }
+        
+        .nav-btn:disabled {
+            background: linear-gradient(145deg, #bdc3c7, #95a5a6);
+            box-shadow: 
+                0 4px 0 #7f8c8d,
+                0 6px 10px rgba(0,0,0,0.1);
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .nav-btn:disabled:active {
+            transform: none;
+            box-shadow: 
+                0 4px 0 #7f8c8d,
+                0 6px 10px rgba(0,0,0,0.1);
+        }
+        
+        .nav-btn.prev {
+            background: linear-gradient(145deg, #e74c3c, #c0392b);
+            box-shadow: 
+                0 5px 0 #a93226,
+                0 8px 15px rgba(0,0,0,0.2);
+        }
+        
+        .nav-btn.prev:hover {
+            background: linear-gradient(145deg, #ec7063, #e74c3c);
+        }
+        
+        .controls-panel {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 
+                0 8px 25px rgba(0,0,0,0.1),
+                0 4px 6px rgba(0,0,0,0.05),
+                inset 0 1px 0 rgba(255,255,255,0.8);
+            margin-bottom: 25px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 25px;
+            align-items: flex-end;
+            position: relative;
+            border: 1px solid rgba(255,255,255,0.5);
+        }
+        
+        .controls-panel::after {
+            content: '';
+            position: absolute;
+            bottom: -12px;
+            left: 2%;
+            right: 2%;
+            height: 18px;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.6), transparent);
+            border-radius: 50%;
+            filter: blur(8px);
+            z-index: -1;
+        }
+        
+        .form-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .form-group.turma {
+            flex: none;
+            min-width: 150px;
+            width: auto;
+        }
+        
+        .form-group.aluno {
+            flex: none;
+            min-width: 350px;
+            width: auto;
+        }
+        
+        .form-group.btn-container {
+            flex: 0.3;
+            min-width: 140px;
+            max-width: 160px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 700;
+            color: var(--dark-color);
+            font-size: 1.05rem;
+            text-shadow: 0 1px 1px rgba(255,255,255,0.8);
+        }
+        
+        select, input {
+            padding: 14px 18px;
+            border: 1px solid #ced4da;
+            border-radius: 8px;
+            font-size: 1.05rem;
+            background: linear-gradient(to bottom, #ffffff, #f8f9fa);
+            transition: all 0.3s ease;
+            box-shadow: 
+                inset 0 2px 4px rgba(0,0,0,0.05),
+                0 2px 4px rgba(0,0,0,0.05);
+            position: relative;
+            color: #495057;
+        }
+        
+        /* Estilos específicos para os campos de seleção */
+        #class-select {
+            width: auto;
+            min-width: 150px;
+        }
+        
+        #student-select {
+            width: auto;
+            min-width: 350px;
+        }
+        
+        select:focus, input:focus {
+            border-color: var(--secondary-color);
+            outline: none;
+            box-shadow: 
+                inset 0 2px 4px rgba(0,0,0,0.05),
+                0 0 0 3px rgba(52, 152, 219, 0.2),
+                0 2px 8px rgba(0,0,0,0.1);
+            background: linear-gradient(to bottom, #ffffff, #fefefe);
+        }
+        
+        /* Estilo para quando uma turma é selecionada - APENAS O CAMPO */
+        #class-select.turma-selecionada {
+            background: #ffeb3b !important;
+            color: #333 !important;
+            font-weight: bold !important;
+        }
+        
+        /* Estilo para lista suspensa de turmas com cores alternadas claro/branco */
+        #class-select option:nth-child(even) {
+            background-color: #f0f8ff;
+        }
+        
+        #class-select option:nth-child(odd) {
+            background-color: #ffffff;
+        }
+        
+        #class-select option:hover {
+            background-color: #e1f0ff !important;
+        }
+        
+        #class-select option:checked {
+            background-color: #ffeb3b !important;
+            color: #000000 !important;
+            font-weight: bold !important;
+        }
+        
+        /* Estilo para quando um aluno é selecionado - APENAS O CAMPO */
+        #student-select.aluno-selecionado {
+            background: #1a237e !important;
+            color: #ffffff !important;
+            font-weight: bold !important;
+        }
+        
+        /* Estilo para lista suspensa de alunos - TODOS OS NOMES EM NEGRITO E PRETOS */
+        #student-select option {
+            font-weight: bold !important;
+            color: #000000 !important;
+        }
+        
+        #student-select option:nth-child(even) {
+            background-color: #f0f8ff;
+        }
+        
+        #student-select option:nth-child(odd) {
+            background-color: #ffffff;
+        }
+        
+        #student-select option:hover {
+            background-color: #e1f0ff !important;
+        }
+        
+        #student-select option:checked {
+            background-color: #d0e7ff !important;
+            font-weight: bold;
+            color: #000000 !important;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, var(--secondary-color), #2980b9);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 
+                0 4px 6px rgba(0,0,0,0.1),
+                0 2px 4px rgba(0,0,0,0.06);
+            width: 100%;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .btn:hover {
+            background: linear-gradient(135deg, #3cb0fd, #3498db);
+            transform: translateY(-2px);
+            box-shadow: 
+                0 6px 12px rgba(0,0,0,0.15),
+                0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .btn:active {
+            transform: translateY(1px);
+            box-shadow: 
+                0 2px 4px rgba(0,0,0,0.1),
+                0 1px 2px rgba(0,0,0,0.06);
+        }
+        
+        .btn:disabled {
+            background: linear-gradient(135deg, #bdc3c7, #95a5a6);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: 
+                0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .student-info {
+            background: linear-gradient(135deg, #ffffff, #f8f9fa);
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            margin-bottom: 25px;
+            display: none;
+            border-left: 5px solid var(--secondary-color);
+        }
+        
+        .student-name {
+            font-size: 1.7rem;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+            font-weight: 900;
+        }
+        
+        .student-class {
+            color: var(--dark-color);
+            font-weight: 600;
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .results {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+        
+        .bimester-card {
+            background: linear-gradient(135deg, #ffffff, #f8f9fa);
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        
+        .bimester-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+        }
+        
+        .bimester-header {
+            background: linear-gradient(135deg, var(--primary-color), #34495e);
+            color: white;
+            padding: 18px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 1.2rem;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+        }
+        
+        .bimester-content {
+            padding: 20px;
+            max-height: 450px;
+            overflow-y: auto;
+        }
+        
+        .subject-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #e9ecef;
+            transition: background-color 0.2s;
+        }
+        
+        .subject-row:hover {
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            padding-left: 8px;
+            padding-right: 8px;
+        }
+        
+        .subject-row:last-child {
+            border-bottom: none;
+        }
+        
+        .subject-name {
+            font-weight: 600;
+            flex: 1;
+            color: #495057;
+        }
+        
+        .grade {
+            font-weight: 700;
+            min-width: 140px;
+            text-align: right;
+            font-size: 1.05rem;
+        }
+        
+        .grade-high {
+            color: var(--success-color);
+        }
+        
+        .grade-medium {
+            color: var(--warning-color);
+        }
+        
+        .grade-low {
+            color: var(--accent-color);
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #6c757d;
+            font-size: 0.95rem;
+            padding: 20px;
+            border-top: 1px solid #e9ecef;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 30px;
+            color: var(--dark-color);
+            font-size: 1.1rem;
+        }
+        
+        .error {
+            background: linear-gradient(135deg, #ffeaea, #ffdada);
+            color: var(--accent-color);
+            padding: 20px;
+            border-radius: 8px;
+            margin: 25px 0;
+            text-align: center;
+            border-left: 4px solid var(--accent-color);
+            font-weight: 600;
+        }
+        
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+            font-style: italic;
+            font-size: 1.1rem;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        
+        @media (max-width: 1024px) {
+            .controls-panel {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .form-group, .form-group.turma, .form-group.aluno, .form-group.btn-container {
+                min-width: 100%;
+                max-width: 100%;
+                width: 100%;
+            }
+            
+            .form-group.aluno {
+                flex: 1;
+            }
+            
+            #class-select, #student-select {
+                width: 100%;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .navigation {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .nav-btn {
+                width: 100%;
+                min-width: auto;
+            }
+            
+            .results {
+                grid-template-columns: 1fr;
+            }
+            
+            .controls-panel {
+                padding: 20px;
+            }
+            
+            select, input {
+                padding: 12px 15px;
+            }
+        }
+    </style>
 </head>
 <body>
- <div class="container">
- <header>
- <h1>CONSELHO DE CLASSE E SÉRIE</h1>
- </header>
+    <div class="container">
+        <header>
+            <h1>CONSELHO DE CLASSE E SÉRIE</h1>
+        </header>
+        
+        <div class="navigation">
+            <button id="prev-btn" class="nav-btn prev" disabled>← VOLTAR</button>
+            <button id="next-btn" class="nav-btn next" disabled>AVANÇAR →</button>
+        </div>
+        
+        <div class="controls-panel">
+            <div class="form-group turma">
+                <label for="class-select">Selecione a Turma:</label>
+                <select id="class-select">
+                    <option value="">-- Selecione uma turma --</option>
+                </select>
+            </div>
+            
+            <div class="form-group aluno">
+                <label for="student-select">Selecione o Aluno:</label>
+                <select id="student-select" disabled>
+                    <option value="">-- Primeiro selecione uma turma --</option>
+                </select>
+            </div>
+            
+            <div class="form-group btn-container">
+                <button id="load-data" class="btn" disabled>Carregar Dados</button>
+            </div>
+        </div>
+        
+        <div id="student-info" class="student-info">
+            <h2 class="student-name" id="student-name-display">Nome do Aluno</h2>
+            <p class="student-class" id="student-class-display">Turma</p>
+        </div>
+        
+        <div id="results" class="results">
+            <div class="no-data">Selecione uma turma e um aluno para visualizar os dados</div>
+        </div>
+        
+        <div class="footer">
+            <p>Sistema de Acompanhamento Escolar &copy; 2024</p>
+        </div>
+    </div>
 
- <div class="navigation">
- <button id="prev-btn" class="nav-btn prev" disabled>← VOLTAR</button>
- <button id="next-btn" class="nav-btn next" disabled>AVANÇAR →</button>
- </div>
+    <script>
+        // URL DO WEB APP
+        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzrBBQYdkdAGXtQeuxJYquMhiG0BQvNZO0FD11_fXkiry7RQGb0Dphr3Ir61IbqX5A/exec';
 
- <div class="controls-panel">
- <div class="form-group turma">
- <label for="class-select">Selecione a Turma:</label>
- <select id="class-select">
- <option value="">-- Selecione uma turma --</option>
- </select>
- </div>
+        // Elementos DOM
+        const classSelect = document.getElementById('class-select');
+        const studentSelect = document.getElementById('student-select');
+        const loadButton = document.getElementById('load-data');
+        const studentInfo = document.getElementById('student-info');
+        const studentNameDisplay = document.getElementById('student-name-display');
+        const studentClassDisplay = document.getElementById('student-class-display');
+        const resultsContainer = document.getElementById('results');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
 
- <div class="form-group aluno">
- <label for="student-select">Selecione o Aluno:</label>
- <select id="student-select" disabled>
- <option value="">-- Primeiro selecione uma turma --</option>
- </select>
- </div>
+        // Variáveis globais para navegação
+        let currentStudents = [];
+        let currentStudentIndex = -1;
+        let currentTurma = '';
 
- <div class="form-group btn-container">
- <button id="load-data" class="btn" disabled>Carregar Dados</button>
- </div>
- </div>
+        /* ===================== CARREGAR TURMAS ===================== */
+        async function populateClassSelect() {
+            try {
+                showLoading('Carregando turmas...');
+                
+                const response = await fetch(`${WEB_APP_URL}?action=getTurmas`);
+                const turmas = await response.json();
 
- <div id="student-info" class="student-info">
- <h2 class="student-name" id="student-name-display">Nome do Aluno</h2>
- <p class="student-class" id="student-class-display">Turma</p>
- </div>
+                if (turmas.error) throw new Error(turmas.error);
 
- <div id="results" class="results">
- <div class="no-data">Selecione uma turma e um aluno para visualizar os dados</div>
- </div>
+                classSelect.innerHTML = '<option value="">-- Selecione uma turma --</option>';
+                turmas.forEach(turma => {
+                    const option = document.createElement('option');
+                    option.value = turma;
+                    option.textContent = turma;
+                    classSelect.appendChild(option);
+                });
 
- <div class="footer">
- <p>Sistema de Acompanhamento Escolar &copy; 2024</p>
- </div>
- </div>
- <script>
- // WEB APP (backend) URL - substitua pela sua URL real
- const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwIpp95a85XWD1uAV2vO6RpQea86_Dgcde8gpr_XJjmix7MplR6H54ozd3XYzWXVzac/exec';
- // DOM elements
- const classSelect = document.getElementById('class-select');
- const studentSelect = document.getElementById('student-select');
- const loadButton = document.getElementById('load-data');
- const studentInfo = document.getElementById('student-info');
- const studentNameDisplay = document.getElementById('student-name-display');
- const studentClassDisplay = document.getElementById('student-class-display');
- const resultsContainer = document.getElementById('results');
- const prevBtn = document.getElementById('prev-btn');
- const nextBtn = document.getElementById('next-btn');
- // state
- let currentStudents = [];
- let currentStudentIndex = -1;
- let currentTurma = '';
- // helper: safe fetch with timeout
- async function safeFetch(url, opts = {}, timeout = 15000) {
- const controller = new AbortController();
- const id = setTimeout(() => controller.abort(), timeout);
- try {
- const res = await fetch(url, { ...opts, signal: controller.signal });
- clearTimeout(id);
- return res;
- } catch (err) {
- clearTimeout(id);
- throw err;
- }
- }
- // populate classes
- async function populateClassSelect() {
- try {
- showLoading('Carregando turmas...');
- const res = await safeFetch(`${WEB_APP_URL}?action=getTurmas`);
- const data = await res.json();
- if (data.error) throw new Error(data.error || 'Erro ao obter turmas');
- classSelect.innerHTML = '<option value="">-- Selecione uma turma --</option>';
- data.forEach(t => {
- const opt = document.createElement('option');
- opt.value = t;
- opt.textContent = t;
- classSelect.appendChild(opt);
- });
- adjustClassSelectWidth();
- hideLoading();
- } catch (err) {
- showError('Erro ao carregar turmas.');
- console.error(err);
- }
- }
- function adjustClassSelectWidth() {
- // compute width based on longest option
- let maxChars = 20;
- Array.from(classSelect.options).forEach(opt => {
- const len = opt.textContent.length;
- if (len > maxChars) maxChars = len;
- });
- const px = Math.min(Math.max(150, maxChars * 9 + 80), 900);
- classSelect.style.width = px + 'px';
- }
- function adjustStudentSelectWidth() {
- let maxChars = 20;
- Array.from(studentSelect.options).forEach(opt => {
- const len = opt.textContent.length;
- if (len > maxChars) maxChars = len;
- });
- const px = Math.min(Math.max(350, maxChars * 9 + 80), 1200);
- studentSelect.style.width = px + 'px';
- }
- // on class change
- classSelect.addEventListener('change', async () => {
- const turma = classSelect.value;
- currentTurma = turma;
- studentSelect.disabled = true;
- loadButton.disabled = true;
- prevBtn.disabled = true;
- nextBtn.disabled = true;
- studentSelect.innerHTML = '<option>Carregando alunos...</option>';
- if (!turma) {
- studentSelect.innerHTML = '<option value="">-- Primeiro selecione uma turma --</option>';
- showNoData();
- return;
- }
- if (turma) classSelect.classList.add('turma-selecionada');
- else classSelect.classList.remove('turma-selecionada');
- try {
- const res = await safeFetch(`${WEB_APP_URL}?action=getAlunos&turma=${encodeURIComponent(tu
-rma)}`);
- const alunos = await res.json();
- if (alunos.error) throw new Error(alunos.error || 'Erro ao carregar alunos');
- currentStudents = Array.isArray(alunos) ? alunos : [];
- currentStudentIndex = -1;
- studentSelect.innerHTML = '<option value="">-- Selecione um aluno --</option>';
- currentStudents.forEach(name => {
- const opt = document.createElement('option');
- opt.value = name;
- opt.textContent = name;
- studentSelect.appendChild(opt);
- });
- studentSelect.disabled = false;
- adjustStudentSelectWidth();
- showNoData();
- } catch (err) {
- console.error(err);
- studentSelect.innerHTML = '<option value="">Erro ao carregar alunos</option>';
- showError('Erro ao carregar alunos.');
- }
- });
- studentSelect.addEventListener('change', () => {
- const aluno = studentSelect.value;
- loadButton.disabled = !aluno;
- if (aluno) studentSelect.classList.add('aluno-selecionado');
- else studentSelect.classList.remove('aluno-selecionado');
- currentStudentIndex = currentStudents.indexOf(aluno);
- updateNavigationButtons();
- });
- // navigation
- function updateNavigationButtons() {
- prevBtn.disabled = currentStudentIndex <= 0;
- nextBtn.disabled = currentStudentIndex >= currentStudents.length - 1 || currentStudentIndex
-=== -1;
- }
- prevBtn.addEventListener('click', async () => {
- if (currentStudentIndex > 0) {
- currentStudentIndex--;
- studentSelect.value = currentStudents[currentStudentIndex];
- await loadStudentData();
- updateNavigationButtons();
- }
- });
- nextBtn.addEventListener('click', async () => {
- if (currentStudentIndex < currentStudents.length - 1) {
- currentStudentIndex++;
- studentSelect.value = currentStudents[currentStudentIndex];
- await loadStudentData();
- updateNavigationButtons();
- }
- });
- // load student data
- loadButton.addEventListener('click', loadStudentData);
- async function loadStudentData() {
- const turma = currentTurma || classSelect.value;
- const aluno = studentSelect.value;
- if (!turma || !aluno) return;
- showLoading('Carregando dados...');
- try {
- const res = await safeFetch(`${WEB_APP_URL}?action=getDadosAluno&turma=${encodeURIComponen
-t(turma)}&aluno=${encodeURIComponent(aluno)}`);
- const payload = await res.json();
- if (payload.error) throw new Error(payload.error || 'Erro ao carregar dados do aluno');
- const dados = payload.dados || payload; // some endpoints return object directly
- studentInfo.style.display = 'block';
- studentNameDisplay.textContent = aluno;
- studentClassDisplay.textContent = turma;
- // Enable navigation buttons when students list exists
- currentStudentIndex = currentStudents.indexOf(aluno);
- updateNavigationButtons();
- prevBtn.disabled = currentStudentIndex <= 0;
- nextBtn.disabled = currentStudentIndex >= currentStudents.length - 1;
- renderStudentData(dados);
- } catch (err) {
- console.error(err);
- showError('Erro ao carregar dados do aluno.');
- }
- }
- // render helper: format grade label
- function gradeClassAndText(nota, falta) {
- const span = document.createElement('span');
- span.className = 'grade';
- let text = '--';
- if (nota !== null && nota !== undefined && !isNaN(nota)) {
- text = Number(nota).toFixed(1) + ' | ' + (falta || 0) + ' faltas';
- if (nota >= 7) span.classList.add('grade-high');
- else if (nota >= 5) span.classList.add('grade-medium');
- else span.classList.add('grade-low');
- } else {
- text = '-- | ' + (falta || 0) + ' faltas';
- span.classList.add('grade-low');
- }
- span.textContent = text;
- return span;
- }
- // Main render function
- function renderStudentData(dados) {
- resultsContainer.innerHTML = '';
- if (!dados) {
- showNoData();
- return;
- }
- // Determine disciplines: prefer explicit labels from backend
- let disciplinas = [];
- if (dados.disciplinas && Array.isArray(dados.disciplinas) && dados.disciplinas.length > 0) {
- disciplinas = dados.disciplinas.map(d => String(d));
- } else if (dados.disciplinas && typeof dados.disciplinas === 'object') {
- // object where keys are indices
- disciplinas = Object.keys(dados.disciplinas).map(k => dados.disciplinas[k] ||
-('Disciplina ' + (parseInt(k)+1)));
- } else {
- // fallback: create labels based on number of notes in first bimestre
- const first = dados.notas && dados.notas[1] ? dados.notas[1] : (dados.notas &&
-dados.notas['1'] ? dados.notas['1'] : null);
- if (first) {
- disciplinas = Object.keys(first).map(k => 'Disciplina ' + (parseInt(k) + 1));
- } else {
- disciplinas = [];
- }
- }
- // We'll render a table-like view: for each discipline show 1º-4º bimestres and conceito5 on
-the right
- const grid = document.createElement('div');
- grid.style.display = 'grid';
- grid.style.gridTemplateColumns = '1fr';
- grid.style.gap = '18px';
- // For mobile and narrow screens, show each discipline in a card
- disciplinas.forEach((discLabel, idx) => {
- const card = document.createElement('div');
- card.className = 'bimester-card';
- card.style.padding = '12px';
- const header = document.createElement('div');
- header.className = 'bimester-header';
- header.textContent = discLabel;
- const content = document.createElement('div');
- content.className = 'bimester-content';
- content.style.display = 'flex';
- content.style.flexDirection = 'column';
- content.style.gap = '10px';
- content.style.paddingTop = '12px';
- // Row with four bimesters + conceito5 at the end
- const row = document.createElement('div');
- row.style.display = 'flex';
- row.style.flexWrap = 'wrap';
- row.style.gap = '8px';
- row.style.alignItems = 'center';
- row.style.justifyContent = 'space-between';
- // Create a small box for each bimestre
- for (let b = 1; b <= 4; b++) {
- const nota = dados.notas && dados.notas[b] ? dados.notas[b][idx] : (dados.notas &&
-dados.notas[String(b)] ? dados.notas[String(b)][idx] : null);
- const falta = dados.faltas && dados.faltas[b] ? dados.faltas[b][idx] : (dados.faltas
-&& dados.faltas[String(b)] ? dados.faltas[String(b)][idx] : 0);
- const box = document.createElement('div');
- box.style.minWidth = '140px';
- box.style.flex = '1';
- box.style.background = '#fff';
- box.style.padding = '10px';
- box.style.borderRadius = '8px';
- box.style.border = '1px solid #eef2f6';
- box.style.display = 'flex';
- box.style.flexDirection = 'column';
- box.style.gap = '6px';
- box.style.justifyContent = 'center';
- const label = document.createElement('div');
- label.style.fontWeight = '700';
- label.style.fontSize = '0.95rem';
- label.style.color = '#2c3e50';
- label.textContent = `${b}º Bimestre`;
- const value = document.createElement('div');
- const gradeSpan = gradeClassAndText(nota, falta);
- gradeSpan.style.fontSize = '1.05rem';
- value.appendChild(gradeSpan);
- box.appendChild(label);
- box.appendChild(value);
- row.appendChild(box);
- }
- // conceito5 box
- const conceitoBox = document.createElement('div');
- conceitoBox.style.minWidth = '120px';
- conceitoBox.style.flex = '0 0 140px';
- conceitoBox.style.background = '#f8f9fa';
- conceitoBox.style.padding = '10px';
- conceitoBox.style.borderRadius = '8px';
- conceitoBox.style.border = '1px solid #e6ebee';
- conceitoBox.style.display = 'flex';
- conceitoBox.style.flexDirection = 'column';
- conceitoBox.style.justifyContent = 'center';
- const conceitoLabel = document.createElement('div');
- conceitoLabel.style.fontWeight = '700';
- conceitoLabel.style.fontSize = '0.95rem';
- conceitoLabel.style.color = '#2c3e50';
- conceitoLabel.textContent = 'Média Final (5º)';
- const conceitoValue = document.createElement('div');
- const cVal = (dados.conceito5 && (dados.conceito5[idx] !== undefined)) ?
-dados.conceito5[idx] : (dados.conceito5 && dados.conceito5[String(idx)] !== undefined ?
-dados.conceito5[String(idx)] : null);
- const conceitoSpan = document.createElement('span');
- conceitoSpan.className = 'grade';
- conceitoSpan.style.fontSize = '1.05rem';
- if (cVal !== null && cVal !== undefined && !isNaN(cVal)) {
- conceitoSpan.textContent = Number(cVal).toFixed(1);
- if (cVal >= 7) conceitoSpan.classList.add('grade-high');
- else if (cVal >= 5) conceitoSpan.classList.add('grade-medium');
- else conceitoSpan.classList.add('grade-low');
- } else {
- conceitoSpan.textContent = '--';
- conceitoSpan.classList.add('grade-low');
- }
- conceitoValue.appendChild(conceitoSpan);
- conceitoBox.appendChild(conceitoLabel);
- conceitoBox.appendChild(conceitoValue);
- // put row and conceito side by side container
- const containerRow = document.createElement('div');
- containerRow.style.display = 'flex';
- containerRow.style.gap = '12px';
- containerRow.style.alignItems = 'flex-start';
- containerRow.style.flexWrap = 'wrap';
- containerRow.appendChild(row);
- containerRow.appendChild(conceitoBox);
- content.appendChild(containerRow);
- // total faltas for discipline
- if (dados.totalFaltasPorDisciplina) {
- const totalFalt = dados.totalFaltasPorDisciplina[idx] !== undefined ?
-dados.totalFaltasPorDisciplina[idx] : (dados.totalFaltasPorDisciplina[String(idx)] || 0);
- const tfDiv = document.createElement('div');
- tfDiv.style.marginTop = '10px';
- tfDiv.style.fontWeight = '700';
- tfDiv.textContent = `Total de faltas na disciplina: ${totalFalt}`;
- content.appendChild(tfDiv);
- }
- card.appendChild(header);
- card.appendChild(content);
- grid.appendChild(card);
- });
- // If no disciplines found, fallback to earlier bimesters cards (original view)
- if (disciplinas.length === 0) {
- // create original cards per bimestre like legacy UI
- for (let b = 1; b <= 4; b++) {
- const card = document.createElement('div');
- card.className = 'bimester-card';
- const header = document.createElement('div');
- header.className = 'bimester-header';
- header.textContent = `${b}º Bimestre`;
- const content = document.createElement('div');
- content.className = 'bimester-content';
- const notasObj = dados.notas && (dados.notas[b] || dados.notas[String(b)]);
- const faltasObj = dados.faltas && (dados.faltas[b] || dados.faltas[String(b)]);
- if (notasObj) {
- Object.keys(notasObj).forEach(k => {
- const nota = notasObj[k];
- const falta = (faltasObj && faltasObj[k]) ? faltasObj[k] : 0;
- const row = document.createElement('div');
- row.className = 'subject-row';
- const name = document.createElement('span');
- name.className = 'subject-name';
- name.textContent = `Disciplina ${parseInt(k) + 1}`;
- const grade = gradeClassAndText(nota, falta);
- row.appendChild(name);
- row.appendChild(grade);
- content.appendChild(row);
- });
- } else {
- const nod = document.createElement('div');
- nod.className = 'no-data';
- nod.textContent = 'Sem dados para este bimestre';
- content.appendChild(nod);
- }
- // concept row: show overall average from conceito5 if present
- if (dados.conceito5) {
- const conceitoRow = document.createElement('div');
- conceitoRow.className = 'subject-row';
- conceitoRow.style.backgroundColor = '#f8f9fa';
- conceitoRow.style.marginTop = '15px';
- conceitoRow.style.padding = '15px';
- conceitoRow.style.borderRadius = '8px';
- conceitoRow.style.fontWeight = 'bold';
- const label = document.createElement('span');
- label.className = 'subject-name';
- label.textContent = 'Média Final (Conceito 5º)';
- const val = document.createElement('span');
- val.className = 'grade';
- // compute average of conceito5
- let soma = 0, cnt = 0;
- Object.keys(dados.conceito5).forEach(k => {
- const v = dados.conceito5[k];
- if (v !== null && v !== undefined && !isNaN(v)) { soma += Number(v); cnt++; }
- });
- if (cnt > 0) {
- const avg = soma / cnt;
- val.textContent = avg.toFixed(1);
- if (avg >= 7) val.classList.add('grade-high');
- else if (avg >= 5) val.classList.add('grade-medium');
- else val.classList.add('grade-low');
- val.style.fontSize = '1.2rem';
- } else {
- val.textContent = '--';
- val.classList.add('grade-low');
- }
- conceitoRow.appendChild(label);
- conceitoRow.appendChild(val);
- content.appendChild(conceitoRow);
- }
- card.appendChild(header);
- card.appendChild(content);
- resultsContainer.appendChild(card);
- }
- return;
- }
- resultsContainer.appendChild(grid);
- }
- // UI helpers
- function showLoading(msg) {
- resultsContainer.innerHTML = `<div class="loading">${msg}</div>`;
- }
- function hideLoading() {
- const loading = resultsContainer.querySelector('.loading');
- if (loading) loading.remove();
- }
- function showError(msg) {
- resultsContainer.innerHTML = `<div class="error">${msg}</div>`;
- }
- function showNoData() {
- resultsContainer.innerHTML = '<div class="no-data">Selecione uma turma e um aluno para
-visualizar os dados</div>';
- }
- // init
- document.addEventListener('DOMContentLoaded', populateClassSelect);
- </script>
+                hideLoading();
+                
+                // Ajustar a largura do campo de turmas baseado no conteúdo
+                adjustClassSelectWidth();
+            } catch (err) {
+                showError("Erro ao carregar turmas.");
+            }
+        }
+
+        // Função para ajustar a largura do campo de turmas
+        function adjustClassSelectWidth() {
+            const tempSelect = document.createElement('select');
+            tempSelect.style.visibility = 'hidden';
+            tempSelect.style.position = 'absolute';
+            tempSelect.style.whiteSpace = 'nowrap';
+            tempSelect.style.fontSize = '1.05rem';
+            tempSelect.style.fontFamily = 'Segoe UI, Tahoma, Geneva, Verdana, sans-serif';
+            
+            // Adicionar todas as opções ao select temporário
+            Array.from(classSelect.options).forEach(option => {
+                const tempOption = document.createElement('option');
+                tempOption.textContent = option.textContent;
+                tempSelect.appendChild(tempOption);
+            });
+            
+            document.body.appendChild(tempSelect);
+            
+            // Encontrar a opção mais larga
+            let maxWidth = 0;
+            Array.from(tempSelect.options).forEach(option => {
+                const text = option.textContent;
+                // Criar um span temporário para medir o texto
+                const tempSpan = document.createElement('span');
+                tempSpan.style.visibility = 'hidden';
+                tempSpan.style.position = 'absolute';
+                tempSpan.style.whiteSpace = 'nowrap';
+                tempSpan.style.fontSize = '1.05rem';
+                tempSpan.style.fontFamily = 'Segoe UI, Tahoma, Geneva, Verdana, sans-serif';
+                tempSpan.textContent = text;
+                document.body.appendChild(tempSpan);
+                const textWidth = tempSpan.offsetWidth;
+                document.body.removeChild(tempSpan);
+                
+                if (textWidth > maxWidth) {
+                    maxWidth = textWidth;
+                }
+            });
+            
+            // Ajustar a largura do select real
+            const padding = 60; // Espaço para padding, bordas e seta
+            const newWidth = Math.min(Math.max(maxWidth + padding, 150), 800); // Limites mínimo e máximo
+            classSelect.style.width = `${newWidth}px`;
+            
+            document.body.removeChild(tempSelect);
+        }
+
+        /* ===================== CARREGAR ALUNOS ===================== */
+        classSelect.addEventListener('change', async function () {
+            const turma = this.value;
+
+            // Aplica/remove a classe de turma selecionada - APENAS NO CAMPO
+            if (turma) {
+                classSelect.classList.add('turma-selecionada');
+            } else {
+                classSelect.classList.remove('turma-selecionada');
+            }
+
+            studentSelect.disabled = true;
+            loadButton.disabled = true;
+            prevBtn.disabled = true;
+            nextBtn.disabled = true;
+
+            if (!turma) {
+                studentSelect.innerHTML = '<option value="">-- Primeiro selecione uma turma --</option>';
+                showNoData();
+                return;
+            }
+
+            studentSelect.innerHTML = '<option>Carregando alunos...</option>';
+
+            try {
+                const response = await fetch(`${WEB_APP_URL}?action=getAlunos&turma=${encodeURIComponent(turma)}`);
+                const alunos = await response.json();
+
+                if (alunos.error) throw new Error(alunos.error);
+
+                studentSelect.innerHTML = '<option value="">-- Selecione um aluno --</option>';
+
+                // Armazena a lista de alunos para navegação
+                currentStudents = alunos;
+                currentTurma = turma;
+
+                alunos.forEach((a, index) => {
+                    const option = document.createElement('option');
+                    option.value = a;
+                    option.textContent = a;
+                    studentSelect.appendChild(option);
+                });
+
+                studentSelect.disabled = false;
+
+                // Ajustar a largura do campo de alunos baseado no conteúdo
+                adjustStudentSelectWidth();
+
+            } catch (err) {
+                studentSelect.innerHTML = '<option value="">Erro ao carregar alunos</option>';
+            }
+        });
+
+        // Função para ajustar a largura do campo de alunos
+        function adjustStudentSelectWidth() {
+            const tempSelect = document.createElement('select');
+            tempSelect.style.visibility = 'hidden';
+            tempSelect.style.position = 'absolute';
+            tempSelect.style.whiteSpace = 'nowrap';
+            tempSelect.style.fontSize = '1.05rem';
+            tempSelect.style.fontFamily = 'Segoe UI, Tahoma, Geneva, Verdana, sans-serif';
+            
+            // Adicionar todas as opções ao select temporário
+            Array.from(studentSelect.options).forEach(option => {
+                const tempOption = document.createElement('option');
+                tempOption.textContent = option.textContent;
+                tempSelect.appendChild(tempOption);
+            });
+            
+            document.body.appendChild(tempSelect);
+            
+            // Encontrar a opção mais larga
+            let maxWidth = 0;
+            Array.from(tempSelect.options).forEach(option => {
+                const text = option.textContent;
+                // Criar um span temporário para medir o texto
+                const tempSpan = document.createElement('span');
+                tempSpan.style.visibility = 'hidden';
+                tempSpan.style.position = 'absolute';
+                tempSpan.style.whiteSpace = 'nowrap';
+                tempSpan.style.fontSize = '1.05rem';
+                tempSpan.style.fontFamily = 'Segoe UI, Tahoma, Geneva, Verdana, sans-serif';
+                tempSpan.textContent = text;
+                document.body.appendChild(tempSpan);
+                const textWidth = tempSpan.offsetWidth;
+                document.body.removeChild(tempSpan);
+                
+                if (textWidth > maxWidth) {
+                    maxWidth = textWidth;
+                }
+            });
+            
+            // Ajustar a largura do select real
+            const padding = 60; // Espaço para padding, bordas e seta
+            const newWidth = Math.min(Math.max(maxWidth + padding, 350), 800); // Limites mínimo e máximo
+            studentSelect.style.width = `${newWidth}px`;
+            
+            document.body.removeChild(tempSelect);
+        }
+
+        /* Habilitar botão quando aluno for selecionado */
+        studentSelect.addEventListener('change', function () {
+            const hasStudent = !!this.value;
+            loadButton.disabled = !hasStudent;
+            
+            // Aplica/remove a classe de aluno selecionado - APENAS NO CAMPO
+            if (hasStudent) {
+                studentSelect.classList.add('aluno-selecionado');
+            } else {
+                studentSelect.classList.remove('aluno-selecionado');
+            }
+            
+            // Atualiza índice atual quando aluno é selecionado manualmente
+            if (hasStudent) {
+                currentStudentIndex = currentStudents.indexOf(this.value);
+                updateNavigationButtons();
+            } else {
+                currentStudentIndex = -1;
+                prevBtn.disabled = true;
+                nextBtn.disabled = true;
+            }
+        });
+
+        /* ===================== NAVEGAÇÃO ENTRE ALUNOS ===================== */
+        function updateNavigationButtons() {
+            prevBtn.disabled = currentStudentIndex <= 0;
+            nextBtn.disabled = currentStudentIndex >= currentStudents.length - 1;
+        }
+
+        async function navigateStudents(direction) {
+            if (direction === 'prev' && currentStudentIndex > 0) {
+                currentStudentIndex--;
+            } else if (direction === 'next' && currentStudentIndex < currentStudents.length - 1) {
+                currentStudentIndex++;
+            } else {
+                return;
+            }
+
+            // Atualiza o select para refletir o aluno atual
+            studentSelect.value = currentStudents[currentStudentIndex];
+            
+            // Aplica a classe de aluno selecionado - APENAS NO CAMPO
+            studentSelect.classList.add('aluno-selecionado');
+            
+            // Carrega os dados do aluno automaticamente
+            await loadStudentData();
+            updateNavigationButtons();
+        }
+
+        prevBtn.addEventListener('click', () => navigateStudents('prev'));
+        nextBtn.addEventListener('click', () => navigateStudents('next'));
+
+        /* ===================== CARREGAR DADOS DO ALUNO ===================== */
+        loadButton.addEventListener('click', loadStudentData);
+
+        async function loadStudentData() {
+            const turma = classSelect.value;
+            const aluno = studentSelect.value;
+
+            // Atualiza o índice atual
+            currentStudentIndex = currentStudents.indexOf(aluno);
+            updateNavigationButtons();
+
+            showLoading("Carregando dados...");
+
+            try {
+                const response = await fetch(`${WEB_APP_URL}?action=getDadosAluno&turma=${encodeURIComponent(turma)}&aluno=${encodeURIComponent(aluno)}`);
+                const dados = await response.json();
+
+                if (dados.error) throw new Error(dados.error);
+
+                studentInfo.style.display = 'block';
+                studentNameDisplay.textContent = aluno;
+                studentClassDisplay.textContent = turma;
+
+                displayStudentData(dados.dados);
+
+            } catch (err) {
+                showError("Erro ao carregar dados do aluno.");
+            }
+        }
+
+        /* ===================== EXIBIR DADOS DO ALUNO ===================== */
+        function displayStudentData(dados) {
+            resultsContainer.innerHTML = "";
+
+            // Verifica se a estrutura de dados é a esperada
+            if (!dados || !dados.notas) {
+                showError("Estrutura de dados inválida.");
+                return;
+            }
+
+            // Cria cards para cada bimestre
+            for (let bimestre = 1; bimestre <= 4; bimestre++) {
+                if (!dados.notas[bimestre]) continue;
+
+                const card = document.createElement('div');
+                card.className = "bimester-card";
+
+                const header = document.createElement('div');
+                header.className = "bimester-header";
+                header.textContent = `${bimestre}º Bimestre`;
+
+                const content = document.createElement('div');
+                content.className = "bimester-content";
+
+                // Itera pelas disciplinas
+                Object.keys(dados.notas[bimestre]).forEach(disciplinaIndex => {
+                    const nota = dados.notas[bimestre][disciplinaIndex];
+                    const falta = dados.faltas[bimestre][disciplinaIndex];
+
+                    const row = document.createElement("div");
+                    row.className = "subject-row";
+
+                    const nome = document.createElement("span");
+                    nome.className = "subject-name";
+                    nome.textContent = `Disciplina ${parseInt(disciplinaIndex) + 1}`;
+
+                    const grade = document.createElement("span");
+                    grade.className = "grade";
+
+                    if (nota !== null) {
+                        if (nota >= 7) grade.classList.add("grade-high");
+                        else if (nota >= 5) grade.classList.add("grade-medium");
+                        else grade.classList.add("grade-low");
+
+                        grade.textContent = `${nota.toFixed(1)} | ${falta || 0} faltas`;
+                    } else {
+                        grade.classList.add("grade-low");
+                        grade.textContent = `-- | ${falta || 0} faltas`;
+                    }
+
+                    row.appendChild(nome);
+                    row.appendChild(grade);
+                    content.appendChild(row);
+                });
+
+                // Adiciona conceito 5º se disponível
+                if (dados.conceito5 && Object.keys(dados.conceito5).length > 0) {
+                    const conceitoRow = document.createElement("div");
+                    conceitoRow.className = "subject-row";
+                    conceitoRow.style.backgroundColor = "#f8f9fa";
+                    conceitoRow.style.marginTop = "15px";
+                    conceitoRow.style.padding = "15px";
+                    conceitoRow.style.borderRadius = "8px";
+                    conceitoRow.style.fontWeight = "bold";
+                    conceitoRow.style.boxShadow = "0 2px 4px rgba(0,0,0,0.05)";
+
+                    const conceitoLabel = document.createElement("span");
+                    conceitoLabel.className = "subject-name";
+                    conceitoLabel.textContent = "Média Final (Conceito 5º)";
+                    conceitoLabel.style.color = "#2c3e50";
+                    conceitoLabel.style.fontSize = "1.1rem";
+
+                    const conceitoValue = document.createElement("span");
+                    conceitoValue.className = "grade";
+                    
+                    // Calcula média geral do bimestre
+                    let soma = 0;
+                    let count = 0;
+                    Object.keys(dados.conceito5).forEach(key => {
+                        if (dados.conceito5[key] !== null) {
+                            soma += dados.conceito5[key];
+                            count++;
+                        }
+                    });
+                    
+                    const mediaGeral = count > 0 ? (soma / count) : null;
+                    
+                    if (mediaGeral !== null) {
+                        if (mediaGeral >= 7) conceitoValue.classList.add("grade-high");
+                        else if (mediaGeral >= 5) conceitoValue.classList.add("grade-medium");
+                        else conceitoValue.classList.add("grade-low");
+                        conceitoValue.textContent = mediaGeral.toFixed(1);
+                        conceitoValue.style.fontSize = "1.2rem";
+                    } else {
+                        conceitoValue.classList.add("grade-low");
+                        conceitoValue.textContent = "--";
+                    }
+
+                    conceitoRow.appendChild(conceitoLabel);
+                    conceitoRow.appendChild(conceitoValue);
+                    content.appendChild(conceitoRow);
+                }
+
+                card.appendChild(header);
+                card.appendChild(content);
+                resultsContainer.appendChild(card);
+            }
+        }
+
+        /* ===================== FUNÇÕES DE AUXÍLIO ===================== */
+        function showLoading(msg) {
+            resultsContainer.innerHTML = `<div class="loading">${msg}</div>`;
+        }
+        
+        function hideLoading() {
+            // Não limpa completamente, apenas remove o loading
+            const loading = resultsContainer.querySelector('.loading');
+            if (loading) loading.remove();
+        }
+        
+        function showError(msg) {
+            resultsContainer.innerHTML = `<div class="error">${msg}</div>`;
+        }
+        
+        function showNoData() {
+            resultsContainer.innerHTML = '<div class="no-data">Selecione uma turma e um aluno para visualizar os dados</div>';
+        }
+
+        /* ===================== INICIAR ===================== */
+        document.addEventListener("DOMContentLoaded", populateClassSelect);
+    </script>
 </body>
 </html>
-
-
