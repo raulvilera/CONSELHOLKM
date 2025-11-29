@@ -166,9 +166,9 @@
         }
         
         .form-group.turma {
-            flex: 0.4;
-            min-width: 150px;
-            max-width: 170px;
+            flex: 0.3;
+            min-width: 120px;
+            max-width: 140px;
         }
         
         .form-group.aluno {
@@ -217,6 +217,13 @@
             background: linear-gradient(to bottom, #ffffff, #fefefe);
         }
         
+        /* Estilo para quando uma turma é selecionada - APENAS O CAMPO */
+        #class-select.turma-selecionada {
+            background: #ffeb3b !important;
+            color: #333 !important;
+            font-weight: bold !important;
+        }
+        
         /* Estilo para lista suspensa de turmas com cores alternadas claro/branco */
         #class-select option:nth-child(even) {
             background-color: #f0f8ff;
@@ -236,7 +243,18 @@
             font-weight: bold !important;
         }
         
-        /* Estilo para lista suspensa de alunos com cores alternadas claro/branco */
+        /* Estilo para quando um aluno é selecionado - APENAS O CAMPO */
+        #student-select.aluno-selecionado {
+            background: #1a237e !important;
+            color: #ffffff !important;
+            font-weight: bold !important;
+        }
+        
+        /* Estilo para lista suspensa de alunos - TODOS OS NOMES EM NEGRITO */
+        #student-select option {
+            font-weight: bold !important;
+        }
+        
         #student-select option:nth-child(even) {
             background-color: #f0f8ff;
         }
@@ -581,6 +599,13 @@
         classSelect.addEventListener('change', async function () {
             const turma = this.value;
 
+            // Aplica/remove a classe de turma selecionada - APENAS NO CAMPO
+            if (turma) {
+                classSelect.classList.add('turma-selecionada');
+            } else {
+                classSelect.classList.remove('turma-selecionada');
+            }
+
             studentSelect.disabled = true;
             loadButton.disabled = true;
             prevBtn.disabled = true;
@@ -675,6 +700,13 @@
             const hasStudent = !!this.value;
             loadButton.disabled = !hasStudent;
             
+            // Aplica/remove a classe de aluno selecionado - APENAS NO CAMPO
+            if (hasStudent) {
+                studentSelect.classList.add('aluno-selecionado');
+            } else {
+                studentSelect.classList.remove('aluno-selecionado');
+            }
+            
             // Atualiza índice atual quando aluno é selecionado manualmente
             if (hasStudent) {
                 currentStudentIndex = currentStudents.indexOf(this.value);
@@ -703,6 +735,9 @@
 
             // Atualiza o select para refletir o aluno atual
             studentSelect.value = currentStudents[currentStudentIndex];
+            
+            // Aplica a classe de aluno selecionado - APENAS NO CAMPO
+            studentSelect.classList.add('aluno-selecionado');
             
             // Carrega os dados do aluno automaticamente
             await loadStudentData();
@@ -875,5 +910,3 @@
     </script>
 </body>
 </html>
-
-
