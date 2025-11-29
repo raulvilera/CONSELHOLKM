@@ -150,13 +150,13 @@
         .controls-panel::after {
             content: '';
             position: absolute;
-            bottom: -8px;
-            left: 5%;
-            right: 5%;
-            height: 12px;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.1), transparent);
+            bottom: -12px;
+            left: 2%;
+            right: 2%;
+            height: 18px;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.6), transparent);
             border-radius: 50%;
-            filter: blur(4px);
+            filter: blur(8px);
             z-index: -1;
         }
         
@@ -166,14 +166,15 @@
         }
         
         .form-group.turma {
-            flex: 0.6;
-            min-width: 180px;
-            max-width: 200px;
+            flex: 0.4;
+            min-width: 150px;
+            max-width: 170px;
         }
         
         .form-group.aluno {
-            flex: 1.8;
-            min-width: 380px;
+            flex: none;
+            min-width: 350px;
+            width: auto;
         }
         
         .form-group.btn-container {
@@ -215,9 +216,27 @@
             background: linear-gradient(to bottom, #ffffff, #fefefe);
         }
         
-        /* Estilo para lista suspensa com cores alternadas */
+        /* Estilo para lista suspensa de turmas com cores alternadas claro/branco */
+        #class-select option:nth-child(even) {
+            background-color: #f0f8ff;
+        }
+        
+        #class-select option:nth-child(odd) {
+            background-color: #ffffff;
+        }
+        
+        #class-select option:hover {
+            background-color: #e1f0ff !important;
+        }
+        
+        #class-select option:checked {
+            background-color: #d0e7ff !important;
+            font-weight: bold;
+        }
+        
+        /* Estilo para lista suspensa de alunos com cores alternadas claro/branco */
         #student-select option:nth-child(even) {
-            background-color: #f8f9fa;
+            background-color: #f0f8ff;
         }
         
         #student-select option:nth-child(odd) {
@@ -225,11 +244,11 @@
         }
         
         #student-select option:hover {
-            background-color: #e3f2fd !important;
+            background-color: #e1f0ff !important;
         }
         
         #student-select option:checked {
-            background-color: #bbdefb !important;
+            background-color: #d0e7ff !important;
             font-weight: bold;
         }
         
@@ -428,6 +447,10 @@
                 max-width: 100%;
                 width: 100%;
             }
+            
+            .form-group.aluno {
+                flex: 1;
+            }
         }
         
         @media (max-width: 768px) {
@@ -590,10 +613,60 @@
 
                 studentSelect.disabled = false;
 
+                // Ajustar a largura do campo de alunos baseado no conteúdo
+                adjustStudentSelectWidth();
+
             } catch (err) {
                 studentSelect.innerHTML = '<option value="">Erro ao carregar alunos</option>';
             }
         });
+
+        // Função para ajustar a largura do campo de alunos
+        function adjustStudentSelectWidth() {
+            const tempSelect = document.createElement('select');
+            tempSelect.style.visibility = 'hidden';
+            tempSelect.style.position = 'absolute';
+            tempSelect.style.whiteSpace = 'nowrap';
+            tempSelect.style.fontSize = '1.05rem';
+            tempSelect.style.fontFamily = 'Segoe UI, Tahoma, Geneva, Verdana, sans-serif';
+            
+            // Adicionar todas as opções ao select temporário
+            Array.from(studentSelect.options).forEach(option => {
+                const tempOption = document.createElement('option');
+                tempOption.textContent = option.textContent;
+                tempSelect.appendChild(tempOption);
+            });
+            
+            document.body.appendChild(tempSelect);
+            
+            // Encontrar a opção mais larga
+            let maxWidth = 0;
+            Array.from(tempSelect.options).forEach(option => {
+                const text = option.textContent;
+                // Criar um span temporário para medir o texto
+                const tempSpan = document.createElement('span');
+                tempSpan.style.visibility = 'hidden';
+                tempSpan.style.position = 'absolute';
+                tempSpan.style.whiteSpace = 'nowrap';
+                tempSpan.style.fontSize = '1.05rem';
+                tempSpan.style.fontFamily = 'Segoe UI, Tahoma, Geneva, Verdana, sans-serif';
+                tempSpan.textContent = text;
+                document.body.appendChild(tempSpan);
+                const textWidth = tempSpan.offsetWidth;
+                document.body.removeChild(tempSpan);
+                
+                if (textWidth > maxWidth) {
+                    maxWidth = textWidth;
+                }
+            });
+            
+            // Ajustar a largura do select real
+            const padding = 60; // Espaço para padding, bordas e seta
+            const newWidth = Math.min(Math.max(maxWidth + padding, 350), 800); // Limites mínimo e máximo
+            studentSelect.style.width = `${newWidth}px`;
+            
+            document.body.removeChild(tempSelect);
+        }
 
         /* Habilitar botão quando aluno for selecionado */
         studentSelect.addEventListener('change', function () {
