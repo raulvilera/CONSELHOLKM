@@ -16,6 +16,11 @@
             --nota-baixa: #ff5252;
             --nota-alta: #2196f3;
             --faltas-cor: #757575;
+            --card-bg-1: #f0f8ff;
+            --card-bg-2: #fff0f5;
+            --card-bg-3: #f0fff0;
+            --card-bg-4: #fff8f0;
+            --card-bg-5: #f5f0ff;
         }
         
         * {
@@ -343,7 +348,6 @@
         }
         
         .bimester-card {
-            background: linear-gradient(135deg, #ffffff, #f8f9fa);
             border-radius: 10px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.08);
             overflow: hidden;
@@ -353,6 +357,26 @@
             flex-direction: column;
             position: relative;
             z-index: 1;
+        }
+        
+        .bimester-card.bg-1 {
+            background: linear-gradient(135deg, var(--card-bg-1), #e6f2ff);
+        }
+        
+        .bimester-card.bg-2 {
+            background: linear-gradient(135deg, var(--card-bg-2), #ffe6f2);
+        }
+        
+        .bimester-card.bg-3 {
+            background: linear-gradient(135deg, var(--card-bg-3), #e6ffe6);
+        }
+        
+        .bimester-card.bg-4 {
+            background: linear-gradient(135deg, var(--card-bg-4), #fff2e6);
+        }
+        
+        .bimester-card.bg-5 {
+            background: linear-gradient(135deg, var(--card-bg-5), #f2e6ff);
         }
         
         .bimester-card:hover {
@@ -390,33 +414,31 @@
         
         .subject-grid {
             display: grid;
-            grid-template-columns: 1fr auto;
+            grid-template-columns: 1fr auto auto;
             gap: 1mm;
         }
         
         .subject-cell {
-            padding: 8px 12px;
+            padding: 10px 12px;
             border-radius: 4px;
             font-weight: 600;
             color: #495057;
-            background-color: #f8f9fa;
-            box-shadow: 
-                inset 0 1px 0 rgba(255,255,255,0.8),
-                0 1px 3px rgba(0,0,0,0.1);
+            background-color: #ffffff;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             transition: all 0.2s ease;
             display: flex;
             align-items: center;
         }
         
         .grade-cell {
-            padding: 8px 12px;
+            padding: 10px 12px;
             border-radius: 4px;
             font-weight: 700;
             text-align: center;
-            min-width: 120px;
-            box-shadow: 
-                inset 0 1px 0 rgba(255,255,255,0.8),
-                0 1px 3px rgba(0,0,0,0.1);
+            min-width: 80px;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             transition: all 0.2s ease;
             display: flex;
             align-items: center;
@@ -426,22 +448,32 @@
         .grade-cell.nota-baixa {
             background-color: var(--nota-baixa);
             color: white;
-            box-shadow: 
-                inset 0 1px 0 rgba(255,255,255,0.3),
-                0 2px 4px rgba(0,0,0,0.2);
         }
         
         .grade-cell.nota-alta {
             background-color: var(--nota-alta);
             color: white;
-            box-shadow: 
-                inset 0 1px 0 rgba(255,255,255,0.3),
-                0 2px 4px rgba(0,0,0,0.2);
         }
         
         .grade-cell.sem-nota {
             background-color: #f0f0f0;
             color: var(--faltas-cor);
+        }
+        
+        .faltas-cell {
+            padding: 10px 12px;
+            border-radius: 4px;
+            font-weight: 700;
+            text-align: center;
+            min-width: 80px;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #ffffff;
+            color: #000000;
         }
         
         .footer {
@@ -542,6 +574,15 @@
             
             select, input {
                 padding: 12px 15px;
+            }
+            
+            .subject-grid {
+                grid-template-columns: 1fr;
+                gap: 2mm;
+            }
+            
+            .subject-cell, .grade-cell, .faltas-cell {
+                min-width: 100%;
             }
         }
     </style>
@@ -847,7 +888,7 @@
         for (let b = 0; b < 4; b++) {
           // Verifica se há algum dado no bimestre; se não houver, ainda assim mostra os títulos (opcional)
           const card = document.createElement('div');
-          card.className = "bimester-card";
+          card.className = `bimester-card bg-${b+1}`;
 
           const header = document.createElement('div');
           header.className = "bimester-header";
@@ -873,7 +914,7 @@
           const content = document.createElement('div');
           content.className = "bimester-content";
 
-          // Cria grid para as disciplinas e notas
+          // Cria grid para as disciplinas, notas e faltas
           const grid = document.createElement('div');
           grid.className = "subject-grid";
 
@@ -888,7 +929,7 @@
             nomeCell.className = "subject-cell";
             nomeCell.textContent = nomeDisc;
 
-            // Célula da nota e faltas
+            // Célula da nota
             const gradeCell = document.createElement("div");
             gradeCell.className = "grade-cell";
 
@@ -897,6 +938,10 @@
               const parsed = parseFloat(notaRaw);
               nota = isNaN(parsed) ? null : parsed;
             }
+
+            // Célula das faltas
+            const faltasCell = document.createElement("div");
+            faltasCell.className = "faltas-cell";
 
             const falta = (faltaRaw === null || faltaRaw === undefined || faltaRaw === "") ? 0 : (parseInt(faltaRaw) || 0);
 
@@ -907,14 +952,18 @@
               } else {
                 gradeCell.classList.add("nota-baixa");
               }
-              gradeCell.textContent = `${nota.toFixed(1)} | ${falta} faltas`;
+              gradeCell.textContent = nota.toFixed(1);
             } else {
               gradeCell.classList.add("sem-nota");
-              gradeCell.textContent = `-- | ${falta} faltas`;
+              gradeCell.textContent = "--";
             }
+
+            // Preenche a célula de faltas
+            faltasCell.textContent = falta;
 
             grid.appendChild(nomeCell);
             grid.appendChild(gradeCell);
+            grid.appendChild(faltasCell);
           }
 
           content.appendChild(grid);
@@ -925,7 +974,7 @@
 
         // 5º CONCEITO (médias e totais)
         const conceitoCard = document.createElement('div');
-        conceitoCard.className = "bimester-card";
+        conceitoCard.className = "bimester-card bg-5";
 
         const conceitoHeader = document.createElement('div');
         conceitoHeader.className = "bimester-header";
@@ -989,9 +1038,13 @@
           nomeCell.className = "subject-cell";
           nomeCell.textContent = disciplinas[i] || (`Disciplina ${i+1}`);
 
-          // Célula da média e faltas
+          // Célula da média
           const gradeCell = document.createElement("div");
           gradeCell.className = "grade-cell";
+
+          // Célula das faltas totais
+          const faltasCell = document.createElement("div");
+          faltasCell.className = "faltas-cell";
 
           const media = medias[i];
           const faltasDisc = totalFaltasPorDisciplina[i] || 0;
@@ -1003,14 +1056,18 @@
             } else {
               gradeCell.classList.add("nota-baixa");
             }
-            gradeCell.textContent = `${media.toFixed(1)} | ${faltasDisc} faltas`;
+            gradeCell.textContent = media.toFixed(1);
           } else {
             gradeCell.classList.add("sem-nota");
-            gradeCell.textContent = `-- | ${faltasDisc} faltas`;
+            gradeCell.textContent = "--";
           }
+
+          // Preenche a célula de faltas totais
+          faltasCell.textContent = faltasDisc;
 
           grid.appendChild(nomeCell);
           grid.appendChild(gradeCell);
+          grid.appendChild(faltasCell);
         }
 
         conceitoContent.appendChild(grid);
@@ -1042,4 +1099,3 @@
     </script>
 </body>
 </html>
-
