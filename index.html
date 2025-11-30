@@ -64,7 +64,7 @@
         
         .controls-panel {
             background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-            padding: 23px 25px; /* Reduzido 2mm do padding-top (de 25px para 23px) */
+            padding: 18px 25px 23px; /* Reduzido 2mm do padding-top (de 25px para 18px) */
             border-radius: 12px;
             box-shadow: 
                 0 8px 25px rgba(0,0,0,0.1),
@@ -74,11 +74,11 @@
             display: flex;
             flex-wrap: wrap;
             gap: 25px;
-            align-items: center; /* Centraliza verticalmente os elementos */
-            justify-content: center; /* Centraliza horizontalmente os elementos */
+            align-items: flex-start; /* Alterado de center para flex-start para alinhar pelo topo */
+            justify-content: center;
             position: relative;
             border: 1px solid rgba(255,255,255,0.5);
-            margin-top: -8px; /* Mover 2mm (aproximadamente 8px) mais acima do cabeçalho */
+            margin-top: -12px; /* Ajustado para mover mais para cima (de -8px para -12px) */
         }
         
         .controls-panel::after {
@@ -494,7 +494,7 @@
             }
             
             .controls-panel {
-                padding: 20px;
+                padding: 15px 20px 20px; /* Ajuste proporcional para dispositivos móveis */
             }
             
             select, input {
@@ -549,7 +549,7 @@
 
     <script>
         // URL DO WEB APP
-        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzrzwVEsw3B01-kJcySMTVL8hcKS8bpbM4fIawJLZsLxo6NXv_kqxIgHFO8zgezjZkq/exec';
+        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzB6W8qtr0JizANnbjzdFEUdeH86HN4sYgPlW_efWgRPgvwypBnwLEQ3F3e4eqABP4u/exec';
 
         // Elementos DOM
         const classSelect = document.getElementById('class-select');
@@ -956,4 +956,3 @@
     </script>
 </body>
 </html>
-
