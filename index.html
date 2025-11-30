@@ -587,295 +587,421 @@
         </div>
     </div>
 
-<script>
-/* ============================================================
-   CONFIGURAÇÕES INICIAIS
-============================================================ */
+    <script>
+      // URL DO WEB APP
+      const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzHLcKk8VBeL1vdDwr95YkpIDRt8al4wm7cPJua_YQTIALhgXrdqGy3S5wCrvweHaBm/exec';
 
-const WEB_APP_URL =
-    "https://script.google.com/macros/s/AKfycbyLNOdrLK-IOuodoiHb7WrcUvIZHpDLFjeOgZ8RTJvVWM7X78V4W4zfhm6FKeC31Wx5/exec";
+      // Elementos DOM
+      const classSelect = document.getElementById('class-select');
+      const studentSelect = document.getElementById('student-select');
+      const loadButton = document.getElementById('load-data');
+      const studentInfo = document.getElementById('student-info');
+      const studentNameDisplay = document.getElementById('student-name-display');
+      const studentClassDisplay = document.getElementById('student-class-display');
+      const resultsContainer = document.getElementById('results');
+      const prevBtn = document.getElementById('prev-btn');
+      const nextBtn = document.getElementById('next-btn');
 
-const classSelect = document.getElementById("class-select");
-const studentSelect = document.getElementById("student-select");
-const loadButton = document.getElementById("load-data");
-const studentInfo = document.getElementById("student-info");
-const studentNameDisplay = document.getElementById("student-name-display");
-const studentClassDisplay = document.getElementById("student-class-display");
-const resultsContainer = document.getElementById("results");
+      // Variáveis globais para navegação
+      let currentStudents = [];
+      let currentStudentIndex = -1;
+      let currentTurma = '';
 
-const prevBtn = document.getElementById("prev-btn");
-const nextBtn = document.getElementById("next-btn");
+      /* ===================== CARREGAR TURMAS ===================== */
+      async function populateClassSelect() {
+        try {
+          showLoading('Carregando turmas...');
 
-let currentStudents = [];
-let currentStudentIndex = -1;
-let currentTurma = "";
+          const response = await fetch(`${WEB_APP_URL}?action=getTurmas`);
+          const turmas = await response.json();
 
-/* ============================================================
-   EXIBIÇÃO DE MENSAGENS
-============================================================ */
+          if (turmas.error) throw new Error(turmas.error);
 
-function showLoading(msg) {
-    resultsContainer.innerHTML = `
-        <div class="loading">${msg}</div>
-    `;
-}
+          classSelect.innerHTML = '<option value="">-- Selecione uma turma --</option>';
+          turmas.forEach(turma => {
+            const option = document.createElement('option');
+            option.value = turma;
+            option.textContent = turma;
+            classSelect.appendChild(option);
+          });
 
-function showError(msg) {
-    resultsContainer.innerHTML = `
-        <div class="error">${msg}</div>
-    `;
-}
+          hideLoading();
 
-function showNoData() {
-    resultsContainer.innerHTML = `
-        <div class="no-data">Nenhum dado disponível</div>
-    `;
-}
-
-/* ============================================================
-   AJUSTE DO SELECT DE TURMAS
-============================================================ */
-function adjustClassSelectWidth() {
-    let maxWidth = 0;
-
-    Array.from(classSelect.options).forEach(option => {
-        const span = document.createElement("span");
-        span.style.visibility = "hidden";
-        span.style.position = "absolute";
-        span.style.whiteSpace = "nowrap";
-        span.style.fontSize = "1.05rem";
-        span.style.fontFamily = "Segoe UI";
-
-        span.textContent = option.textContent;
-        document.body.appendChild(span);
-
-        maxWidth = Math.max(maxWidth, span.offsetWidth);
-
-        span.remove();
-    });
-
-    const padding = 60;
-    classSelect.style.width = `${Math.min(maxWidth + padding, 420)}px`;
-}
-
-/* ============================================================
-   CARREGAR LISTA DE TURMAS
-============================================================ */
-async function populateClassSelect() {
-    try {
-        showLoading("Carregando turmas...");
-
-        const response = await fetch(`${WEB_APP_URL}?action=getTurmas`);
-        const json = await response.json();
-
-        if (!Array.isArray(json)) {
-            throw new Error("Estrutura de dados inválida recebida do servidor.");
+          // Ajustar a largura do campo de turmas baseado no conteúdo
+          adjustClassSelectWidth();
+        } catch (err) {
+          showError("Erro ao carregar turmas.");
+          console.error(err);
         }
+      }
 
-        classSelect.innerHTML = `<option value="">-- Selecione uma turma --</option>`;
-
-        json.forEach(turma => {
-            const op = document.createElement("option");
-            op.value = turma;
-            op.textContent = turma;
-            classSelect.appendChild(op);
+      // Função para ajustar a largura do campo de turmas
+      function adjustClassSelectWidth() {
+        let maxWidth = 0;
+        Array.from(classSelect.options).forEach(option => {
+          const text = option.textContent;
+          const tempSpan = document.createElement('span');
+          tempSpan.style.visibility = 'hidden';
+          tempSpan.style.position = 'absolute';
+          tempSpan.style.whiteSpace = 'nowrap';
+          tempSpan.style.fontSize = '1.05rem';
+          tempSpan.style.fontFamily = 'Segoe UI, Tahoma, Geneva, Verdana, sans-serif';
+          tempSpan.textContent = text;
+          document.body.appendChild(tempSpan);
+          const textWidth = tempSpan.offsetWidth;
+          document.body.removeChild(tempSpan);
+          if (textWidth > maxWidth) maxWidth = textWidth;
         });
 
-        adjustClassSelectWidth();
-        resultsContainer.innerHTML = `
-            <div class="no-data">Selecione uma turma e um aluno para visualizar os dados</div>
-        `;
+        const padding = 60;
+        const newWidth = Math.min(Math.max(maxWidth + padding, 150), 300);
+        classSelect.style.width = `${newWidth}px`;
+      }
 
-    } catch (e) {
-        showError("Erro ao carregar turmas.");
-    }
-}
+      /* ===================== CARREGAR ALUNOS ===================== */
+      classSelect.addEventListener('change', async function () {
+        const turma = this.value;
 
-/* ============================================================
-   CARREGAR ALUNOS DE UMA TURMA
-============================================================ */
-async function loadStudentsOfClass(turma) {
-    try {
+        if (turma) classSelect.classList.add('turma-selecionada');
+        else classSelect.classList.remove('turma-selecionada');
+
         studentSelect.disabled = true;
-        studentSelect.innerHTML = `<option>Carregando...</option>`;
+        loadButton.disabled = true;
+        prevBtn.disabled = true;
+        nextBtn.disabled = true;
 
-        const response = await fetch(`${WEB_APP_URL}?action=getAlunos&turma=${encodeURIComponent(turma)}`);
-        const json = await response.json();
-
-        if (!Array.isArray(json)) {
-            throw new Error("Estrutura inválida: esperado array de alunos.");
+        if (!turma) {
+          studentSelect.innerHTML = '<option value="">-- Primeiro selecione uma turma --</option>';
+          showNoData();
+          return;
         }
 
-        currentStudents = json;
-        currentStudentIndex = -1;
+        studentSelect.innerHTML = '<option>Carregando alunos...</option>';
 
-        studentSelect.disabled = false;
-        studentSelect.innerHTML = `<option value="">-- Selecione o aluno --</option>`;
+        try {
+          const response = await fetch(`${WEB_APP_URL}?action=getAlunos&turma=${encodeURIComponent(turma)}`);
+          const alunos = await response.json();
 
-        json.forEach(aluno => {
-            const op = document.createElement("option");
-            op.value = aluno;
-            op.textContent = aluno;
-            studentSelect.appendChild(op);
+          if (alunos.error) throw new Error(alunos.error);
+
+          studentSelect.innerHTML = '<option value="">-- Selecione um aluno --</option>';
+
+          // Armazena a lista de alunos para navegação
+          currentStudents = Array.isArray(alunos) ? alunos : [];
+          currentTurma = turma;
+
+          currentStudents.forEach((a) => {
+            const option = document.createElement('option');
+            option.value = a;
+            option.textContent = a;
+            studentSelect.appendChild(option);
+          });
+
+          studentSelect.disabled = false;
+
+          // Ajustar a largura do campo de alunos baseado no conteúdo
+          adjustStudentSelectWidth();
+
+        } catch (err) {
+          studentSelect.innerHTML = '<option value="">Erro ao carregar alunos</option>';
+          console.error(err);
+        }
+      });
+
+      // Função para ajustar a largura do campo de alunos
+      function adjustStudentSelectWidth() {
+        let maxWidth = 0;
+        Array.from(studentSelect.options).forEach(option => {
+          const text = option.textContent;
+          const tempSpan = document.createElement('span');
+          tempSpan.style.visibility = 'hidden';
+          tempSpan.style.position = 'absolute';
+          tempSpan.style.whiteSpace = 'nowrap';
+          tempSpan.style.fontSize = '1.05rem';
+          tempSpan.style.fontFamily = 'Segoe UI, Tahoma, Geneva, Verdana, sans-serif';
+          tempSpan.textContent = text;
+          document.body.appendChild(tempSpan);
+          const textWidth = tempSpan.offsetWidth;
+          document.body.removeChild(tempSpan);
+          if (textWidth > maxWidth) maxWidth = textWidth;
         });
 
-    } catch (e) {
-        showError("Erro ao carregar alunos.");
-    }
-}
+        const padding = 60;
+        const newWidth = Math.min(Math.max(maxWidth + padding, 350), 600);
+        studentSelect.style.width = `${newWidth}px`;
+      }
 
-/* ============================================================
-   NAVEGAR ENTRE ALUNOS
-============================================================ */
+      /* Habilitar botão quando aluno for selecionado */
+      studentSelect.addEventListener('change', function () {
+        const hasStudent = !!this.value;
+        loadButton.disabled = !hasStudent;
 
-function updateNavButtons() {
-    prevBtn.disabled = currentStudentIndex <= 0;
-    nextBtn.disabled = currentStudentIndex >= currentStudents.length - 1;
-}
+        if (hasStudent) studentSelect.classList.add('aluno-selecionado');
+        else studentSelect.classList.remove('aluno-selecionado');
 
-function goToStudent(index) {
-    if (index < 0 || index >= currentStudents.length) return;
+        if (hasStudent) {
+          currentStudentIndex = currentStudents.indexOf(this.value);
+          updateNavigationButtons();
+        } else {
+          currentStudentIndex = -1;
+          prevBtn.disabled = true;
+          nextBtn.disabled = true;
+        }
+      });
 
-    currentStudentIndex = index;
-    studentSelect.value = currentStudents[index];
+      /* ===================== NAVEGAÇÃO ENTRE ALUNOS ===================== */
+      function updateNavigationButtons() {
+        prevBtn.disabled = currentStudentIndex <= 0;
+        nextBtn.disabled = currentStudentIndex >= currentStudents.length - 1 || currentStudents.length === 0;
+      }
 
-    loadStudentData();
-    updateNavButtons();
-}
+      async function navigateStudents(direction) {
+        if (direction === 'prev' && currentStudentIndex > 0) {
+          currentStudentIndex--;
+        } else if (direction === 'next' && currentStudentIndex < currentStudents.length - 1) {
+          currentStudentIndex++;
+        } else {
+          return;
+        }
 
-prevBtn.onclick = () => goToStudent(currentStudentIndex - 1);
-nextBtn.onclick = () => goToStudent(currentStudentIndex + 1);
+        studentSelect.value = currentStudents[currentStudentIndex];
+        studentSelect.classList.add('aluno-selecionado');
 
-/* ============================================================
-   CARREGAR DADOS DO ALUNO
-============================================================ */
+        // Carrega os dados do aluno automaticamente
+        await loadStudentData();
+        updateNavigationButtons();
+      }
 
-async function loadStudentData() {
-    try {
-        const aluno = studentSelect.value;
+      prevBtn.addEventListener('click', () => navigateStudents('prev'));
+      nextBtn.addEventListener('click', () => navigateStudents('next'));
+
+      /* ===================== CARREGAR DADOS DO ALUNO ===================== */
+      loadButton.addEventListener('click', loadStudentData);
+
+      async function loadStudentData() {
         const turma = classSelect.value;
+        const aluno = studentSelect.value;
 
-        if (!aluno || !turma) return;
+        currentStudentIndex = currentStudents.indexOf(aluno);
+        updateNavigationButtons();
 
         showLoading("Carregando dados...");
 
-        const response = await fetch(
-            `${WEB_APP_URL}?action=getDados&turma=${encodeURIComponent(turma)}&aluno=${encodeURIComponent(aluno)}`
-        );
+        try {
+          const response = await fetch(`${WEB_APP_URL}?action=getDadosAluno&turma=${encodeURIComponent(turma)}&aluno=${encodeURIComponent(aluno)}`);
+          const dados = await response.json();
 
-        const json = await response.json();
+          if (dados.error) throw new Error(dados.error);
 
-        if (!json || typeof json !== "object") {
-            throw new Error("Resposta inválida do servidor.");
+          // Novo formato: objeto direto (não dados.dados)
+          // Verifica estrutura mínima esperada
+          const hasNotas = Array.isArray(dados.notas) && dados.notas.length >= 1;
+          const hasDisciplinas = Array.isArray(dados.disciplinas);
+          if (!hasNotas || !hasDisciplinas) {
+            console.error("Resposta do backend:", dados);
+            showError("Estrutura de dados inválida.");
+            return;
+          }
+
+          studentInfo.style.display = 'block';
+          // NÃO repetir o nome do aluno em outros lugares — o select já mostra
+          studentNameDisplay.textContent = aluno;
+          studentClassDisplay.textContent = turma;
+
+          // normalize shape: garantir indices 0..3 (bimestres)
+          // garantir que notas/faltas sejam arrays de 4 arrays (pode vir como array[0..3])
+          const notas = Array.isArray(dados.notas) ? dados.notas : [];
+          const faltas = Array.isArray(dados.faltas) ? dados.faltas : [[],[],[],[]];
+          const disciplinas = Array.isArray(dados.disciplinas) ? dados.disciplinas : [];
+          const conceito5 = Array.isArray(dados.conceito5) ? dados.conceito5 : [];
+          const coresConceito5 = Array.isArray(dados.coresConceito5) ? dados.coresConceito5 : [];
+          const totalFaltasPorDisciplina = Array.isArray(dados.totalFaltasPorDisciplina) ? dados.totalFaltasPorDisciplina : [];
+          const faltasTotal = typeof dados.faltasTotal === 'number' ? dados.faltasTotal : (totalFaltasPorDisciplina.reduce((a,b)=>a+(b||0),0) || 0);
+
+          displayStudentData({ disciplinas, notas, faltas, conceito5, coresConceito5, totalFaltasPorDisciplina, faltasTotal, bimestres: dados.bimestres || {} });
+
+        } catch (err) {
+          showError("Erro ao carregar dados do aluno.");
+          console.error(err);
+        }
+      }
+
+      /* ===================== EXIBIR DADOS DO ALUNO ===================== */
+      function displayStudentData(dados) {
+        resultsContainer.innerHTML = "";
+
+        // Valida
+        if (!dados || !Array.isArray(dados.disciplinas) || !Array.isArray(dados.notas)) {
+          showError("Estrutura de dados inválida.");
+          return;
         }
 
-        renderStudentInfo(aluno, turma);
-        renderBimesters(json);
+        const disciplinas = dados.disciplinas;
+        const disciplinasCount = disciplinas.length || 0;
 
-    } catch (e) {
-        showError("Erro ao carregar dados do aluno.");
-    }
-}
+        // Ensure notas and faltas are arrays of 4 arrays
+        const notas = [];
+        const faltas = [];
+        for (let b = 0; b < 4; b++) {
+          notas[b] = Array.isArray(dados.notas[b]) ? dados.notas[b] : new Array(disciplinasCount).fill(null);
+          faltas[b] = Array.isArray(dados.faltas[b]) ? dados.faltas[b] : new Array(disciplinasCount).fill(0);
+          // if shorter, pad
+          if (notas[b].length < disciplinasCount) notas[b] = notas[b].concat(new Array(disciplinasCount - notas[b].length).fill(null));
+          if (faltas[b].length < disciplinasCount) faltas[b] = faltas[b].concat(new Array(disciplinasCount - faltas[b].length).fill(0));
+        }
 
-/* ============================================================
-   EXIBIR DADOS DO ALUNO
-============================================================ */
+        // Cria cards para cada bimestre (1..4)
+        for (let b = 0; b < 4; b++) {
+          // Verifica se há algum dado no bimestre; se não houver, ainda assim mostra os títulos (opcional)
+          const card = document.createElement('div');
+          card.className = "bimester-card";
 
-function renderStudentInfo(aluno, turma) {
-    studentNameDisplay.textContent = aluno;
-    studentClassDisplay.textContent = turma;
-    studentInfo.style.display = "block";
-}
+          const header = document.createElement('div');
+          header.className = "bimester-header";
+          header.textContent = `${b+1}º Bimestre`;
 
-/* ============================================================
-   EXIBIR BIMESTRES
-============================================================ */
+          const content = document.createElement('div');
+          content.className = "bimester-content";
 
-function renderBimesters(data) {
-    resultsContainer.innerHTML = "";
+          // Itera pelas disciplinas
+          for (let i = 0; i < disciplinasCount; i++) {
+            const nomeDisc = disciplinas[i] || (`Disciplina ${i+1}`);
+            const notaRaw = notas[b][i];
+            const faltaRaw = faltas[b][i];
 
-    const bimestres = Object.keys(data);
-
-    if (bimestres.length === 0) {
-        showNoData();
-        return;
-    }
-
-    bimestres.forEach(bi => {
-        const card = document.createElement("div");
-        card.classList.add("bimester-card");
-
-        const header = document.createElement("div");
-        header.classList.add("bimester-header");
-        header.textContent = bi.toUpperCase();
-        card.appendChild(header);
-
-        const content = document.createElement("div");
-        content.classList.add("bimester-content");
-
-        const disciplinas = data[bi];
-
-        Object.entries(disciplinas).forEach(([nome, nota]) => {
             const row = document.createElement("div");
-            row.classList.add("subject-row");
+            row.className = "subject-row";
 
-            const n = parseFloat(nota);
-            let classe = "grade-medium";
-            if (n >= 7) classe = "grade-high";
-            if (n < 5) classe = "grade-low";
+            const nome = document.createElement("span");
+            nome.className = "subject-name";
+            nome.textContent = nomeDisc;
 
-            row.innerHTML = `
-                <div class="subject-name">${nome}</div>
-                <div class="grade ${classe}">${nota}</div>
-            `;
+            const grade = document.createElement("span");
+            grade.className = "grade";
 
+            let nota = null;
+            if (notaRaw !== null && notaRaw !== undefined && notaRaw !== "") {
+              const parsed = parseFloat(notaRaw);
+              nota = isNaN(parsed) ? null : parsed;
+            }
+
+            const falta = (faltaRaw === null || faltaRaw === undefined || faltaRaw === "") ? 0 : (parseInt(faltaRaw) || 0);
+
+            if (nota !== null) {
+              if (nota >= 7) grade.classList.add("grade-high");
+              else if (nota >= 5) grade.classList.add("grade-medium");
+              else grade.classList.add("grade-low");
+
+              grade.textContent = `${nota.toFixed(1)} | ${falta} faltas`;
+            } else {
+              grade.classList.add("grade-low");
+              grade.textContent = `-- | ${falta} faltas`;
+            }
+
+            row.appendChild(nome);
+            row.appendChild(grade);
             content.appendChild(row);
-        });
+          }
 
-        card.appendChild(content);
-        resultsContainer.appendChild(card);
-    });
-}
+          card.appendChild(header);
+          card.appendChild(content);
+          resultsContainer.appendChild(card);
+        }
 
-/* ============================================================
-   EVENTOS PRINCIPAIS
-============================================================ */
+        // 5º CONCEITO (médias e totais)
+        const conceitoCard = document.createElement('div');
+        conceitoCard.className = "bimester-card";
 
-classSelect.addEventListener("change", async () => {
-    const turma = classSelect.value;
+        const conceitoHeader = document.createElement('div');
+        conceitoHeader.className = "bimester-header";
+        conceitoHeader.textContent = "5º CONCEITO";
+        conceitoHeader.style.background = "linear-gradient(135deg, #27ae60, #2ecc71)";
 
-    studentSelect.innerHTML = `<option value="">-- Primeiro selecione uma turma --</option>`;
-    studentSelect.disabled = true;
-    loadButton.disabled = true;
+        const conceitoContent = document.createElement('div');
+        conceitoContent.className = "bimester-content";
 
-    if (turma) {
-        currentTurma = turma;
-        await loadStudentsOfClass(turma);
-    }
-});
+        // Preferir conceito5 vindo do backend; se não houver, calcula localmente
+        let medias = Array.isArray(dados.conceito5) && dados.conceito5.length >= disciplinasCount ? dados.conceito5.slice(0, disciplinasCount) : null;
+        if (!medias) {
+          medias = new Array(disciplinasCount).fill(null);
+          for (let i = 0; i < disciplinasCount; i++) {
+            let soma = 0, cont = 0;
+            for (let b = 0; b < 4; b++) {
+              const n = notas[b][i];
+              if (n !== null && n !== undefined && n !== "" && !isNaN(parseFloat(n))) { soma += parseFloat(n); cont++; }
+            }
+            medias[i] = cont > 0 ? (soma / cont) : null;
+          }
+        }
 
-studentSelect.addEventListener("change", () => {
-    loadButton.disabled = !studentSelect.value;
-});
+        const totalFaltasPorDisciplina = Array.isArray(dados.totalFaltasPorDisciplina) && dados.totalFaltasPorDisciplina.length >= disciplinasCount
+          ? dados.totalFaltasPorDisciplina
+          : (function() {
+              // calcula somando faltas por disciplina
+              const totals = new Array(disciplinasCount).fill(0);
+              for (let i = 0; i < disciplinasCount; i++) {
+                let tot = 0;
+                for (let b = 0; b < 4; b++) tot += (parseInt(faltas[b][i]) || 0);
+                totals[i] = tot;
+              }
+              return totals;
+            })();
 
-loadButton.addEventListener("click", () => {
-    currentStudentIndex = currentStudents.indexOf(studentSelect.value);
-    loadStudentData();
-    updateNavButtons();
-});
+        for (let i = 0; i < disciplinasCount; i++) {
+          const row = document.createElement("div");
+          row.className = "subject-row";
 
-/* ============================================================
-   INICIALIZAÇÃO DO SISTEMA
-============================================================ */
-populateClassSelect();
+          const nome = document.createElement("span");
+          nome.className = "subject-name";
+          nome.textContent = disciplinas[i] || (`Disciplina ${i+1}`);
 
-</script>
+          const grade = document.createElement("span");
+          grade.className = "grade";
 
+          const media = medias[i];
+          const faltasDisc = totalFaltasPorDisciplina[i] || 0;
+
+          if (media !== null && media !== undefined && !isNaN(media)) {
+            if (media >= 7) grade.classList.add("grade-high");
+            else if (media >= 5) grade.classList.add("grade-medium");
+            else grade.classList.add("grade-low");
+
+            grade.textContent = `${media.toFixed(1)} | ${faltasDisc} faltas`;
+          } else {
+            grade.classList.add("grade-low");
+            grade.textContent = `-- | ${faltasDisc} faltas`;
+          }
+
+          row.appendChild(nome);
+          row.appendChild(grade);
+          conceitoContent.appendChild(row);
+        }
+
+        conceitoCard.appendChild(conceitoHeader);
+        conceitoCard.appendChild(conceitoContent);
+        resultsContainer.appendChild(conceitoCard);
+      }
+
+      /* ===================== FUNÇÕES DE AUXÍLIO ===================== */
+      function showLoading(msg) {
+        resultsContainer.innerHTML = `<div class="loading">${msg}</div>`;
+      }
+
+      function hideLoading() {
+        const loading = resultsContainer.querySelector('.loading');
+        if (loading) loading.remove();
+      }
+
+      function showError(msg) {
+        resultsContainer.innerHTML = `<div class="error">${msg}</div>`;
+      }
+
+      function showNoData() {
+        resultsContainer.innerHTML = '<div class="no-data">Selecione uma turma e um aluno para visualizar os dados</div>';
+      }
+
+      /* ===================== INICIAR ===================== */
+      document.addEventListener("DOMContentLoaded", populateClassSelect);
+    </script>
 </body>
 </html>
-
-
-
-
-
-
