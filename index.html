@@ -62,11 +62,59 @@
             margin: 0;
         }
         
-        .navigation {
+        .controls-panel {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 23px 25px; /* Reduzido 2mm do padding-top (de 25px para 23px) */
+            border-radius: 12px;
+            box-shadow: 
+                0 8px 25px rgba(0,0,0,0.1),
+                0 4px 6px rgba(0,0,0,0.05),
+                inset 0 1px 0 rgba(255,255,255,0.8);
+            margin-bottom: 25px;
             display: flex;
-            justify-content: space-between;
-            margin: 25px 0;
-            padding: 0 15px;
+            flex-wrap: wrap;
+            gap: 25px;
+            align-items: center; /* Centraliza verticalmente os elementos */
+            justify-content: center; /* Centraliza horizontalmente os elementos */
+            position: relative;
+            border: 1px solid rgba(255,255,255,0.5);
+            margin-top: -8px; /* Mover 2mm (aproximadamente 8px) mais acima do cabeçalho */
+        }
+        
+        .controls-panel::after {
+            content: '';
+            position: absolute;
+            bottom: -12px;
+            left: 2%;
+            right: 2%;
+            height: 18px;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.6), transparent);
+            border-radius: 50%;
+            filter: blur(8px);
+            z-index: -1;
+        }
+        
+        .form-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .form-group.turma {
+            flex: none;
+            min-width: 150px;
+            width: auto;
+        }
+        
+        .form-group.aluno {
+            flex: none;
+            min-width: 350px;
+            width: auto;
+        }
+        
+        .form-group.btn-container {
+            flex: 0.3;
+            min-width: 140px;
+            max-width: 160px;
         }
         
         .nav-btn {
@@ -128,59 +176,6 @@
         
         .nav-btn.prev:hover {
             background: linear-gradient(145deg, #ec7063, #e74c3c);
-        }
-        
-        .controls-panel {
-            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 
-                0 8px 25px rgba(0,0,0,0.1),
-                0 4px 6px rgba(0,0,0,0.05),
-                inset 0 1px 0 rgba(255,255,255,0.8);
-            margin-bottom: 25px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 25px;
-            align-items: flex-end;
-            position: relative;
-            border: 1px solid rgba(255,255,255,0.5);
-        }
-        
-        .controls-panel::after {
-            content: '';
-            position: absolute;
-            bottom: -12px;
-            left: 2%;
-            right: 2%;
-            height: 18px;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.6), transparent);
-            border-radius: 50%;
-            filter: blur(8px);
-            z-index: -1;
-        }
-        
-        .form-group {
-            flex: 1;
-            min-width: 200px;
-        }
-        
-        .form-group.turma {
-            flex: none;
-            min-width: 150px;
-            width: auto;
-        }
-        
-        .form-group.aluno {
-            flex: none;
-            min-width: 350px;
-            width: auto;
-        }
-        
-        .form-group.btn-container {
-            flex: 0.3;
-            min-width: 140px;
-            max-width: 160px;
         }
         
         label {
@@ -498,20 +493,6 @@
                 font-size: 1.8rem;
             }
             
-            .navigation {
-                flex-direction: column;
-                gap: 15px;
-            }
-            
-            .nav-btn {
-                width: 100%;
-                min-width: auto;
-            }
-            
-            .results {
-                grid-template-columns: 1fr;
-            }
-            
             .controls-panel {
                 padding: 20px;
             }
@@ -528,12 +509,9 @@
             <h1>CONSELHO DE CLASSE E SÉRIE</h1>
         </header>
         
-        <div class="navigation">
-            <button id="prev-btn" class="nav-btn prev" disabled>← VOLTAR</button>
-            <button id="next-btn" class="nav-btn next" disabled>AVANÇAR →</button>
-        </div>
-        
         <div class="controls-panel">
+            <button id="prev-btn" class="nav-btn prev" disabled>← VOLTAR</button>
+            
             <div class="form-group turma">
                 <label for="class-select">Selecione a Turma:</label>
                 <select id="class-select">
@@ -551,6 +529,8 @@
             <div class="form-group btn-container">
                 <button id="load-data" class="btn" disabled>Carregar Dados</button>
             </div>
+            
+            <button id="next-btn" class="nav-btn next" disabled>AVANÇAR →</button>
         </div>
         
         <div id="student-info" class="student-info">
@@ -569,7 +549,7 @@
 
     <script>
         // URL DO WEB APP
-        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycby3Bv-SOCtjUTJMm8wBJlfZUC_8Mb0qI30hcxjvVHC2Gw5KqdYWyIm8CNNQhorFnBND/exec';
+        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxOxKB9fvgLzSvkYRDKDCfLQSwIhNm3O5go-VRvUbm0CaRhLxIUsa4uErjzJjzXCOTr/exec';
 
         // Elementos DOM
         const classSelect = document.getElementById('class-select');
@@ -976,12 +956,3 @@
     </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
