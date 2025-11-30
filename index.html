@@ -64,7 +64,7 @@
         
         .controls-panel {
             background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-            padding: 18px 25px 23px; /* Reduzido 2mm do padding-top (de 25px para 18px) */
+            padding: 18px 25px 23px;
             border-radius: 12px;
             box-shadow: 
                 0 8px 25px rgba(0,0,0,0.1),
@@ -74,11 +74,11 @@
             display: flex;
             flex-wrap: wrap;
             gap: 25px;
-            align-items: flex-start; /* Alterado de center para flex-start para alinhar pelo topo */
+            align-items: flex-start;
             justify-content: center;
             position: relative;
             border: 1px solid rgba(255,255,255,0.5);
-            margin-top: -12px; /* Ajustado para mover mais para cima (de -8px para -12px) */
+            margin-top: -12px;
         }
         
         .controls-panel::after {
@@ -134,6 +134,10 @@
             text-transform: uppercase;
             letter-spacing: 1px;
             min-width: 140px;
+            height: 50px; /* Altura fixa para alinhamento */
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         .nav-btn:hover {
@@ -199,6 +203,7 @@
                 0 2px 4px rgba(0,0,0,0.05);
             position: relative;
             color: #495057;
+            height: 50px; /* Altura fixa para alinhamento */
         }
         
         /* Estilos específicos para os campos de seleção */
@@ -295,6 +300,7 @@
             width: 100%;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            height: 50px; /* Altura fixa para alinhamento */
         }
         
         .btn:hover {
@@ -494,7 +500,7 @@
             }
             
             .controls-panel {
-                padding: 15px 20px 20px; /* Ajuste proporcional para dispositivos móveis */
+                padding: 15px 20px 20px;
             }
             
             select, input {
