@@ -587,407 +587,293 @@
         </div>
     </div>
 
-    <script>
-        // URL DO WEB APP
-        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzHLcKk8VBeL1vdDwr95YkpIDRt8al4wm7cPJua_YQTIALhgXrdqGy3S5wCrvweHaBm/exec';
+<script>
+/* ============================================================
+   CONFIGURAÇÕES INICIAIS
+============================================================ */
 
-        // Elementos DOM
-        const classSelect = document.getElementById('class-select');
-        const studentSelect = document.getElementById('student-select');
-        const loadButton = document.getElementById('load-data');
-        const studentInfo = document.getElementById('student-info');
-        const studentNameDisplay = document.getElementById('student-name-display');
-        const studentClassDisplay = document.getElementById('student-class-display');
-        const resultsContainer = document.getElementById('results');
-        const prevBtn = document.getElementById('prev-btn');
-        const nextBtn = document.getElementById('next-btn');
+const WEB_APP_URL =
+    "https://script.google.com/macros/s/AKfycbzHLcKk8VBeL1vdDwr95YkpIDRt8al4wm7cPJua_YQTIALhgXrdqGy3S5wCrvweHaBm/exec";
 
-        // Variáveis globais para navegação
-        let currentStudents = [];
-        let currentStudentIndex = -1;
-        let currentTurma = '';
+const classSelect = document.getElementById("class-select");
+const studentSelect = document.getElementById("student-select");
+const loadButton = document.getElementById("load-data");
+const studentInfo = document.getElementById("student-info");
+const studentNameDisplay = document.getElementById("student-name-display");
+const studentClassDisplay = document.getElementById("student-class-display");
+const resultsContainer = document.getElementById("results");
 
-        /* ===================== CARREGAR TURMAS ===================== */
-        async function populateClassSelect() {
-            try {
-                showLoading('Carregando turmas...');
-                
-                const response = await fetch(`${WEB_APP_URL}?action=getTurmas`);
-                const turmas = await response.json();
+const prevBtn = document.getElementById("prev-btn");
+const nextBtn = document.getElementById("next-btn");
 
-                if (turmas.error) throw new Error(turmas.error);
+let currentStudents = [];
+let currentStudentIndex = -1;
+let currentTurma = "";
 
-                classSelect.innerHTML = '<option value="">-- Selecione uma turma --</option>';
-                turmas.forEach(turma => {
-                    const option = document.createElement('option');
-                    option.value = turma;
-                    option.textContent = turma;
-                    classSelect.appendChild(option);
-                });
+/* ============================================================
+   EXIBIÇÃO DE MENSAGENS
+============================================================ */
 
-                hideLoading();
-                
-                // Ajustar a largura do campo de turmas baseado no conteúdo
-                adjustClassSelectWidth();
-            } catch (err) {
-                showError("Erro ao carregar turmas.");
-            }
+function showLoading(msg) {
+    resultsContainer.innerHTML = `
+        <div class="loading">${msg}</div>
+    `;
+}
+
+function showError(msg) {
+    resultsContainer.innerHTML = `
+        <div class="error">${msg}</div>
+    `;
+}
+
+function showNoData() {
+    resultsContainer.innerHTML = `
+        <div class="no-data">Nenhum dado disponível</div>
+    `;
+}
+
+/* ============================================================
+   AJUSTE DO SELECT DE TURMAS
+============================================================ */
+function adjustClassSelectWidth() {
+    let maxWidth = 0;
+
+    Array.from(classSelect.options).forEach(option => {
+        const span = document.createElement("span");
+        span.style.visibility = "hidden";
+        span.style.position = "absolute";
+        span.style.whiteSpace = "nowrap";
+        span.style.fontSize = "1.05rem";
+        span.style.fontFamily = "Segoe UI";
+
+        span.textContent = option.textContent;
+        document.body.appendChild(span);
+
+        maxWidth = Math.max(maxWidth, span.offsetWidth);
+
+        span.remove();
+    });
+
+    const padding = 60;
+    classSelect.style.width = `${Math.min(maxWidth + padding, 420)}px`;
+}
+
+/* ============================================================
+   CARREGAR LISTA DE TURMAS
+============================================================ */
+async function populateClassSelect() {
+    try {
+        showLoading("Carregando turmas...");
+
+        const response = await fetch(`${WEB_APP_URL}?action=getTurmas`);
+        const json = await response.json();
+
+        if (!Array.isArray(json)) {
+            throw new Error("Estrutura de dados inválida recebida do servidor.");
         }
 
-        // Função para ajustar a largura do campo de turmas
-        function adjustClassSelectWidth() {
-            // Encontrar a opção mais larga
-            let maxWidth = 0;
-            Array.from(classSelect.options).forEach(option => {
-                const text = option.textContent;
-                // Criar um span temporário para medir o texto
-                const tempSpan = document.createElement('span');
-                tempSpan.style.visibility = 'hidden';
-                tempSpan.style.position = 'absolute';
-                tempSpan.style.whiteSpace = 'nowrap';
-                tempSpan.style.fontSize = '1.05rem';
-                tempSpan.style.fontFamily = 'Segoe UI, Tahoma, Geneva, Verdana, sans-serif';
-                tempSpan.textContent = text;
-                document.body.appendChild(tempSpan);
-                const textWidth = tempSpan.offsetWidth;
-                document.body.removeChild(tempSpan);
-                
-                if (textWidth > maxWidth) {
-                    maxWidth = textWidth;
-                }
-            });
-            
-            // Ajustar a largura do select real
-            const padding = 60; // Espaço para padding, bordas e seta
-            const newWidth = Math.min(Math.max(maxWidth + padding, 150), 300); // Limites mínimo e máximo
-            classSelect.style.width = `${newWidth}px`;
-        }
+        classSelect.innerHTML = `<option value="">-- Selecione uma turma --</option>`;
 
-        /* ===================== CARREGAR ALUNOS ===================== */
-        classSelect.addEventListener('change', async function () {
-            const turma = this.value;
-
-            // Aplica/remove a classe de turma selecionada - APENAS NO CAMPO
-            if (turma) {
-                classSelect.classList.add('turma-selecionada');
-            } else {
-                classSelect.classList.remove('turma-selecionada');
-            }
-
-            studentSelect.disabled = true;
-            loadButton.disabled = true;
-            prevBtn.disabled = true;
-            nextBtn.disabled = true;
-
-            if (!turma) {
-                studentSelect.innerHTML = '<option value="">-- Primeiro selecione uma turma --</option>';
-                showNoData();
-                return;
-            }
-
-            studentSelect.innerHTML = '<option>Carregando alunos...</option>';
-
-            try {
-                const response = await fetch(`${WEB_APP_URL}?action=getAlunos&turma=${encodeURIComponent(turma)}`);
-                const alunos = await response.json();
-
-                if (alunos.error) throw new Error(alunos.error);
-
-                studentSelect.innerHTML = '<option value="">-- Selecione um aluno --</option>';
-
-                // Armazena a lista de alunos para navegação
-                currentStudents = alunos;
-                currentTurma = turma;
-
-                alunos.forEach((a, index) => {
-                    const option = document.createElement('option');
-                    option.value = a;
-                    option.textContent = a;
-                    studentSelect.appendChild(option);
-                });
-
-                studentSelect.disabled = false;
-
-                // Ajustar a largura do campo de alunos baseado no conteúdo
-                adjustStudentSelectWidth();
-
-            } catch (err) {
-                studentSelect.innerHTML = '<option value="">Erro ao carregar alunos</option>';
-            }
+        json.forEach(turma => {
+            const op = document.createElement("option");
+            op.value = turma;
+            op.textContent = turma;
+            classSelect.appendChild(op);
         });
 
-        // Função para ajustar a largura do campo de alunos
-        function adjustStudentSelectWidth() {
-            // Encontrar a opção mais larga
-            let maxWidth = 0;
-            Array.from(studentSelect.options).forEach(option => {
-                const text = option.textContent;
-                // Criar um span temporário para medir o texto
-                const tempSpan = document.createElement('span');
-                tempSpan.style.visibility = 'hidden';
-                tempSpan.style.position = 'absolute';
-                tempSpan.style.whiteSpace = 'nowrap';
-                tempSpan.style.fontSize = '1.05rem';
-                tempSpan.style.fontFamily = 'Segoe UI, Tahoma, Geneva, Verdana, sans-serif';
-                tempSpan.textContent = text;
-                document.body.appendChild(tempSpan);
-                const textWidth = tempSpan.offsetWidth;
-                document.body.removeChild(tempSpan);
-                
-                if (textWidth > maxWidth) {
-                    maxWidth = textWidth;
-                }
-            });
-            
-            // Ajustar a largura do select real
-            const padding = 60; // Espaço para padding, bordas e seta
-            const newWidth = Math.min(Math.max(maxWidth + padding, 350), 600); // Limites mínimo e máximo
-            studentSelect.style.width = `${newWidth}px`;
+        adjustClassSelectWidth();
+        resultsContainer.innerHTML = `
+            <div class="no-data">Selecione uma turma e um aluno para visualizar os dados</div>
+        `;
+
+    } catch (e) {
+        showError("Erro ao carregar turmas.");
+    }
+}
+
+/* ============================================================
+   CARREGAR ALUNOS DE UMA TURMA
+============================================================ */
+async function loadStudentsOfClass(turma) {
+    try {
+        studentSelect.disabled = true;
+        studentSelect.innerHTML = `<option>Carregando...</option>`;
+
+        const response = await fetch(`${WEB_APP_URL}?action=getAlunos&turma=${encodeURIComponent(turma)}`);
+        const json = await response.json();
+
+        if (!Array.isArray(json)) {
+            throw new Error("Estrutura inválida: esperado array de alunos.");
         }
 
-        /* Habilitar botão quando aluno for selecionado */
-        studentSelect.addEventListener('change', function () {
-            const hasStudent = !!this.value;
-            loadButton.disabled = !hasStudent;
-            
-            // Aplica/remove a classe de aluno selecionado - APENAS NO CAMPO
-            if (hasStudent) {
-                studentSelect.classList.add('aluno-selecionado');
-            } else {
-                studentSelect.classList.remove('aluno-selecionado');
-            }
-            
-            // Atualiza índice atual quando aluno é selecionado manualmente
-            if (hasStudent) {
-                currentStudentIndex = currentStudents.indexOf(this.value);
-                updateNavigationButtons();
-            } else {
-                currentStudentIndex = -1;
-                prevBtn.disabled = true;
-                nextBtn.disabled = true;
-            }
+        currentStudents = json;
+        currentStudentIndex = -1;
+
+        studentSelect.disabled = false;
+        studentSelect.innerHTML = `<option value="">-- Selecione o aluno --</option>`;
+
+        json.forEach(aluno => {
+            const op = document.createElement("option");
+            op.value = aluno;
+            op.textContent = aluno;
+            studentSelect.appendChild(op);
         });
 
-        /* ===================== NAVEGAÇÃO ENTRE ALUNOS ===================== */
-        function updateNavigationButtons() {
-            prevBtn.disabled = currentStudentIndex <= 0;
-            nextBtn.disabled = currentStudentIndex >= currentStudents.length - 1;
+    } catch (e) {
+        showError("Erro ao carregar alunos.");
+    }
+}
+
+/* ============================================================
+   NAVEGAR ENTRE ALUNOS
+============================================================ */
+
+function updateNavButtons() {
+    prevBtn.disabled = currentStudentIndex <= 0;
+    nextBtn.disabled = currentStudentIndex >= currentStudents.length - 1;
+}
+
+function goToStudent(index) {
+    if (index < 0 || index >= currentStudents.length) return;
+
+    currentStudentIndex = index;
+    studentSelect.value = currentStudents[index];
+
+    loadStudentData();
+    updateNavButtons();
+}
+
+prevBtn.onclick = () => goToStudent(currentStudentIndex - 1);
+nextBtn.onclick = () => goToStudent(currentStudentIndex + 1);
+
+/* ============================================================
+   CARREGAR DADOS DO ALUNO
+============================================================ */
+
+async function loadStudentData() {
+    try {
+        const aluno = studentSelect.value;
+        const turma = classSelect.value;
+
+        if (!aluno || !turma) return;
+
+        showLoading("Carregando dados...");
+
+        const response = await fetch(
+            `${WEB_APP_URL}?action=getDados&turma=${encodeURIComponent(turma)}&aluno=${encodeURIComponent(aluno)}`
+        );
+
+        const json = await response.json();
+
+        if (!json || typeof json !== "object") {
+            throw new Error("Resposta inválida do servidor.");
         }
 
-        async function navigateStudents(direction) {
-            if (direction === 'prev' && currentStudentIndex > 0) {
-                currentStudentIndex--;
-            } else if (direction === 'next' && currentStudentIndex < currentStudents.length - 1) {
-                currentStudentIndex++;
-            } else {
-                return;
-            }
+        renderStudentInfo(aluno, turma);
+        renderBimesters(json);
 
-            // Atualiza o select para refletir o aluno atual
-            studentSelect.value = currentStudents[currentStudentIndex];
-            
-            // Aplica a classe de aluno selecionado - APENAS NO CAMPO
-            studentSelect.classList.add('aluno-selecionado');
-            
-            // Carrega os dados do aluno automaticamente
-            await loadStudentData();
-            updateNavigationButtons();
-        }
+    } catch (e) {
+        showError("Erro ao carregar dados do aluno.");
+    }
+}
 
-        prevBtn.addEventListener('click', () => navigateStudents('prev'));
-        nextBtn.addEventListener('click', () => navigateStudents('next'));
+/* ============================================================
+   EXIBIR DADOS DO ALUNO
+============================================================ */
 
-        /* ===================== CARREGAR DADOS DO ALUNO ===================== */
-        loadButton.addEventListener('click', loadStudentData);
+function renderStudentInfo(aluno, turma) {
+    studentNameDisplay.textContent = aluno;
+    studentClassDisplay.textContent = turma;
+    studentInfo.style.display = "block";
+}
 
-        async function loadStudentData() {
-            const turma = classSelect.value;
-            const aluno = studentSelect.value;
+/* ============================================================
+   EXIBIR BIMESTRES
+============================================================ */
 
-            // Atualiza o índice atual
-            currentStudentIndex = currentStudents.indexOf(aluno);
-            updateNavigationButtons();
+function renderBimesters(data) {
+    resultsContainer.innerHTML = "";
 
-            showLoading("Carregando dados...");
+    const bimestres = Object.keys(data);
 
-            try {
-                const response = await fetch(`${WEB_APP_URL}?action=getDadosAluno&turma=${encodeURIComponent(turma)}&aluno=${encodeURIComponent(aluno)}`);
-                const dados = await response.json();
+    if (bimestres.length === 0) {
+        showNoData();
+        return;
+    }
 
-                if (dados.error) throw new Error(dados.error);
+    bimestres.forEach(bi => {
+        const card = document.createElement("div");
+        card.classList.add("bimester-card");
 
-                studentInfo.style.display = 'block';
-                studentNameDisplay.textContent = aluno;
-                studentClassDisplay.textContent = turma;
+        const header = document.createElement("div");
+        header.classList.add("bimester-header");
+        header.textContent = bi.toUpperCase();
+        card.appendChild(header);
 
-                displayStudentData(dados.dados);
+        const content = document.createElement("div");
+        content.classList.add("bimester-content");
 
-            } catch (err) {
-                showError("Erro ao carregar dados do aluno.");
-            }
-        }
+        const disciplinas = data[bi];
 
-        /* ===================== EXIBIR DADOS DO ALUNO ===================== */
-        function displayStudentData(dados) {
-            resultsContainer.innerHTML = "";
+        Object.entries(disciplinas).forEach(([nome, nota]) => {
+            const row = document.createElement("div");
+            row.classList.add("subject-row");
 
-            // Verifica se a estrutura de dados é a esperada
-            if (!dados || !dados.notas) {
-                showError("Estrutura de dados inválida.");
-                return;
-            }
+            const n = parseFloat(nota);
+            let classe = "grade-medium";
+            if (n >= 7) classe = "grade-high";
+            if (n < 5) classe = "grade-low";
 
-            // Cria cards para cada bimestre
-            for (let bimestre = 1; bimestre <= 4; bimestre++) {
-                if (!dados.notas[bimestre]) continue;
+            row.innerHTML = `
+                <div class="subject-name">${nome}</div>
+                <div class="grade ${classe}">${nota}</div>
+            `;
 
-                const card = document.createElement('div');
-                card.className = "bimester-card";
+            content.appendChild(row);
+        });
 
-                const header = document.createElement('div');
-                header.className = "bimester-header";
-                header.textContent = `${bimestre}º Bimestre`;
+        card.appendChild(content);
+        resultsContainer.appendChild(card);
+    });
+}
 
-                const content = document.createElement('div');
-                content.className = "bimester-content";
+/* ============================================================
+   EVENTOS PRINCIPAIS
+============================================================ */
 
-                // Itera pelas disciplinas
-                Object.keys(dados.notas[bimestre]).forEach(disciplinaIndex => {
-                    const nota = dados.notas[bimestre][disciplinaIndex];
-                    const falta = dados.faltas[bimestre][disciplinaIndex];
+classSelect.addEventListener("change", async () => {
+    const turma = classSelect.value;
 
-                    const row = document.createElement("div");
-                    row.className = "subject-row";
+    studentSelect.innerHTML = `<option value="">-- Primeiro selecione uma turma --</option>`;
+    studentSelect.disabled = true;
+    loadButton.disabled = true;
 
-                    const nome = document.createElement("span");
-                    nome.className = "subject-name";
-                    nome.textContent = `Disciplina ${parseInt(disciplinaIndex) + 1}`;
+    if (turma) {
+        currentTurma = turma;
+        await loadStudentsOfClass(turma);
+    }
+});
 
-                    const grade = document.createElement("span");
-                    grade.className = "grade";
+studentSelect.addEventListener("change", () => {
+    loadButton.disabled = !studentSelect.value;
+});
 
-                    if (nota !== null) {
-                        if (nota >= 7) grade.classList.add("grade-high");
-                        else if (nota >= 5) grade.classList.add("grade-medium");
-                        else grade.classList.add("grade-low");
+loadButton.addEventListener("click", () => {
+    currentStudentIndex = currentStudents.indexOf(studentSelect.value);
+    loadStudentData();
+    updateNavButtons();
+});
 
-                        grade.textContent = `${nota.toFixed(1)} | ${falta || 0} faltas`;
-                    } else {
-                        grade.classList.add("grade-low");
-                        grade.textContent = `-- | ${falta || 0} faltas`;
-                    }
+/* ============================================================
+   INICIALIZAÇÃO DO SISTEMA
+============================================================ */
+populateClassSelect();
 
-                    row.appendChild(nome);
-                    row.appendChild(grade);
-                    content.appendChild(row);
-                });
+</script>
 
-                card.appendChild(header);
-                card.appendChild(content);
-                resultsContainer.appendChild(card);
-            }
-
-            // Cria o card para o 5º Conceito (Média/Total de Faltas)
-            const conceitoCard = document.createElement('div');
-            conceitoCard.className = "bimester-card";
-
-            const conceitoHeader = document.createElement('div');
-            conceitoHeader.className = "bimester-header";
-            conceitoHeader.textContent = "5º CONCEITO";
-            conceitoHeader.style.background = "linear-gradient(135deg, #27ae60, #2ecc71)";
-
-            const conceitoContent = document.createElement('div');
-            conceitoContent.className = "bimester-content";
-
-            // Calcula médias e totais
-            const medias = {};
-            const totalFaltas = {};
-            
-            // Inicializa estruturas
-            Object.keys(dados.notas[1] || {}).forEach(key => {
-                medias[key] = 0;
-                totalFaltas[key] = 0;
-            });
-
-            // Calcula médias e soma faltas
-            for (let bimestre = 1; bimestre <= 4; bimestre++) {
-                if (!dados.notas[bimestre]) continue;
-                
-                Object.keys(dados.notas[bimestre]).forEach(key => {
-                    if (dados.notas[bimestre][key] !== null) {
-                        medias[key] += dados.notas[bimestre][key];
-                    }
-                    if (dados.faltas[bimestre] && dados.faltas[bimestre][key] !== null) {
-                        totalFaltas[key] += dados.faltas[bimestre][key];
-                    }
-                });
-            }
-
-            // Divide por 4 para obter a média
-            Object.keys(medias).forEach(key => {
-                medias[key] = medias[key] / 4;
-            });
-
-            // Adiciona as disciplinas com médias e totais de faltas
-            Object.keys(medias).forEach(disciplinaIndex => {
-                const row = document.createElement("div");
-                row.className = "subject-row";
-
-                const nome = document.createElement("span");
-                nome.className = "subject-name";
-                nome.textContent = `Disciplina ${parseInt(disciplinaIndex) + 1}`;
-
-                const grade = document.createElement("span");
-                grade.className = "grade";
-
-                const media = medias[disciplinaIndex];
-                const faltas = totalFaltas[disciplinaIndex] || 0;
-
-                if (media !== null && !isNaN(media)) {
-                    if (media >= 7) grade.classList.add("grade-high");
-                    else if (media >= 5) grade.classList.add("grade-medium");
-                    else grade.classList.add("grade-low");
-
-                    grade.textContent = `${media.toFixed(1)} | ${faltas} faltas`;
-                } else {
-                    grade.classList.add("grade-low");
-                    grade.textContent = `-- | ${faltas} faltas`;
-                }
-
-                row.appendChild(nome);
-                row.appendChild(grade);
-                conceitoContent.appendChild(row);
-            });
-
-            conceitoCard.appendChild(conceitoHeader);
-            conceitoCard.appendChild(conceitoContent);
-            resultsContainer.appendChild(conceitoCard);
-        }
-
-        /* ===================== FUNÇÕES DE AUXÍLIO ===================== */
-        function showLoading(msg) {
-            resultsContainer.innerHTML = `<div class="loading">${msg}</div>`;
-        }
-        
-        function hideLoading() {
-            // Não limpa completamente, apenas remove o loading
-            const loading = resultsContainer.querySelector('.loading');
-            if (loading) loading.remove();
-        }
-        
-        function showError(msg) {
-            resultsContainer.innerHTML = `<div class="error">${msg}</div>`;
-        }
-        
-        function showNoData() {
-            resultsContainer.innerHTML = '<div class="no-data">Selecione uma turma e um aluno para visualizar os dados</div>';
-        }
-
-        /* ===================== INICIAR ===================== */
-        document.addEventListener("DOMContentLoaded", populateClassSelect);
-    </script>
 </body>
 </html>
+
 
 
 
