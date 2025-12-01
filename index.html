@@ -337,167 +337,94 @@
                 0 2px 4px rgba(0,0,0,0.05);
         }
         
-        /* NOVA ESTRUTURA DE TABELA COM BIMESTRES SEPARADOS */
-        .bimestres-container {
-            display: flex;
-            gap: 2mm;
-            margin-bottom: 25px;
+        /* NOVA ESTRUTURA DE TABELA */
+        .table-container {
+            width: 100%;
             overflow-x: auto;
-            padding: 10px 0;
-        }
-        
-        .bimestre-wrapper {
-            flex: 1;
-            min-width: 300px;
-            background: white;
+            margin-bottom: 25px;
             border-radius: 10px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
+            background-color: var(--card-bg);
         }
         
-        .bimestre-header {
+        .grades-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            min-width: 800px;
+        }
+        
+        .grades-table th {
             background: linear-gradient(135deg, var(--primary-color), #34495e);
             color: white;
-            padding: 15px;
+            padding: 18px 12px;
             text-align: center;
             font-weight: 700;
             font-size: 1.2rem;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+            position: sticky;
+            top: 0;
+            z-index: 10;
         }
         
-        .bimestre-header.conceito {
+        .grades-table th.conceito-header {
             background: linear-gradient(135deg, #27ae60, #2ecc71);
         }
         
-        .bimestre-content {
-            flex: 1;
-            overflow-y: auto;
-            max-height: 600px;
-        }
-        
-        .bimestre-table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-        }
-        
-        .bimestre-table th {
-            background: rgba(52, 73, 94, 0.9);
-            color: white;
-            padding: 12px 8px;
+        .grades-table td {
+            padding: 15px 12px;
             text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             font-weight: 600;
-            font-size: 1rem;
+        }
+        
+        .subject-name {
+            text-align: left;
+            color: #ffffff;
+            font-weight: 700;
+            background-color: rgba(255, 255, 255, 0.05);
+            padding-left: 20px;
             position: sticky;
-            top: 0;
+            left: 0;
             z-index: 5;
         }
         
-        .bimestre-table td {
-            padding: 8px;
-            text-align: center;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-            font-weight: 600;
-        }
-        
-        .disciplina-cell {
-            text-align: left;
-            color: #2c3e50;
-            font-weight: 700;
-            background-color: rgba(255, 255, 255, 0.8);
-            padding-left: 15px;
-            position: sticky;
-            left: 0;
-            z-index: 2;
-            min-width: 180px;
-        }
-        
-        .nota-faltas-container {
+        .bimester-section {
             display: flex;
             gap: 1mm;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .grade-cell, .faltas-cell {
-            flex: 1;
-            min-width: 60px;
-            display: flex;
-            align-items: center;
             justify-content: center;
         }
         
         .grade-value, .faltas-value {
-            padding: 10px 12px;
+            padding: 12px 15px;
             border-radius: 6px;
             font-weight: 800;
-            font-size: 1.1rem;
-            width: 100%;
+            font-size: 1.3rem;
+            min-width: 80px;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 
-                0 2px 4px rgba(0,0,0,0.2),
-                inset 0 1px 3px rgba(255,255,255,0.5);
-            background: white;
-            border: 1px solid rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
         
         .grade-value.nota-baixa {
             background-color: var(--nota-baixa);
             color: white;
-            box-shadow: 
-                0 2px 6px rgba(255,82,82,0.4),
-                inset 0 1px 3px rgba(255,255,255,0.3);
         }
         
         .grade-value.nota-alta {
             background-color: var(--nota-alta);
             color: white;
-            box-shadow: 
-                0 2px 6px rgba(33,150,243,0.4),
-                inset 0 1px 3px rgba(255,255,255,0.3);
         }
         
         .grade-value.sem-nota {
-            background-color: rgba(255, 255, 255, 0.9);
-            color: #7f8c8d;
-            box-shadow: 
-                0 2px 4px rgba(0,0,0,0.1),
-                inset 0 1px 3px rgba(255,255,255,0.8);
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
         }
         
         .faltas-value {
-            background-color: rgba(255, 255, 255, 0.9);
-            color: var(--faltas-cor);
-            box-shadow: 
-                0 2px 4px rgba(0,0,0,0.1),
-                inset 0 1px 3px rgba(255,255,255,0.8);
-        }
-        
-        .sync-scroll {
-            overflow-y: scroll;
-        }
-        
-        /* Estilo da barra de rolagem */
-        .sync-scroll::-webkit-scrollbar {
-            width: 8px;
-        }
-        
-        .sync-scroll::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 4px;
-        }
-        
-        .sync-scroll::-webkit-scrollbar-thumb {
-            background: #c1c1c1;
-            border-radius: 4px;
-        }
-        
-        .sync-scroll::-webkit-scrollbar-thumb:hover {
-            background: #a8a8a8;
+            background-color: rgba(255, 255, 255, 0.15);
+            color: #ffffff;
         }
         
         .footer {
@@ -570,14 +497,6 @@
             #class-select, #student-select {
                 width: 100%;
             }
-            
-            .bimestres-container {
-                flex-direction: column;
-            }
-            
-            .bimestre-wrapper {
-                min-width: 100%;
-            }
         }
         
         @media (max-width: 768px) {
@@ -598,13 +517,9 @@
             }
             
             .grade-value, .faltas-value {
-                font-size: 1rem;
-                padding: 8px 10px;
-            }
-            
-            .disciplina-cell {
-                min-width: 150px;
-                padding-left: 10px;
+                font-size: 1.1rem;
+                padding: 10px 12px;
+                min-width: 70px;
             }
         }
     </style>
@@ -905,6 +820,44 @@
           if (faltas[b].length < disciplinasCount) faltas[b] = faltas[b].concat(new Array(disciplinasCount - faltas[b].length).fill(0));
         }
 
+        // Cria container da tabela
+        const tableContainer = document.createElement('div');
+        tableContainer.className = 'table-container';
+
+        // Cria tabela
+        const table = document.createElement('table');
+        table.className = 'grades-table';
+
+        // Cria cabeçalho da tabela
+        const thead = document.createElement('thead');
+        const headerRow = document.createElement('tr');
+        
+        // Célula vazia para o canto superior esquerdo
+        const emptyHeader = document.createElement('th');
+        emptyHeader.textContent = 'Disciplinas';
+        headerRow.appendChild(emptyHeader);
+        
+        // Cabeçalhos para cada bimestre
+        for (let b = 0; b < 4; b++) {
+          const bimestreHeader = document.createElement('th');
+          bimestreHeader.textContent = `${b+1}º Bimestre`;
+          bimestreHeader.colSpan = 2; // Para nota e faltas
+          headerRow.appendChild(bimestreHeader);
+        }
+        
+        // Cabeçalho para o 5º conceito
+        const conceitoHeader = document.createElement('th');
+        conceitoHeader.textContent = '5º CONCEITO';
+        conceitoHeader.className = 'conceito-header';
+        conceitoHeader.colSpan = 2; // Para média e faltas totais
+        headerRow.appendChild(conceitoHeader);
+        
+        thead.appendChild(headerRow);
+        table.appendChild(thead);
+
+        // Cria corpo da tabela
+        const tbody = document.createElement('tbody');
+
         // Preferir conceito5 vindo do backend; se não houver, calcula localmente
         let medias = Array.isArray(dados.conceito5) && dados.conceito5.length >= disciplinasCount ? dados.conceito5.slice(0, disciplinasCount) : null;
         if (!medias) {
@@ -932,68 +885,18 @@
               return totals;
             })();
 
-        // Cria container principal para os bimestres
-        const bimestresContainer = document.createElement('div');
-        bimestresContainer.className = 'bimestres-container';
-        
-        // Array para armazenar referências às áreas de rolagem
-        const scrollAreas = [];
-
-        // Cria um container para cada bimestre
-        for (let b = 0; b < 4; b++) {
-          const bimestreWrapper = document.createElement('div');
-          bimestreWrapper.className = 'bimestre-wrapper';
+        // Itera pelas disciplinas
+        for (let i = 0; i < disciplinasCount; i++) {
+          const row = document.createElement('tr');
           
-          const bimestreHeader = document.createElement('div');
-          bimestreHeader.className = 'bimestre-header';
-          bimestreHeader.textContent = `${b+1}º Bimestre`;
+          // Nome da disciplina
+          const disciplinaCell = document.createElement('td');
+          disciplinaCell.className = 'subject-name';
+          disciplinaCell.textContent = disciplinas[i] || (`Disciplina ${i+1}`);
+          row.appendChild(disciplinaCell);
           
-          const bimestreContent = document.createElement('div');
-          bimestreContent.className = 'bimestre-content sync-scroll';
-          
-          // Armazena referência para sincronização de rolagem
-          scrollAreas.push(bimestreContent);
-          
-          const table = document.createElement('table');
-          table.className = 'bimestre-table';
-          
-          // Cabeçalho da tabela do bimestre
-          const thead = document.createElement('thead');
-          const headerRow = document.createElement('tr');
-          
-          const disciplinaHeader = document.createElement('th');
-          disciplinaHeader.textContent = 'Disciplina';
-          disciplinaHeader.style.textAlign = 'left';
-          headerRow.appendChild(disciplinaHeader);
-          
-          const notaHeader = document.createElement('th');
-          notaHeader.textContent = 'Nota';
-          headerRow.appendChild(notaHeader);
-          
-          const faltasHeader = document.createElement('th');
-          faltasHeader.textContent = 'Faltas';
-          headerRow.appendChild(faltasHeader);
-          
-          thead.appendChild(headerRow);
-          table.appendChild(thead);
-          
-          // Corpo da tabela do bimestre
-          const tbody = document.createElement('tbody');
-          
-          for (let i = 0; i < disciplinasCount; i++) {
-            const row = document.createElement('tr');
-            
-            // Célula da disciplina
-            const disciplinaCell = document.createElement('td');
-            disciplinaCell.className = 'disciplina-cell';
-            disciplinaCell.textContent = disciplinas[i] || (`Disciplina ${i+1}`);
-            row.appendChild(disciplinaCell);
-            
-            // Container para nota e faltas
-            const notaFaltasContainer = document.createElement('td');
-            notaFaltasContainer.className = 'nota-faltas-container';
-            notaFaltasContainer.colSpan = 2;
-            
+          // Dados de cada bimestre
+          for (let b = 0; b < 4; b++) {
             const notaRaw = notas[b][i];
             const faltaRaw = faltas[b][i];
             
@@ -1006,110 +909,40 @@
             const falta = (faltaRaw === null || faltaRaw === undefined || faltaRaw === "") ? 0 : (parseInt(faltaRaw) || 0);
             
             // Célula da nota
-            const gradeCell = document.createElement('div');
-            gradeCell.className = 'grade-cell';
-            
-            const gradeValue = document.createElement('div');
-            gradeValue.className = 'grade-value';
+            const notaCell = document.createElement('td');
+            const notaValue = document.createElement('div');
+            notaValue.className = 'grade-value';
             
             if (nota !== null) {
               if (nota >= 5) {
-                gradeValue.classList.add('nota-alta');
+                notaValue.classList.add('nota-alta');
               } else {
-                gradeValue.classList.add('nota-baixa');
+                notaValue.classList.add('nota-baixa');
               }
-              gradeValue.textContent = nota.toFixed(1);
+              notaValue.textContent = nota.toFixed(1);
             } else {
-              gradeValue.classList.add('sem-nota');
-              gradeValue.textContent = '--';
+              notaValue.classList.add('sem-nota');
+              notaValue.textContent = '--';
             }
             
-            gradeCell.appendChild(gradeValue);
-            notaFaltasContainer.appendChild(gradeCell);
+            notaCell.appendChild(notaValue);
+            row.appendChild(notaCell);
             
             // Célula das faltas
-            const faltasCell = document.createElement('div');
-            faltasCell.className = 'faltas-cell';
-            
+            const faltasCell = document.createElement('td');
             const faltasValue = document.createElement('div');
             faltasValue.className = 'faltas-value';
             faltasValue.textContent = falta;
-            
             faltasCell.appendChild(faltasValue);
-            notaFaltasContainer.appendChild(faltasCell);
-            
-            row.appendChild(notaFaltasContainer);
-            tbody.appendChild(row);
+            row.appendChild(faltasCell);
           }
           
-          table.appendChild(tbody);
-          bimestreContent.appendChild(table);
-          bimestreWrapper.appendChild(bimestreHeader);
-          bimestreWrapper.appendChild(bimestreContent);
-          bimestresContainer.appendChild(bimestreWrapper);
-        }
-        
-        // Cria container para o 5º conceito
-        const conceitoWrapper = document.createElement('div');
-        conceitoWrapper.className = 'bimestre-wrapper';
-        
-        const conceitoHeader = document.createElement('div');
-        conceitoHeader.className = 'bimestre-header conceito';
-        conceitoHeader.textContent = '5º CONCEITO';
-        
-        const conceitoContent = document.createElement('div');
-        conceitoContent.className = 'bimestre-content sync-scroll';
-        
-        // Armazena referência para sincronização de rolagem
-        scrollAreas.push(conceitoContent);
-        
-        const conceitoTable = document.createElement('table');
-        conceitoTable.className = 'bimestre-table';
-        
-        // Cabeçalho da tabela do conceito
-        const conceitoThead = document.createElement('thead');
-        const conceitoHeaderRow = document.createElement('tr');
-        
-        const conceitoDisciplinaHeader = document.createElement('th');
-        conceitoDisciplinaHeader.textContent = 'Disciplina';
-        conceitoDisciplinaHeader.style.textAlign = 'left';
-        conceitoHeaderRow.appendChild(conceitoDisciplinaHeader);
-        
-        const mediaHeader = document.createElement('th');
-        mediaHeader.textContent = 'Média';
-        conceitoHeaderRow.appendChild(mediaHeader);
-        
-        const faltasTotaisHeader = document.createElement('th');
-        faltasTotaisHeader.textContent = 'Faltas Totais';
-        conceitoHeaderRow.appendChild(faltasTotaisHeader);
-        
-        conceitoThead.appendChild(conceitoHeaderRow);
-        conceitoTable.appendChild(conceitoThead);
-        
-        // Corpo da tabela do conceito
-        const conceitoTbody = document.createElement('tbody');
-        
-        for (let i = 0; i < disciplinasCount; i++) {
-          const row = document.createElement('tr');
-          
-          // Célula da disciplina
-          const disciplinaCell = document.createElement('td');
-          disciplinaCell.className = 'disciplina-cell';
-          disciplinaCell.textContent = disciplinas[i] || (`Disciplina ${i+1}`);
-          row.appendChild(disciplinaCell);
-          
-          // Container para média e faltas totais
-          const mediaFaltasContainer = document.createElement('td');
-          mediaFaltasContainer.className = 'nota-faltas-container';
-          mediaFaltasContainer.colSpan = 2;
-          
+          // Dados do 5º conceito
           const media = medias[i];
           const faltasDisc = totalFaltasPorDisciplina[i] || 0;
           
           // Célula da média
-          const mediaCell = document.createElement('div');
-          mediaCell.className = 'grade-cell';
-          
+          const mediaCell = document.createElement('td');
           const mediaValue = document.createElement('div');
           mediaValue.className = 'grade-value';
           
@@ -1126,57 +959,22 @@
           }
           
           mediaCell.appendChild(mediaValue);
-          mediaFaltasContainer.appendChild(mediaCell);
+          row.appendChild(mediaCell);
           
           // Célula das faltas totais
-          const faltasTotaisCell = document.createElement('div');
-          faltasTotaisCell.className = 'faltas-cell';
-          
+          const faltasTotaisCell = document.createElement('td');
           const faltasTotaisValue = document.createElement('div');
           faltasTotaisValue.className = 'faltas-value';
           faltasTotaisValue.textContent = faltasDisc;
-          
           faltasTotaisCell.appendChild(faltasTotaisValue);
-          mediaFaltasContainer.appendChild(faltasTotaisCell);
+          row.appendChild(faltasTotaisCell);
           
-          row.appendChild(mediaFaltasContainer);
-          conceitoTbody.appendChild(row);
+          tbody.appendChild(row);
         }
         
-        conceitoTable.appendChild(conceitoTbody);
-        conceitoContent.appendChild(conceitoTable);
-        conceitoWrapper.appendChild(conceitoHeader);
-        conceitoWrapper.appendChild(conceitoContent);
-        bimestresContainer.appendChild(conceitoWrapper);
-        
-        resultsContainer.appendChild(bimestresContainer);
-        
-        // Configura a sincronização de rolagem
-        setupScrollSync(scrollAreas);
-      }
-
-      /* ===================== SINCRONIZAÇÃO DE ROLAGEM ===================== */
-      function setupScrollSync(scrollAreas) {
-        let isScrolling = false;
-        
-        scrollAreas.forEach(area => {
-          area.addEventListener('scroll', function() {
-            if (isScrolling) return;
-            
-            isScrolling = true;
-            
-            // Sincroniza a rolagem de todas as áreas
-            scrollAreas.forEach(otherArea => {
-              if (otherArea !== area) {
-                otherArea.scrollTop = area.scrollTop;
-              }
-            });
-            
-            setTimeout(() => {
-              isScrolling = false;
-            }, 10);
-          });
-        });
+        table.appendChild(tbody);
+        tableContainer.appendChild(table);
+        resultsContainer.appendChild(tableContainer);
       }
 
       /* ===================== FUNÇÕES DE AUXÍLIO ===================== */
