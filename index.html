@@ -337,32 +337,34 @@
                 0 2px 4px rgba(0,0,0,0.05);
         }
         
-        .btn:disabled:active {
-            transform: none;
-            box-shadow: 
-                0 2px 4px rgba(0,0,0,0.05);
-        }
-        
         .results-container {
             display: flex;
             flex-wrap: wrap;
-            gap: 20px;
+            gap: 15px;
+            margin-bottom: 25px;
             justify-content: center;
-            align-items: stretch;
-            margin-top: 20px;
         }
         
         .bimester-card {
-            background-color: var(--light-color);
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            background: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
             overflow: hidden;
-            flex: 1 1 300px;
-            min-width: 300px;
             transition: all 0.3s ease;
+            border: 1px solid rgba(0,0,0,0.05);
             display: flex;
             flex-direction: column;
-            border: 1px solid #ddd;
+            position: relative;
+            z-index: 1;
+            flex: 1 1 300px;
+            min-width: 300px;
+            max-width: 100%;
+            max-height: 500px;
+        }
+        
+        .bimester-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
         }
         
         .bimester-card.expanded {
@@ -370,106 +372,11 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            z-index: 1000;
             width: 90%;
-            max-width: 1200px;
-            height: 90%;
-            max-height: 90vh;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        }
-        
-        .bimester-header {
-            background: linear-gradient(135deg, var(--primary-color), var(--dark-color));
-            color: white;
-            padding: 15px 10px;
-            text-align: center;
-            font-weight: 700;
-            font-size: clamp(1rem, 2vw, 1.2rem);
-            cursor: pointer;
-            user-select: none;
-            flex-shrink: 0;
-        }
-        
-        .bimester-content {
-            padding: 15px;
-            overflow-y: auto;
-            flex-grow: 1;
-        }
-        
-        .subject-grid {
-            display: grid;
-            grid-template-columns: 3fr 1fr 1fr;
-            gap: 1px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            overflow: hidden;
-        }
-        
-        .subject-grid > div:nth-child(-n+3) {
-            background-color: var(--dark-color) !important;
-            color: white;
-            font-weight: bold;
-            text-transform: uppercase;
-            font-size: 0.9rem;
-            padding: 10px 10px;
-        }
-        
-        .subject-cell, .grade-cell, .faltas-cell {
-            padding: 8px 10px;
-            font-size: clamp(0.85rem, 1.5vw, 0.95rem);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            word-break: break-word;
-        }
-        
-        .subject-cell {
-            justify-content: flex-start;
-            text-align: left;
-            font-weight: 600;
-            background-color: #f8f9fa;
-        }
-        
-        .subject-grid > div:nth-child(6n+4),
-        .subject-grid > div:nth-child(6n+5),
-        .subject-grid > div:nth-child(6n+6) {
-            background-color: #f8f9fa;
-        }
-        
-        .subject-grid > div:nth-child(6n+7),
-        .subject-grid > div:nth-child(6n+8),
-        .subject-grid > div:nth-child(6n+9) {
-            background-color: #ffffff;
-        }
-        
-        .grade-cell {
-            font-weight: 700;
-        }
-        
-        .faltas-cell {
-            color: var(--faltas-cor);
-            font-weight: 700;
-        }
-        
-        .nota-baixa {
-            color: var(--nota-baixa);
-        }
-        
-        .nota-alta {
-            color: var(--nota-alta);
-        }
-        
-        .sem-nota {
-            color: #999;
-            font-style: italic;
-        }
-        
-        .footer {
-            text-align: center;
-            padding: 20px 0 10px;
-            color: #6c757d;
-            font-size: 0.9rem;
+            max-width: 800px;
+            max-height: 80vh;
+            z-index: 1000;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
         }
         
         .overlay {
@@ -478,9 +385,119 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.6);
+            background: rgba(0,0,0,0.7);
             z-index: 999;
             display: none;
+        }
+        
+        .bimester-header {
+            background: linear-gradient(135deg, var(--primary-color), #34495e);
+            color: white;
+            padding: 12px;
+            text-align: center;
+            font-weight: 700;
+            font-size: clamp(1rem, 2vw, 1.1rem);
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .bimester-header:hover {
+            background: linear-gradient(135deg, #34495e, #2c3e50);
+        }
+        
+        .bimester-content {
+            padding: 12px;
+            flex: 1;
+            overflow-y: auto;
+        }
+        
+        .subject-grid {
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            gap: 6px;
+        }
+        
+        .subject-cell {
+            padding: 8px 10px;
+            border-radius: 6px;
+            font-weight: 600;
+            color: #ffffff;
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            font-size: clamp(0.8rem, 1.5vw, 0.85rem);
+            line-height: 1.2;
+            word-break: break-word;
+            overflow-wrap: break-word;
+        }
+        
+        .grade-cell {
+            padding: 8px 10px;
+            border-radius: 6px;
+            font-weight: 700;
+            text-align: center;
+            min-width: 55px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: clamp(0.85rem, 1.5vw, 0.9rem);
+        }
+        
+        .grade-cell.nota-baixa {
+            background-color: var(--nota-baixa);
+            color: white;
+        }
+        
+        .grade-cell.nota-alta {
+            background-color: var(--nota-alta);
+            color: white;
+        }
+        
+        .grade-cell.sem-nota {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+        }
+        
+        .faltas-cell {
+            padding: 8px 10px;
+            border-radius: 6px;
+            font-weight: bold;
+            text-align: center;
+            min-width: 55px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #ffffff;
+            color: #000000;
+            font-size: clamp(0.9rem, 1.5vw, 1rem);
+        }
+        
+        .faltas-total-cell {
+            background-color: #ffffff !important;
+            color: #000000 !important;
+            font-weight: bold !important;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #6c757d;
+            font-size: clamp(0.85rem, 2vw, 0.95rem);
+            padding: 20px;
+            border-top: 1px solid #e9ecef;
         }
         
         .loading {
@@ -922,7 +939,7 @@
             }
         }
 
-        /* ===================== EXIBIR DADOS DO ALUNO (Alteração mínima para reordenar) ===================== */
+        /* ===================== EXIBIR DADOS DO ALUNO ===================== */
         function displayStudentData(dados) {
             resultsContainer.innerHTML = "";
 
@@ -945,9 +962,6 @@
                 if (notas[b].length < disciplinasCount) notas[b] = notas[b].concat(new Array(disciplinasCount - notas[b].length).fill(null));
                 if (faltas[b].length < disciplinasCount) faltas[b] = faltas[b].concat(new Array(disciplinasCount - faltas[b].length).fill(0));
             }
-
-            // Array para armazenar os cards na ordem desejada
-            const cards = [];
 
             // Cria cards para cada bimestre (1..4) e 5º conceito
             for (let b = 0; b < 5; b++) {
@@ -1092,19 +1106,8 @@
                 content.appendChild(grid);
                 card.appendChild(header);
                 card.appendChild(content);
-                
-                // Adiciona o card ao array de cards
-                cards.push(card);
+                resultsContainer.appendChild(card);
             }
-            
-            // Reordena os cards para colocar o 5º Conceito (índice 4) após o 4º Bimestre (índice 3)
-            // A ordem original era 1, 2, 3, 4, 5. O loop acima cria os cards nesta ordem.
-            // Para garantir que o 5º Conceito (cards[4]) esteja ao lado do 4º Bimestre (cards[3]),
-            // a ordem de inserção deve ser: 1, 2, 3, 4, 5.
-            // Como o loop já faz isso, a única alteração é garantir que todos sejam inseridos.
-            
-            // Inserção dos cards no container na ordem correta: 1, 2, 3, 4, 5
-            cards.forEach(card => resultsContainer.appendChild(card));
         }
 
         /* ===================== FUNÇÃO PARA EXPANDIR/RETRAIR CARD ===================== */
