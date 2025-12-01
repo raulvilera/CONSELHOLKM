@@ -342,32 +342,12 @@
                 0 2px 4px rgba(0,0,0,0.05);
         }
         
-        /* NOVO CONTAINER PARA COLOCAR BIMESTRES LADO A LADO */
-        .bimester-container {
-            display: flex;
-            flex-wrap: nowrap;
-            overflow-x: auto;
-            gap: 15px;
-            padding: 10px 0 20px;
-            scrollbar-width: thin;
-            scrollbar-color: #3498db #f1f1f1;
-        }
-        
-        .bimester-container::-webkit-scrollbar {
-            height: 8px;
-        }
-        
-        .bimester-container::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 4px;
-        }
-        
-        .bimester-container::-webkit-scrollbar-thumb {
-            background: #3498db;
-            border-radius: 4px;
-        }
-        
         .results-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            align-items: stretch;
             margin-top: 20px;
         }
         
@@ -376,17 +356,26 @@
             border-radius: 12px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             overflow: hidden;
-            flex: 0 0 auto;
-            width: 300px;
+            flex: 1 1 300px;
             min-width: 300px;
+            transition: all 0.3s ease;
             display: flex;
             flex-direction: column;
             border: 1px solid #ddd;
-            height: 500px;
+            height: 500px; /* Altura fixa para evitar distorção */
         }
         
-        .bimester-card.conceito5 {
-            border: 2px solid #27ae60;
+        .bimester-card.expanded {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+            width: 90%;
+            max-width: 1200px;
+            height: 90%;
+            max-height: 90vh;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
         
         .bimester-header {
@@ -396,6 +385,7 @@
             text-align: center;
             font-weight: 700;
             font-size: clamp(1rem, 2vw, 1.2rem);
+            cursor: pointer;
             user-select: none;
             flex-shrink: 0;
         }
@@ -420,7 +410,7 @@
         }
         
         .subject-row {
-            display: contents;
+            display: contents; /* Permite que os filhos sejam colocados diretamente no grid */
         }
         
         .grid-header {
@@ -438,39 +428,26 @@
         }
         
         .subject-cell, .grade-cell, .faltas-cell {
-            padding: 8px 5px;
-            font-size: clamp(0.8rem, 1.5vw, 0.9rem);
+            padding: 8px 10px;
+            font-size: clamp(0.85rem, 1.5vw, 0.95rem);
             display: flex;
             align-items: center;
             justify-content: center;
             text-align: center;
-            min-height: 40px;
             word-break: break-word;
-            line-height: 1.2;
+            min-height: 40px;
         }
         
         .subject-cell {
-            justify-content: center;
-            text-align: center;
+            justify-content: flex-start;
+            text-align: left;
             font-weight: 600;
             background-color: #f8f9fa;
-            padding: 5px;
-            flex-direction: column;
-        }
-        
-        /* ESTILO PARA NOMES DE DISCIPLINA COM DUAS PALAVRAS */
-        .disciplina-nome {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            width: 100%;
-            height: 100%;
-        }
-        
-        .disciplina-nome span {
-            display: block;
-            line-height: 1.1;
+            /* Alterações para ajuste horizontal */
+            white-space: nowrap; /* Impede a quebra de linha */
+            overflow: hidden; /* Esconde o excesso */
+            text-overflow: ellipsis; /* Adiciona reticências se o texto for muito longo */
+            padding-right: 5px; /* Ajuste de padding para melhor visualização */
         }
         
         .subject-grid .subject-row:nth-child(odd) .subject-cell,
@@ -514,6 +491,17 @@
             font-size: 0.9rem;
         }
         
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 999;
+            display: none;
+        }
+        
         .loading {
             text-align: center;
             padding: 30px;
@@ -547,16 +535,15 @@
         /* Ajustes responsivos */
         @media (max-width: 1400px) {
             .bimester-card {
-                width: 280px;
+                flex: 1 1 280px;
                 min-width: 280px;
             }
         }
         
         @media (max-width: 1200px) {
             .bimester-card {
-                width: 260px;
-                min-width: 260px;
-                height: 480px;
+                flex: 1 1 250px;
+                min-width: 250px;
             }
             
             .controls-panel {
@@ -590,9 +577,8 @@
             }
             
             .bimester-card {
-                width: 240px;
-                min-width: 240px;
-                height: 460px;
+                flex: 1 1 calc(50% - 20px);
+                min-width: calc(50% - 20px);
             }
             
             .form-group {
@@ -620,14 +606,20 @@
             }
             
             .bimester-card {
-                width: 220px;
-                min-width: 220px;
-                height: 440px;
+                flex: 1 1 100%;
+                min-width: 100%;
+                max-height: 400px;
             }
             
-            .subject-cell, .grade-cell, .faltas-cell {
-                font-size: 0.8rem;
-                padding: 5px 3px;
+            .subject-grid {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+            
+            .grade-cell, .faltas-cell {
+                min-width: 100%;
+                justify-content: flex-start;
+                padding-left: 15px;
             }
             
             .nav-btn {
@@ -687,16 +679,14 @@
                 height: 42px;
             }
             
-            .bimester-card {
-                width: 200px;
-                min-width: 200px;
-                height: 420px;
+            .bimester-card.expanded {
+                width: 95%;
+                max-height: 85vh;
             }
             
             .subject-cell, .grade-cell, .faltas-cell {
-                padding: 4px 2px;
-                font-size: 0.75rem;
-                min-height: 35px;
+                padding: 6px 8px;
+                font-size: 0.85rem;
             }
         }
         
@@ -727,12 +717,6 @@
             
             .bimester-content {
                 padding: 10px 8px;
-            }
-            
-            .bimester-card {
-                width: 190px;
-                min-width: 190px;
-                height: 400px;
             }
         }
     </style>
@@ -778,6 +762,8 @@
         </div>
     </div>
 
+    <div class="overlay" id="overlay"></div>
+
     <script>
         // URL DO WEB APP
         const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbw1E7S5gM15r8Ct0LFLi4tNz4_TQWO_tfRfSZ3ODRDHZZxXkDJWBpcXqqzUCe2Vna9f/exec';
@@ -789,40 +775,13 @@
         const resultsContainer = document.getElementById('results');
         const prevBtn = document.getElementById('prev-btn');
         const nextBtn = document.getElementById('next-btn');
+        const overlay = document.getElementById('overlay');
 
         // Variáveis globais para navegação
         let currentStudents = [];
         let currentStudentIndex = -1;
         let currentTurma = '';
-
-        /* ===================== FUNÇÃO PARA FORMATAR NOME DA DISCIPLINA ===================== */
-        function formatarNomeDisciplina(nome) {
-            // Remove espaços extras
-            nome = nome.trim();
-            
-            // Se a disciplina tiver duas palavras, quebra em duas linhas
-            const palavras = nome.split(/\s+/);
-            
-            if (palavras.length === 2) {
-                // Duas palavras - coloca uma embaixo da outra
-                return `<div class="disciplina-nome"><span>${palavras[0]}</span><span>${palavras[1]}</span></div>`;
-            } else if (palavras.length > 2) {
-                // Mais de duas palavras - tenta agrupar de forma inteligente
-                if (nome.length > 15) {
-                    // Divide no meio se for muito longo
-                    const meio = Math.floor(palavras.length / 2);
-                    const parte1 = palavras.slice(0, meio).join(' ');
-                    const parte2 = palavras.slice(meio).join(' ');
-                    return `<div class="disciplina-nome"><span>${parte1}</span><span>${parte2}</span></div>`;
-                } else {
-                    // Mantém tudo em uma linha se for curto
-                    return `<div class="disciplina-nome"><span>${nome}</span></div>`;
-                }
-            } else {
-                // Uma palavra apenas
-                return `<div class="disciplina-nome"><span>${nome}</span></div>`;
-            }
-        }
+        let currentExpandedCard = null;
 
         /* ===================== CARREGAR TURMAS ===================== */
         async function populateClassSelect() {
@@ -1006,10 +965,6 @@
                 if (faltas[b].length < disciplinasCount) faltas[b] = faltas[b].concat(new Array(disciplinasCount - faltas[b].length).fill(0));
             }
 
-            // Cria container principal para os bimestres lado a lado
-            const bimesterContainer = document.createElement('div');
-            bimesterContainer.className = "bimester-container";
-
             // Cria cards para cada bimestre (1..4) e 5º conceito
             for (let b = 0; b < 5; b++) {
                 const card = document.createElement('div');
@@ -1026,6 +981,11 @@
                 } else {
                     header.textContent = "5º CONCEITO";
                 }
+
+                // Adiciona funcionalidade de duplo clique para expandir
+                header.addEventListener('dblclick', function() {
+                    toggleCardExpansion(card);
+                });
 
                 const content = document.createElement('div');
                 content.className = "bimester-content";
@@ -1062,10 +1022,10 @@
                     const row = document.createElement('div');
                     row.className = "subject-row";
                     
-                    // Célula do nome da disciplina (formatada)
+                    // Célula do nome da disciplina
                     const nomeCell = document.createElement("div");
                     nomeCell.className = "subject-cell";
-                    nomeCell.innerHTML = formatarNomeDisciplina(nomeDisc);
+                    nomeCell.textContent = nomeDisc;
 
                     // Célula da nota
                     const gradeCell = document.createElement("div");
@@ -1095,7 +1055,7 @@
                             } else {
                                 gradeCell.classList.add("nota-baixa");
                             }
-                            // Exibe como número inteiro SEM VÍRGULAS - com arredondamento
+                            // Exibe como número inteiro SEM VÍRGULAS
                             gradeCell.textContent = Math.round(nota);
                         } else {
                             gradeCell.classList.add("sem-nota");
@@ -1122,10 +1082,10 @@
                                     }
                                 }
                                 
-                                // Cálculo da média com arredondamento para inteiro
+                                // Cálculo da média com arredondamento para o inteiro mais próximo (round half up)
                                 if (cont > 0) {
                                     const mediaCalculada = soma / cont;
-                                    // Arredonda para inteiro (sem vírgula)
+                                    // Math.round() implementa o arredondamento para o inteiro mais próximo (round half up)
                                     medias[i] = Math.round(mediaCalculada);
                                 } else {
                                     medias[i] = null;
@@ -1163,8 +1123,9 @@
                             gradeCell.textContent = "--";
                         }
 
-                        // Preenche a célula de faltas totais
+                        // Preenche a célula de faltas totais com estilo específico
                         faltasCell.textContent = faltasDisc;
+                        faltasCell.classList.add("faltas-total-cell");
                     }
 
                     row.appendChild(nomeCell);
@@ -1176,11 +1137,38 @@
                 content.appendChild(grid);
                 card.appendChild(header);
                 card.appendChild(content);
-                bimesterContainer.appendChild(card);
+                resultsContainer.appendChild(card);
             }
-
-            resultsContainer.appendChild(bimesterContainer);
         }
+
+        /* ===================== FUNÇÃO PARA EXPANDIR/RETRAIR CARD ===================== */
+        function toggleCardExpansion(card) {
+            // Se o card já está expandido, retrai
+            if (card.classList.contains('expanded')) {
+                card.classList.remove('expanded');
+                overlay.style.display = 'none';
+                currentExpandedCard = null;
+            } else {
+                // Remove a classe expanded de todos os cards
+                document.querySelectorAll('.bimester-card').forEach(c => {
+                    c.classList.remove('expanded');
+                });
+                
+                // Adiciona a classe expanded no card clicado
+                card.classList.add('expanded');
+                overlay.style.display = 'block';
+                currentExpandedCard = card;
+            }
+        }
+
+        // Fechar card expandido ao clicar no overlay
+        overlay.addEventListener('click', function() {
+            if (currentExpandedCard) {
+                currentExpandedCard.classList.remove('expanded');
+                overlay.style.display = 'none';
+                currentExpandedCard = null;
+            }
+        });
 
         /* ===================== FUNÇÕES DE AUXÍLIO ===================== */
         function showLoading(msg) {
