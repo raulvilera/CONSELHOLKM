@@ -33,7 +33,7 @@
         }
         
         .container {
-            max-width: 1800px; /* Aumentado para acomodar mais cards */
+            max-width: 2000px; /* Aumentado para acomodar 5 cards lado a lado */
             margin: 0 auto;
             padding: 20px;
         }
@@ -337,10 +337,11 @@
         }
         
         .results-container {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr); /* Alterado para 5 colunas para os bimestres + 5º conceito */
-            gap: 15px; /* Reduzido o gap para economizar espaço */
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
             margin-bottom: 25px;
+            justify-content: space-between;
         }
         
         .bimester-card {
@@ -354,7 +355,10 @@
             flex-direction: column;
             position: relative;
             z-index: 1;
-            max-height: 500px; /* Reduzido para caber melhor */
+            flex: 1;
+            min-width: 19%; /* 5 cards com pequeno espaço entre eles */
+            max-width: 19%;
+            max-height: 500px;
         }
         
         .bimester-card:hover {
@@ -388,10 +392,10 @@
         .bimester-header {
             background: linear-gradient(135deg, var(--primary-color), #34495e);
             color: white;
-            padding: 15px; /* Reduzido para economizar espaço */
+            padding: 12px; /* Reduzido para economizar espaço */
             text-align: center;
             font-weight: 700;
-            font-size: 1.2rem; /* Reduzido para caber melhor */
+            font-size: 1.1rem; /* Reduzido para caber melhor */
             text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
             cursor: pointer;
             transition: all 0.3s ease;
@@ -402,7 +406,7 @@
         }
         
         .bimester-content {
-            padding: 15px; /* Reduzido para economizar espaço */
+            padding: 12px; /* Reduzido para economizar espaço */
             flex: 1;
             overflow-y: auto;
         }
@@ -410,11 +414,11 @@
         .subject-grid {
             display: grid;
             grid-template-columns: 1fr auto auto;
-            gap: 8px; /* Reduzido para economizar espaço */
+            gap: 6px; /* Reduzido para economizar espaço */
         }
         
         .subject-cell {
-            padding: 10px 12px; /* Reduzido para economizar espaço */
+            padding: 8px 10px; /* Reduzido para economizar espaço */
             border-radius: 6px;
             font-weight: 600;
             color: #ffffff;
@@ -424,23 +428,25 @@
             transition: all 0.2s ease;
             display: flex;
             align-items: center;
-            font-size: 0.95rem; /* Reduzido para caber melhor */
-            line-height: 1.3; /* Melhor legibilidade com texto menor */
+            font-size: 0.85rem; /* Reduzido para caber melhor */
+            line-height: 1.2; /* Melhor legibilidade com texto menor */
+            word-break: break-word; /* Garante que nomes longos quebrem corretamente */
+            overflow-wrap: break-word; /* Garante que nomes longos quebrem corretamente */
         }
         
         .grade-cell {
-            padding: 10px 12px; /* Reduzido para economizar espaço */
+            padding: 8px 10px; /* Reduzido para economizar espaço */
             border-radius: 6px;
             font-weight: 700;
             text-align: center;
-            min-width: 65px; /* Reduzido para caber melhor */
+            min-width: 55px; /* Reduzido para caber melhor */
             border: 1px solid rgba(255, 255, 255, 0.2);
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             transition: all 0.2s ease;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1rem; /* Reduzido para caber melhor */
+            font-size: 0.9rem; /* Reduzido para caber melhor */
         }
         
         .grade-cell.nota-baixa {
@@ -459,11 +465,11 @@
         }
         
         .faltas-cell {
-            padding: 10px 12px; /* Reduzido para economizar espaço */
+            padding: 8px 10px; /* Reduzido para economizar espaço */
             border-radius: 6px;
             font-weight: 900;
             text-align: center;
-            min-width: 65px; /* Reduzido para caber melhor */
+            min-width: 55px; /* Reduzido para caber melhor */
             border: 2px solid rgba(255, 255, 255, 0.3);
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             transition: all 0.2s ease;
@@ -472,7 +478,7 @@
             justify-content: center;
             background-color: var(--faltas-cor);
             color: #000;
-            font-size: 1.2rem; /* Reduzido para caber melhor */
+            font-size: 1rem; /* Reduzido para caber melhor */
             text-shadow: 0 1px 1px rgba(255,255,255,0.5);
         }
         
@@ -512,33 +518,66 @@
             background: linear-gradient(135deg, #f8f9fa, #e9ecef);
             border-radius: 10px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            grid-column: 1 / -1;
+            width: 100%;
         }
         
         /* Ajustes responsivos */
+        @media (max-width: 1800px) {
+            .container {
+                max-width: 1700px;
+            }
+            
+            .bimester-card {
+                min-width: 19%;
+                max-width: 19%;
+            }
+        }
+        
         @media (max-width: 1600px) {
             .container {
                 max-width: 1500px;
             }
             
-            .results-container {
-                grid-template-columns: repeat(4, 1fr); /* 4 colunas em telas médias-grandes */
+            .bimester-card {
+                min-width: 19%;
+                max-width: 19%;
+            }
+        }
+        
+        @media (max-width: 1400px) {
+            .container {
+                max-width: 1300px;
             }
             
-            /* O 5º conceito será movido para a próxima linha */
-            .bimester-card:nth-child(5) {
-                grid-column: 1 / -1; /* Ocupa toda a linha */
-                max-width: 100%;
+            .bimester-card {
+                min-width: 19%;
+                max-width: 19%;
+            }
+            
+            .subject-cell {
+                font-size: 0.8rem;
+            }
+            
+            .grade-cell, .faltas-cell {
+                font-size: 0.85rem;
+                min-width: 50px;
             }
         }
         
         @media (max-width: 1200px) {
-            .results-container {
-                grid-template-columns: repeat(3, 1fr); /* 3 colunas em tablets grandes */
+            .container {
+                max-width: 1100px;
+            }
+            
+            .bimester-card {
+                min-width: 48%;
+                max-width: 48%;
+                margin-bottom: 15px;
             }
             
             .bimester-card:nth-child(5) {
-                grid-column: 1 / -1; /* Ocupa toda a linha */
+                min-width: 100%;
+                max-width: 100%;
             }
         }
         
@@ -593,8 +632,9 @@
                 padding: 15px 20px 20px;
             }
             
-            .results-container {
-                grid-template-columns: 1fr; /* 1 coluna em dispositivos móveis */
+            .bimester-card {
+                min-width: 100%;
+                max-width: 100%;
             }
             
             select, input {
