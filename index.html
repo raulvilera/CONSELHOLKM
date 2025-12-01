@@ -342,48 +342,51 @@
                 0 2px 4px rgba(0,0,0,0.05);
         }
         
-        /* CONTAINER PRINCIPAL DOS CARDS - LADO A LADO OCUPANDO TODA A LINHA */
-        .results-container {
+        /* NOVO CONTAINER PARA COLOCAR BIMESTRES LADO A LADO */
+        .bimester-container {
             display: flex;
+            flex-wrap: nowrap;
+            overflow-x: auto;
             gap: 15px;
-            margin-top: 20px;
-            width: 100%;
-            min-height: 700px;
+            padding: 10px 0 20px;
+            scrollbar-width: thin;
+            scrollbar-color: #3498db #f1f1f1;
         }
         
-        /* CARD DE BIMESTRE - LADO A LADO COM LARGURA IGUAL */
+        .bimester-container::-webkit-scrollbar {
+            height: 8px;
+        }
+        
+        .bimester-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        
+        .bimester-container::-webkit-scrollbar-thumb {
+            background: #3498db;
+            border-radius: 4px;
+        }
+        
+        .results-container {
+            margin-top: 20px;
+        }
+        
         .bimester-card {
-            background-color: var(--card-bg);
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            background-color: var(--light-color);
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             overflow: hidden;
-            transition: all 0.3s ease;
+            flex: 0 0 auto;
+            width: 300px;
+            min-width: 300px;
             display: flex;
             flex-direction: column;
-            border: 1px solid rgba(0,0,0,0.05);
-            position: relative;
-            z-index: 1;
-            flex: 1;
-            min-width: 0;
-            height: 700px;
+            border: 1px solid #ddd;
+            height: 500px;
         }
         
-        .bimester-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-        }
-        
-        .bimester-card.expanded {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 1000;
-            width: 90%;
-            max-width: 1200px;
-            height: 90%;
-            max-height: 90vh;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        .bimester-card.conceito5 {
+            border: 2px solid #27ae60;
         }
         
         .bimester-header {
@@ -392,23 +395,13 @@
             padding: 15px 10px;
             text-align: center;
             font-weight: 700;
-            font-size: 1.2rem;
-            cursor: pointer;
+            font-size: clamp(1rem, 2vw, 1.2rem);
             user-select: none;
             flex-shrink: 0;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
-            transition: all 0.3s ease;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            height: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
         
-        .bimester-header:hover {
-            background: linear-gradient(135deg, #34495e, #2c3e50);
+        .bimester-card.conceito5 .bimester-header {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
         }
         
         .bimester-content {
@@ -417,19 +410,17 @@
             flex-grow: 1;
         }
         
-        /* GRID DE DISCIPLINAS - ALTURAS FIXAS E SEM QUEBRA */
         .subject-grid {
             display: grid;
-            grid-template-columns: 1fr;
-            gap: 6px;
+            grid-template-columns: 3fr 1fr 1fr;
+            gap: 1px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            overflow: hidden;
         }
         
         .subject-row {
-            display: grid;
-            grid-template-columns: 2fr 0.8fr 0.8fr;
-            gap: 6px;
-            min-height: 70px;
-            align-items: stretch;
+            display: contents;
         }
         
         .grid-header {
@@ -438,111 +429,82 @@
             font-weight: bold;
             text-transform: uppercase;
             font-size: 0.9rem;
-            padding: 12px 8px;
+            padding: 10px 10px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 40px;
+        }
+        
+        .subject-cell, .grade-cell, .faltas-cell {
+            padding: 8px 5px;
+            font-size: clamp(0.8rem, 1.5vw, 0.9rem);
             display: flex;
             align-items: center;
             justify-content: center;
             text-align: center;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            min-height: 50px;
-        }
-        
-        .subject-cell, .grade-cell, .faltas-cell {
-            padding: 10px 8px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            font-size: 0.9rem;
-            line-height: 1.2;
-            white-space: normal;
+            min-height: 40px;
             word-break: break-word;
-            overflow: hidden;
-            height: 70px;
-            border-radius: 6px;
-            min-height: 70px;
-            max-height: 70px;
-            width: 100%;
-            box-sizing: border-box;
+            line-height: 1.2;
         }
         
         .subject-cell {
             justify-content: center;
             text-align: center;
-            background-color: rgba(255, 255, 255, 0.1);
-            color: #ffffff;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            padding: 8px 5px;
-            font-size: 0.85rem;
-            line-height: 1.3;
-            display: flex;
+            font-weight: 600;
+            background-color: #f8f9fa;
+            padding: 5px;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
         }
         
-        /* ESTILO PARA NOMES COM DUAS PALAVRAS */
-        .subject-cell.two-words {
+        /* ESTILO PARA NOMES DE DISCIPLINA COM DUAS PALAVRAS */
+        .disciplina-nome {
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            text-align: center;
-        }
-        
-        .subject-cell.two-words span {
-            display: block;
             width: 100%;
+            height: 100%;
+        }
+        
+        .disciplina-nome span {
+            display: block;
+            line-height: 1.1;
+        }
+        
+        .subject-grid .subject-row:nth-child(odd) .subject-cell,
+        .subject-grid .subject-row:nth-child(odd) .grade-cell,
+        .subject-grid .subject-row:nth-child(odd) .faltas-cell {
+            background-color: #ffffff;
+        }
+        
+        .subject-grid .subject-row:nth-child(even) .subject-cell,
+        .subject-grid .subject-row:nth-child(even) .grade-cell,
+        .subject-grid .subject-row:nth-child(even) .faltas-cell {
+            background-color: #f8f9fa;
         }
         
         .grade-cell {
             font-weight: 700;
-            text-align: center;
-            min-width: 60px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            color: white;
-            font-family: 'Arial', sans-serif;
-        }
-        
-        .grade-cell.nota-baixa {
-            background-color: var(--nota-baixa);
-        }
-        
-        .grade-cell.nota-alta {
-            background-color: var(--nota-alta);
-        }
-        
-        .grade-cell.sem-nota {
-            background-color: rgba(255, 255, 255, 0.1);
-            color: #ffffff;
         }
         
         .faltas-cell {
-            color: #000000;
-            font-weight: bold;
-            text-align: center;
-            min-width: 60px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: #ffffff;
-            font-size: 1.2rem;
-            font-family: 'Arial', sans-serif;
+            color: var(--faltas-cor);
+            font-weight: 700;
         }
         
-        .faltas-total-cell {
-            background-color: #ffffff !important;
-            color: #000000 !important;
-            font-weight: bold !important;
+        .nota-baixa {
+            color: var(--nota-baixa);
+        }
+        
+        .nota-alta {
+            color: var(--nota-alta);
+        }
+        
+        .sem-nota {
+            color: #999;
+            font-style: italic;
         }
         
         .footer {
@@ -550,18 +512,6 @@
             padding: 20px 0 10px;
             color: #6c757d;
             font-size: 0.9rem;
-            margin-top: 20px;
-        }
-        
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.6);
-            z-index: 999;
-            display: none;
         }
         
         .loading {
@@ -594,111 +544,19 @@
             width: 100%;
         }
 
-        /* 5º CONCEITO - COR ESPECIAL */
-        .bimester-card.conceito5 .bimester-header {
-            background: linear-gradient(135deg, #27ae60, #2ecc71);
-        }
-        
-        .bimester-card.conceito5 .bimester-header:hover {
-            background: linear-gradient(135deg, #229954, #27ae60);
-        }
-
-        /* AJUSTES RESPONSIVOS - PARA TELAS MENORES */
-        @media (max-width: 1600px) {
-            .bimester-card {
-                height: 650px;
-            }
-            
-            .subject-row {
-                min-height: 65px;
-            }
-            
-            .subject-cell, .grade-cell, .faltas-cell {
-                font-size: 0.85rem;
-                height: 65px;
-                min-height: 65px;
-                max-height: 65px;
-                padding: 8px 6px;
-            }
-            
-            .grid-header {
-                font-size: 0.85rem;
-                padding: 10px 6px;
-                min-height: 45px;
-            }
-            
-            .subject-cell {
-                font-size: 0.8rem;
-            }
-        }
-        
+        /* Ajustes responsivos */
         @media (max-width: 1400px) {
             .bimester-card {
-                height: 600px;
-            }
-            
-            .subject-row {
-                min-height: 60px;
-            }
-            
-            .subject-cell, .grade-cell, .faltas-cell {
-                font-size: 0.8rem;
-                height: 60px;
-                min-height: 60px;
-                max-height: 60px;
-                padding: 8px 5px;
-            }
-            
-            .grid-header {
-                font-size: 0.8rem;
-                padding: 10px 5px;
-                min-height: 40px;
-            }
-            
-            .bimester-header {
-                font-size: 1.1rem;
-                height: 55px;
-            }
-            
-            .subject-cell {
-                font-size: 0.75rem;
-                line-height: 1.25;
+                width: 280px;
+                min-width: 280px;
             }
         }
         
         @media (max-width: 1200px) {
-            .results-container {
-                flex-wrap: wrap;
-                min-height: auto;
-            }
-            
             .bimester-card {
-                flex: 1 1 calc(33.333% - 15px);
-                height: 550px;
-                min-width: 300px;
-            }
-            
-            .subject-row {
-                min-height: 55px;
-            }
-            
-            .subject-cell, .grade-cell, .faltas-cell {
-                font-size: 0.75rem;
-                height: 55px;
-                min-height: 55px;
-                max-height: 55px;
-                padding: 7px 4px;
-            }
-            
-            .grid-header {
-                font-size: 0.75rem;
-                padding: 9px 4px;
-                min-height: 38px;
-            }
-            
-            .bimester-header {
-                font-size: 1rem;
-                height: 50px;
+                width: 260px;
+                min-width: 260px;
+                height: 480px;
             }
             
             .controls-panel {
@@ -718,38 +576,9 @@
             .nav-btn.next {
                 order: 3;
             }
-            
-            .subject-cell {
-                font-size: 0.7rem;
-                line-height: 1.2;
-            }
         }
         
         @media (max-width: 992px) {
-            .bimester-card {
-                flex: 1 1 calc(50% - 15px);
-                height: 500px;
-                min-width: 280px;
-            }
-            
-            .subject-row {
-                min-height: 50px;
-            }
-            
-            .subject-cell, .grade-cell, .faltas-cell {
-                font-size: 0.7rem;
-                height: 50px;
-                min-height: 50px;
-                max-height: 50px;
-                padding: 6px 3px;
-            }
-            
-            .grid-header {
-                font-size: 0.7rem;
-                padding: 8px 3px;
-                min-height: 35px;
-            }
-            
             .controls-panel {
                 flex-direction: column;
                 align-items: stretch;
@@ -760,21 +589,18 @@
                 flex: 0 0 auto;
             }
             
+            .bimester-card {
+                width: 240px;
+                min-width: 240px;
+                height: 460px;
+            }
+            
             .form-group {
                 min-width: 100%;
             }
             
             .controls-center {
                 gap: 10px;
-            }
-            
-            .bimester-header {
-                font-size: 0.95rem;
-                height: 48px;
-            }
-            
-            .subject-cell {
-                font-size: 0.65rem;
             }
         }
         
@@ -793,37 +619,15 @@
                 margin-bottom: 20px;
             }
             
-            .results-container {
-                gap: 12px;
-            }
-            
             .bimester-card {
-                flex: 1 1 100%;
-                height: 480px;
-                min-width: 100%;
-            }
-            
-            .subject-row {
-                min-height: 48px;
+                width: 220px;
+                min-width: 220px;
+                height: 440px;
             }
             
             .subject-cell, .grade-cell, .faltas-cell {
                 font-size: 0.8rem;
-                height: 48px;
-                min-height: 48px;
-                max-height: 48px;
-                padding: 8px 4px;
-            }
-            
-            .grid-header {
-                font-size: 0.8rem;
-                padding: 10px 4px;
-                min-height: 38px;
-            }
-            
-            .bimester-header {
-                font-size: 1rem;
-                height: 50px;
+                padding: 5px 3px;
             }
             
             .nav-btn {
@@ -834,11 +638,6 @@
             .btn {
                 padding: 10px 15px;
                 height: 44px;
-            }
-            
-            .subject-cell {
-                font-size: 0.75rem;
-                line-height: 1.15;
             }
         }
         
@@ -860,6 +659,10 @@
             
             .controls-center {
                 gap: 8px;
+            }
+            
+            .form-group {
+                min-width: 100%;
             }
             
             label {
@@ -884,40 +687,16 @@
                 height: 42px;
             }
             
-            .bimester-card.expanded {
-                width: 95%;
-                max-height: 85vh;
-            }
-            
             .bimester-card {
-                height: 460px;
-            }
-            
-            .subject-row {
-                min-height: 46px;
+                width: 200px;
+                min-width: 200px;
+                height: 420px;
             }
             
             .subject-cell, .grade-cell, .faltas-cell {
+                padding: 4px 2px;
                 font-size: 0.75rem;
-                height: 46px;
-                min-height: 46px;
-                max-height: 46px;
-                padding: 7px 3px;
-            }
-            
-            .grid-header {
-                font-size: 0.75rem;
-                padding: 9px 3px;
-                min-height: 36px;
-            }
-            
-            .bimester-header {
-                font-size: 0.9rem;
-                height: 46px;
-            }
-            
-            .subject-cell {
-                font-size: 0.7rem;
+                min-height: 35px;
             }
         }
         
@@ -942,40 +721,18 @@
             }
             
             .bimester-header {
-                padding: 8px 3px;
-                font-size: 0.85rem;
-                height: 44px;
+                padding: 10px 8px;
+                font-size: 0.95rem;
             }
             
             .bimester-content {
-                padding: 10px;
+                padding: 10px 8px;
             }
             
             .bimester-card {
-                height: 440px;
-            }
-            
-            .subject-row {
-                min-height: 44px;
-            }
-            
-            .subject-cell, .grade-cell, .faltas-cell {
-                font-size: 0.7rem;
-                height: 44px;
-                min-height: 44px;
-                max-height: 44px;
-                padding: 6px 2px;
-            }
-            
-            .grid-header {
-                font-size: 0.7rem;
-                padding: 8px 2px;
-                min-height: 34px;
-            }
-            
-            .subject-cell {
-                font-size: 0.65rem;
-                line-height: 1.1;
+                width: 190px;
+                min-width: 190px;
+                height: 400px;
             }
         }
     </style>
@@ -1021,8 +778,6 @@
         </div>
     </div>
 
-    <div class="overlay" id="overlay"></div>
-
     <script>
         // URL DO WEB APP
         const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbw1E7S5gM15r8Ct0LFLi4tNz4_TQWO_tfRfSZ3ODRDHZZxXkDJWBpcXqqzUCe2Vna9f/exec';
@@ -1034,13 +789,40 @@
         const resultsContainer = document.getElementById('results');
         const prevBtn = document.getElementById('prev-btn');
         const nextBtn = document.getElementById('next-btn');
-        const overlay = document.getElementById('overlay');
 
         // Variáveis globais para navegação
         let currentStudents = [];
         let currentStudentIndex = -1;
         let currentTurma = '';
-        let currentExpandedCard = null;
+
+        /* ===================== FUNÇÃO PARA FORMATAR NOME DA DISCIPLINA ===================== */
+        function formatarNomeDisciplina(nome) {
+            // Remove espaços extras
+            nome = nome.trim();
+            
+            // Se a disciplina tiver duas palavras, quebra em duas linhas
+            const palavras = nome.split(/\s+/);
+            
+            if (palavras.length === 2) {
+                // Duas palavras - coloca uma embaixo da outra
+                return `<div class="disciplina-nome"><span>${palavras[0]}</span><span>${palavras[1]}</span></div>`;
+            } else if (palavras.length > 2) {
+                // Mais de duas palavras - tenta agrupar de forma inteligente
+                if (nome.length > 15) {
+                    // Divide no meio se for muito longo
+                    const meio = Math.floor(palavras.length / 2);
+                    const parte1 = palavras.slice(0, meio).join(' ');
+                    const parte2 = palavras.slice(meio).join(' ');
+                    return `<div class="disciplina-nome"><span>${parte1}</span><span>${parte2}</span></div>`;
+                } else {
+                    // Mantém tudo em uma linha se for curto
+                    return `<div class="disciplina-nome"><span>${nome}</span></div>`;
+                }
+            } else {
+                // Uma palavra apenas
+                return `<div class="disciplina-nome"><span>${nome}</span></div>`;
+            }
+        }
 
         /* ===================== CARREGAR TURMAS ===================== */
         async function populateClassSelect() {
@@ -1224,6 +1006,10 @@
                 if (faltas[b].length < disciplinasCount) faltas[b] = faltas[b].concat(new Array(disciplinasCount - faltas[b].length).fill(0));
             }
 
+            // Cria container principal para os bimestres lado a lado
+            const bimesterContainer = document.createElement('div');
+            bimesterContainer.className = "bimester-container";
+
             // Cria cards para cada bimestre (1..4) e 5º conceito
             for (let b = 0; b < 5; b++) {
                 const card = document.createElement('div');
@@ -1240,11 +1026,6 @@
                 } else {
                     header.textContent = "5º CONCEITO";
                 }
-
-                // Adiciona funcionalidade de duplo clique para expandir
-                header.addEventListener('dblclick', function() {
-                    toggleCardExpansion(card);
-                });
 
                 const content = document.createElement('div');
                 content.className = "bimester-content";
@@ -1281,23 +1062,10 @@
                     const row = document.createElement('div');
                     row.className = "subject-row";
                     
-                    // Célula do nome da disciplina - COM SUPORTE PARA DUAS PALAVRAS
+                    // Célula do nome da disciplina (formatada)
                     const nomeCell = document.createElement("div");
                     nomeCell.className = "subject-cell";
-                    
-                    // Verifica se tem duas palavras
-                    const palavras = nomeDisc.trim().split(/\s+/);
-                    if (palavras.length === 2) {
-                        nomeCell.classList.add("two-words");
-                        const span1 = document.createElement("span");
-                        span1.textContent = palavras[0];
-                        const span2 = document.createElement("span");
-                        span2.textContent = palavras[1];
-                        nomeCell.appendChild(span1);
-                        nomeCell.appendChild(span2);
-                    } else {
-                        nomeCell.textContent = nomeDisc;
-                    }
+                    nomeCell.innerHTML = formatarNomeDisciplina(nomeDisc);
 
                     // Célula da nota
                     const gradeCell = document.createElement("div");
@@ -1327,7 +1095,7 @@
                             } else {
                                 gradeCell.classList.add("nota-baixa");
                             }
-                            // Exibe como número inteiro SEM VÍRGULAS
+                            // Exibe como número inteiro SEM VÍRGULAS - com arredondamento
                             gradeCell.textContent = Math.round(nota);
                         } else {
                             gradeCell.classList.add("sem-nota");
@@ -1357,6 +1125,7 @@
                                 // Cálculo da média com arredondamento para inteiro
                                 if (cont > 0) {
                                     const mediaCalculada = soma / cont;
+                                    // Arredonda para inteiro (sem vírgula)
                                     medias[i] = Math.round(mediaCalculada);
                                 } else {
                                     medias[i] = null;
@@ -1394,9 +1163,8 @@
                             gradeCell.textContent = "--";
                         }
 
-                        // Preenche a célula de faltas totais com estilo específico
+                        // Preenche a célula de faltas totais
                         faltasCell.textContent = faltasDisc;
-                        faltasCell.classList.add("faltas-total-cell");
                     }
 
                     row.appendChild(nomeCell);
@@ -1408,38 +1176,11 @@
                 content.appendChild(grid);
                 card.appendChild(header);
                 card.appendChild(content);
-                resultsContainer.appendChild(card);
+                bimesterContainer.appendChild(card);
             }
-        }
 
-        /* ===================== FUNÇÃO PARA EXPANDIR/RETRAIR CARD ===================== */
-        function toggleCardExpansion(card) {
-            // Se o card já está expandido, retrai
-            if (card.classList.contains('expanded')) {
-                card.classList.remove('expanded');
-                overlay.style.display = 'none';
-                currentExpandedCard = null;
-            } else {
-                // Remove a classe expanded de todos os cards
-                document.querySelectorAll('.bimester-card').forEach(c => {
-                    c.classList.remove('expanded');
-                });
-                
-                // Adiciona a classe expanded no card clicado
-                card.classList.add('expanded');
-                overlay.style.display = 'block';
-                currentExpandedCard = card;
-            }
+            resultsContainer.appendChild(bimesterContainer);
         }
-
-        // Fechar card expandido ao clicar no overlay
-        overlay.addEventListener('click', function() {
-            if (currentExpandedCard) {
-                currentExpandedCard.classList.remove('expanded');
-                overlay.style.display = 'none';
-                currentExpandedCard = null;
-            }
-        });
 
         /* ===================== FUNÇÕES DE AUXÍLIO ===================== */
         function showLoading(msg) {
