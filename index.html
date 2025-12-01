@@ -15,7 +15,7 @@
             --warning-color: #f39c12;
             --nota-baixa: #ff5252;
             --nota-alta: #2196f3;
-            --faltas-cor: #757575;
+            --faltas-cor: #ff9800;
             --card-bg: #4a5568;
         }
         
@@ -414,7 +414,7 @@
         }
         
         .subject-cell {
-            padding: 10px 12px;
+            padding: 12px 14px;
             border-radius: 4px;
             font-weight: 600;
             color: #ffffff;
@@ -424,10 +424,11 @@
             transition: all 0.2s ease;
             display: flex;
             align-items: center;
+            font-size: 1.05rem;
         }
         
         .grade-cell {
-            padding: 10px 12px;
+            padding: 12px 14px;
             border-radius: 4px;
             font-weight: 700;
             text-align: center;
@@ -438,6 +439,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            font-size: 1.2rem;
         }
         
         .grade-cell.nota-baixa {
@@ -456,9 +458,9 @@
         }
         
         .faltas-cell {
-            padding: 10px 12px;
+            padding: 12px 14px;
             border-radius: 4px;
-            font-weight: 700;
+            font-weight: 900;
             text-align: center;
             min-width: 80px;
             border: 1px solid rgba(255, 255, 255, 0.2);
@@ -467,8 +469,10 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background-color: rgba(255, 255, 255, 0.1);
-            color: #ffffff;
+            background-color: var(--faltas-cor);
+            color: #000;
+            font-size: 1.3rem;
+            text-shadow: 0 1px 1px rgba(255,255,255,0.5);
         }
         
         .footer {
@@ -994,9 +998,26 @@
             let soma = 0, cont = 0;
             for (let b = 0; b < 4; b++) {
               const n = notas[b][i];
-              if (n !== null && n !== undefined && n !== "" && !isNaN(parseFloat(n))) { soma += parseFloat(n); cont++; }
+              if (n !== null && n !== undefined && n !== "" && !isNaN(parseFloat(n))) { 
+                soma += parseFloat(n); 
+                cont++; 
+              }
             }
-            medias[i] = cont > 0 ? (soma / cont) : null;
+            
+            // Cálculo da média com arredondamento conforme especificado
+            if (cont > 0) {
+              const mediaCalculada = soma / cont;
+              const parteDecimal = mediaCalculada - Math.floor(mediaCalculada);
+              
+              // Arredondamento: se a parte decimal for >= 0.5, arredonda para cima, senão mantém
+              if (parteDecimal >= 0.5) {
+                medias[i] = Math.ceil(mediaCalculada);
+              } else {
+                medias[i] = Math.floor(mediaCalculada);
+              }
+            } else {
+              medias[i] = null;
+            }
           }
         }
 
@@ -1037,7 +1058,7 @@
             } else {
               gradeCell.classList.add("nota-baixa");
             }
-            gradeCell.textContent = media.toFixed(1);
+            gradeCell.textContent = media;
           } else {
             gradeCell.classList.add("sem-nota");
             gradeCell.textContent = "--";
