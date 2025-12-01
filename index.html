@@ -1336,64 +1336,58 @@
                         faltasCell.textContent = falta;
                     } else {
                         // 5º Conceito (médias e totais) - INTEIROS SEM VÍRGULAS
-                        let medias = Array.isArray(dados.conceito5) && dados.conceito5.length >= disciplinasCount ? 
-                            dados.conceito5.slice(0, disciplinasCount) : null;
+                        // CORREÇÃO: Cálculo da média com soma das 4 notas dividida por 4
+                        // com arredondamento a partir de 0,5 (usando Math.round)
+                        let mediaCalculada = null;
                         
-                        if (!medias) {
-                            // Calcula as médias se não vierem do backend
-                            medias = new Array(disciplinasCount).fill(null);
-                            for (let i = 0; i < disciplinasCount; i++) {
-                                let soma = 0, cont = 0;
-                                for (let b = 0; b < 4; b++) {
-                                    const n = notas[b][i];
-                                    if (n !== null && n !== undefined && n !== "" && !isNaN(parseFloat(n))) { 
-                                        soma += parseFloat(n); 
-                                        cont++; 
-                                    }
-                                }
-                                
-                                // Cálculo da média com arredondamento para inteiro
-                                if (cont > 0) {
-                                    const mediaCalculada = soma / cont;
-                                    medias[i] = Math.round(mediaCalculada);
-                                } else {
-                                    medias[i] = null;
+                        // Soma as notas dos 4 bimestres
+                        let soma = 0;
+                        let temNota = false;
+                        
+                        for (let bimestre = 0; bimestre < 4; bimestre++) {
+                            const notaRaw = notas[bimestre][i];
+                            if (notaRaw !== null && notaRaw !== undefined && notaRaw !== "") {
+                                const parsed = parseFloat(notaRaw);
+                                if (!isNaN(parsed)) {
+                                    soma += parsed;
+                                    temNota = true;
                                 }
                             }
                         }
-
-                        const totalFaltasPorDisciplina = Array.isArray(dados.totalFaltasPorDisciplina) && dados.totalFaltasPorDisciplina.length >= disciplinasCount
-                            ? dados.totalFaltasPorDisciplina
-                            : (function() {
-                                // calcula somando faltas por disciplina
-                                const totals = new Array(disciplinasCount).fill(0);
-                                for (let i = 0; i < disciplinasCount; i++) {
-                                    let tot = 0;
-                                    for (let b = 0; b < 4; b++) tot += (parseInt(faltas[b][i]) || 0);
-                                    totals[i] = tot;
-                                }
-                                return totals;
-                            })();
-
-                        const media = medias[i];
-                        const faltasDisc = totalFaltasPorDisciplina[i] || 0;
-
-                        // Aplica a cor baseada na média (INTEIRO SEM VÍRGULAS)
-                        if (media !== null && media !== undefined && !isNaN(media)) {
-                            if (media >= 5) {
+                        
+                        // Calcula a média dividindo por 4
+                        if (temNota) {
+                            mediaCalculada = soma / 4;
+                            // Arredonda usando Math.round (arredonda 0.5 para cima)
+                            const mediaArredondada = Math.round(mediaCalculada);
+                            
+                            // Aplica a cor baseada na média (INTEIRO SEM VÍRGULAS)
+                            if (mediaArredondada >= 5) {
                                 gradeCell.classList.add("nota-alta");
                             } else {
                                 gradeCell.classList.add("nota-baixa");
                             }
                             // Exibe como número inteiro SEM VÍRGULAS
-                            gradeCell.textContent = Math.round(media);
+                            gradeCell.textContent = mediaArredondada;
                         } else {
                             gradeCell.classList.add("sem-nota");
                             gradeCell.textContent = "--";
                         }
 
+                        // Soma as faltas dos 4 bimestres
+                        let totalFaltas = 0;
+                        for (let bimestre = 0; bimestre < 4; bimestre++) {
+                            const faltaRaw = faltas[bimestre][i];
+                            if (faltaRaw !== null && faltaRaw !== undefined && faltaRaw !== "") {
+                                const parsed = parseInt(faltaRaw);
+                                if (!isNaN(parsed)) {
+                                    totalFaltas += parsed;
+                                }
+                            }
+                        }
+
                         // Preenche a célula de faltas totais com estilo específico
-                        faltasCell.textContent = faltasDisc;
+                        faltasCell.textContent = totalFaltas;
                         faltasCell.classList.add("faltas-total-cell");
                     }
 
