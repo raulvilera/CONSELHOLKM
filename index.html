@@ -31,13 +31,15 @@
             color: #333;
             line-height: 1.6;
             min-height: 100vh;
+            overflow-x: auto;
         }
         
         .container {
             width: 100%;
             margin: 0 auto;
             padding: 20px;
-            max-width: 2000px;
+            max-width: 2400px;
+            min-width: 1200px;
         }
         
         header {
@@ -67,7 +69,9 @@
             text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
             margin: 0;
             line-height: 1.2;
-            word-break: break-word;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         
         .controls-panel {
@@ -343,33 +347,17 @@
                 0 2px 4px rgba(0,0,0,0.05);
         }
         
+        /* CONTAINER PRINCIPAL DOS CARDS - LADO A LADO */
         .results-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
+            display: flex;
+            gap: 15px;
             margin-top: 20px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+            min-height: 600px;
         }
         
-        /* Layout especial para telas grandes */
-        @media (min-width: 1200px) {
-            .results-container {
-                grid-template-columns: repeat(3, 1fr);
-                grid-template-areas: 
-                    "b1 b2 b3"
-                    "b4 b5 b5";
-            }
-            
-            .bimester-card:nth-child(1) { grid-area: b1; }
-            .bimester-card:nth-child(2) { grid-area: b2; }
-            .bimester-card:nth-child(3) { grid-area: b3; }
-            .bimester-card:nth-child(4) { grid-area: b4; }
-            .bimester-card:nth-child(5) { 
-                grid-area: b5; 
-                min-height: 0;
-                height: 100%;
-            }
-        }
-        
+        /* CARD DE BIMESTRE - DIMENSIONADO PARA FICAR LADO A LADO */
         .bimester-card {
             background-color: var(--card-bg);
             border-radius: 10px;
@@ -381,8 +369,10 @@
             border: 1px solid rgba(0,0,0,0.05);
             position: relative;
             z-index: 1;
-            height: fit-content;
-            min-height: 300px;
+            flex: 1;
+            min-width: 230px;
+            max-width: 230px;
+            height: 580px;
         }
         
         .bimester-card:hover {
@@ -406,10 +396,10 @@
         .bimester-header {
             background: linear-gradient(135deg, var(--primary-color), var(--dark-color));
             color: white;
-            padding: 12px;
+            padding: 12px 8px;
             text-align: center;
             font-weight: 700;
-            font-size: clamp(1rem, 2vw, 1.1rem);
+            font-size: 1rem;
             cursor: pointer;
             user-select: none;
             flex-shrink: 0;
@@ -418,6 +408,10 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         .bimester-header:hover {
@@ -430,32 +424,49 @@
             flex-grow: 1;
         }
         
+        /* GRID DE DISCIPLINAS - ALTURAS FIXAS E SEM QUEBRA */
         .subject-grid {
             display: grid;
-            grid-template-columns: 3fr 1fr 1fr;
-            gap: 6px;
+            grid-template-columns: 1fr;
+            gap: 4px;
         }
         
-        .subject-grid > div:nth-child(-n+3) {
+        .subject-row {
+            display: grid;
+            grid-template-columns: 2fr 0.8fr 0.8fr;
+            gap: 4px;
+            min-height: 36px;
+            align-items: stretch;
+        }
+        
+        .grid-header {
             background-color: var(--dark-color) !important;
             color: white;
             font-weight: bold;
             text-transform: uppercase;
-            font-size: 0.9rem;
-            padding: 10px 10px;
+            font-size: 0.8rem;
+            padding: 8px 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         
         .subject-cell, .grade-cell, .faltas-cell {
-            padding: 8px 10px;
-            border-radius: 6px;
+            padding: 6px 4px;
             font-weight: 600;
             display: flex;
             align-items: center;
-            font-size: clamp(0.8rem, 1.5vw, 0.85rem);
-            line-height: 1.2;
-            word-break: break-word;
-            overflow-wrap: break-word;
-            min-height: 40px;
+            font-size: 0.75rem;
+            line-height: 1.1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            height: 36px;
+            border-radius: 4px;
         }
         
         .subject-cell {
@@ -464,19 +475,21 @@
             background-color: rgba(255, 255, 255, 0.1);
             color: #ffffff;
             border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding-left: 8px;
+            padding-right: 8px;
         }
         
         .grade-cell {
             font-weight: 700;
             text-align: center;
-            min-width: 55px;
+            min-width: 40px;
             border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: clamp(0.85rem, 1.5vw, 0.9rem);
+            font-size: 0.8rem;
             color: white;
         }
         
@@ -497,14 +510,14 @@
             color: #000000;
             font-weight: bold;
             text-align: center;
-            min-width: 55px;
+            min-width: 40px;
             border: 2px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
             display: flex;
             align-items: center;
             justify-content: center;
             background-color: #ffffff;
-            font-size: clamp(0.9rem, 1.5vw, 1rem);
+            font-size: 0.85rem;
         }
         
         .faltas-total-cell {
@@ -560,19 +573,57 @@
             border-radius: 10px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.05);
             width: 100%;
-            grid-column: 1 / -1;
         }
 
-        /* Ajustes responsivos */
+        /* 5º CONCEITO - COR ESPECIAL */
+        .bimester-card.conceito5 .bimester-header {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+        }
+        
+        .bimester-card.conceito5 .bimester-header:hover {
+            background: linear-gradient(135deg, #229954, #27ae60);
+        }
+
+        /* AJUSTES RESPONSIVOS - PARA TELAS MENORES */
         @media (max-width: 1400px) {
+            .container {
+                min-width: 1000px;
+                padding: 15px;
+            }
+            
             .bimester-card {
-                min-width: 280px;
+                min-width: 200px;
+                max-width: 200px;
+                height: 550px;
+            }
+            
+            .subject-cell, .grade-cell, .faltas-cell {
+                font-size: 0.7rem;
+                height: 34px;
             }
         }
         
         @media (max-width: 1200px) {
-            .results-container {
-                grid-template-columns: repeat(2, 1fr);
+            .container {
+                min-width: 900px;
+                padding: 15px;
+            }
+            
+            .bimester-card {
+                min-width: 180px;
+                max-width: 180px;
+                height: 520px;
+            }
+            
+            .subject-cell, .grade-cell, .faltas-cell {
+                font-size: 0.65rem;
+                height: 32px;
+                padding: 4px 3px;
+            }
+            
+            .grid-header {
+                font-size: 0.75rem;
+                padding: 6px 4px;
             }
             
             .controls-panel {
@@ -595,6 +646,10 @@
         }
         
         @media (max-width: 992px) {
+            .container {
+                min-width: 800px;
+            }
+            
             .controls-panel {
                 flex-direction: column;
                 align-items: stretch;
@@ -605,10 +660,6 @@
                 flex: 0 0 auto;
             }
             
-            .results-container {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
             .form-group {
                 min-width: 100%;
             }
@@ -616,10 +667,32 @@
             .controls-center {
                 gap: 10px;
             }
+            
+            .bimester-card {
+                min-width: 160px;
+                max-width: 160px;
+                height: 500px;
+            }
+            
+            .bimester-header {
+                font-size: 0.9rem;
+                height: 45px;
+                padding: 10px 6px;
+            }
+            
+            .subject-cell, .grade-cell, .faltas-cell {
+                font-size: 0.6rem;
+                height: 30px;
+            }
         }
         
         @media (max-width: 768px) {
+            body {
+                overflow-x: auto;
+            }
+            
             .container {
+                min-width: 700px;
                 padding: 15px 10px;
             }
             
@@ -634,19 +707,31 @@
             }
             
             .results-container {
-                grid-template-columns: 1fr;
-                gap: 15px;
+                gap: 12px;
+                min-height: 480px;
             }
             
-            .subject-grid {
-                grid-template-columns: 1fr;
-                gap: 8px;
+            .bimester-card {
+                min-width: 150px;
+                max-width: 150px;
+                height: 480px;
             }
             
-            .grade-cell, .faltas-cell {
-                min-width: 100%;
-                justify-content: flex-start;
-                padding-left: 15px;
+            .bimester-header {
+                font-size: 0.85rem;
+                height: 42px;
+                padding: 8px 4px;
+            }
+            
+            .subject-cell, .grade-cell, .faltas-cell {
+                font-size: 0.58rem;
+                height: 28px;
+                padding: 3px 2px;
+            }
+            
+            .grid-header {
+                font-size: 0.7rem;
+                padding: 5px 3px;
             }
             
             .nav-btn {
@@ -662,6 +747,7 @@
         
         @media (max-width: 576px) {
             .container {
+                min-width: 600px;
                 padding: 10px 8px;
             }
             
@@ -678,10 +764,6 @@
             
             .controls-center {
                 gap: 8px;
-            }
-            
-            .form-group {
-                min-width: 100%;
             }
             
             label {
@@ -711,13 +793,29 @@
                 max-height: 85vh;
             }
             
+            .bimester-card {
+                min-width: 140px;
+                max-width: 140px;
+                height: 460px;
+            }
+            
+            .bimester-header {
+                font-size: 0.8rem;
+                height: 40px;
+                padding: 6px 3px;
+            }
+            
             .subject-cell, .grade-cell, .faltas-cell {
-                padding: 6px 8px;
-                font-size: 0.85rem;
+                font-size: 0.55rem;
+                height: 26px;
             }
         }
         
         @media (max-width: 400px) {
+            .container {
+                min-width: 500px;
+            }
+            
             h1 {
                 font-size: 1.3rem;
             }
@@ -738,12 +836,23 @@
             }
             
             .bimester-header {
-                padding: 10px 8px;
-                font-size: 0.95rem;
+                padding: 8px 3px;
+                font-size: 0.75rem;
             }
             
             .bimester-content {
-                padding: 10px 8px;
+                padding: 8px;
+            }
+            
+            .bimester-card {
+                min-width: 130px;
+                max-width: 130px;
+                height: 440px;
+            }
+            
+            .subject-cell, .grade-cell, .faltas-cell {
+                font-size: 0.5rem;
+                height: 24px;
             }
         }
     </style>
@@ -992,13 +1101,13 @@
                 if (faltas[b].length < disciplinasCount) faltas[b] = faltas[b].concat(new Array(disciplinasCount - faltas[b].length).fill(0));
             }
 
-            // Array para armazenar os cards
-            const cards = [];
-
             // Cria cards para cada bimestre (1..4) e 5º conceito
             for (let b = 0; b < 5; b++) {
                 const card = document.createElement('div');
                 card.className = "bimester-card";
+                if (b === 4) {
+                    card.classList.add("conceito5");
+                }
 
                 const header = document.createElement('div');
                 header.className = "bimester-header";
@@ -1007,7 +1116,6 @@
                     header.textContent = `${b+1}º Bimestre`;
                 } else {
                     header.textContent = "5º CONCEITO";
-                    header.style.background = "linear-gradient(135deg, #27ae60, #2ecc71)";
                 }
 
                 // Adiciona funcionalidade de duplo clique para expandir
@@ -1023,20 +1131,32 @@
                 grid.className = "subject-grid";
 
                 // Cabeçalhos da grid
+                const headerRow = document.createElement('div');
+                headerRow.className = "subject-row";
+                
                 const header1 = document.createElement("div");
+                header1.className = "grid-header";
                 header1.textContent = "Disciplina";
+                
                 const header2 = document.createElement("div");
+                header2.className = "grid-header";
                 header2.textContent = "Nota";
+                
                 const header3 = document.createElement("div");
+                header3.className = "grid-header";
                 header3.textContent = "Faltas";
                 
-                grid.appendChild(header1);
-                grid.appendChild(header2);
-                grid.appendChild(header3);
+                headerRow.appendChild(header1);
+                headerRow.appendChild(header2);
+                headerRow.appendChild(header3);
+                grid.appendChild(headerRow);
 
                 // Itera pelas disciplinas
                 for (let i = 0; i < disciplinasCount; i++) {
                     const nomeDisc = disciplinas[i] || (`Disciplina ${i+1}`);
+                    
+                    const row = document.createElement('div');
+                    row.className = "subject-row";
                     
                     // Célula do nome da disciplina
                     const nomeCell = document.createElement("div");
@@ -1142,19 +1262,17 @@
                         faltasCell.classList.add("faltas-total-cell");
                     }
 
-                    grid.appendChild(nomeCell);
-                    grid.appendChild(gradeCell);
-                    grid.appendChild(faltasCell);
+                    row.appendChild(nomeCell);
+                    row.appendChild(gradeCell);
+                    row.appendChild(faltasCell);
+                    grid.appendChild(row);
                 }
 
                 content.appendChild(grid);
                 card.appendChild(header);
                 card.appendChild(content);
-                cards.push(card);
+                resultsContainer.appendChild(card);
             }
-            
-            // Adiciona todos os cards ao container
-            cards.forEach(card => resultsContainer.appendChild(card));
         }
 
         /* ===================== FUNÇÃO PARA EXPANDIR/RETRAIR CARD ===================== */
