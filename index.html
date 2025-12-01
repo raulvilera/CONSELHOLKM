@@ -30,18 +30,20 @@
             background-color: #f5f7fa;
             color: #333;
             line-height: 1.6;
+            min-height: 100vh;
         }
         
         .container {
-            max-width: 2000px;
+            width: 100%;
             margin: 0 auto;
             padding: 20px;
+            max-width: 2000px;
         }
         
         header {
             background: linear-gradient(135deg, var(--primary-color), #1a252f);
             color: white;
-            padding: 18px 0;
+            padding: 18px 15px;
             text-align: center;
             border-radius: 12px 12px 0 0;
             margin-bottom: 25px;
@@ -61,14 +63,16 @@
         }
         
         h1 {
-            font-size: 2.2rem;
+            font-size: clamp(1.5rem, 4vw, 2.2rem);
             text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
             margin: 0;
+            line-height: 1.2;
+            word-break: break-word;
         }
         
         .controls-panel {
             background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-            padding: 18px 25px 23px;
+            padding: 18px 20px 23px;
             border-radius: 12px;
             box-shadow: 
                 0 8px 25px rgba(0,0,0,0.1),
@@ -76,12 +80,13 @@
                 inset 0 1px 0 rgba(255,255,255,0.8);
             margin-bottom: 25px;
             display: flex;
+            flex-wrap: wrap;
             align-items: flex-start;
             justify-content: space-between;
+            gap: 15px;
             position: relative;
             border: 1px solid rgba(255,255,255,0.5);
             margin-top: -12px;
-            gap: 20px;
         }
         
         .controls-panel::after {
@@ -98,8 +103,8 @@
         }
         
         .nav-btn {
-            padding: 12px 25px;
-            font-size: 1.1rem;
+            padding: 12px 15px;
+            font-size: clamp(0.9rem, 2vw, 1.1rem);
             font-weight: bold;
             border: none;
             border-radius: 8px;
@@ -112,9 +117,11 @@
             background: linear-gradient(145deg, #3498db, #2980b9);
             color: white;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            min-width: 140px;
-            flex-shrink: 0;
+            letter-spacing: 0.5px;
+            min-width: 120px;
+            flex: 1;
+            max-width: 200px;
+            white-space: nowrap;
         }
         
         .nav-btn:hover {
@@ -161,51 +168,51 @@
         
         .controls-center {
             display: flex;
+            flex-wrap: wrap;
             align-items: flex-start;
-            gap: 25px;
-            flex: 1;
-            justify-content: center;
+            gap: 15px;
+            flex: 3;
             min-width: 0;
+            justify-content: center;
         }
         
         .form-group {
             display: flex;
             flex-direction: column;
+            flex: 1;
+            min-width: 200px;
         }
         
         .form-group.turma {
+            flex: 1;
             min-width: 150px;
-            max-width: 300px;
-            flex: 0 1 auto;
         }
         
         .form-group.aluno {
-            min-width: 350px;
-            max-width: 600px;
-            flex: 1 1 auto;
+            flex: 2;
+            min-width: 250px;
         }
         
         .form-group.btn-container {
+            flex: 0 1 auto;
             min-width: 140px;
-            max-width: 160px;
-            flex: 0 0 auto;
         }
         
         label {
             display: block;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             font-weight: 700;
             color: var(--dark-color);
-            font-size: 1.05rem;
+            font-size: clamp(0.9rem, 2vw, 1.05rem);
             text-shadow: 0 1px 1px rgba(255,255,255,0.8);
             white-space: nowrap;
         }
         
         select, input {
-            padding: 14px 18px;
+            padding: 12px 15px;
             border: 1px solid #ced4da;
             border-radius: 8px;
-            font-size: 1.05rem;
+            font-size: clamp(0.95rem, 2vw, 1.05rem);
             background: linear-gradient(to bottom, #ffffff, #f8f9fa);
             transition: all 0.3s ease;
             box-shadow: 
@@ -216,16 +223,13 @@
             width: 100%;
         }
         
-        /* Estilos específicos para os campos de seleção */
         #class-select {
             text-align: center;
-            width: auto;
-            min-width: 100%;
+            width: 100%;
         }
         
         #student-select {
-            width: auto;
-            min-width: 100%;
+            width: 100%;
         }
         
         select:focus, input:focus {
@@ -238,14 +242,12 @@
             background: linear-gradient(to bottom, #ffffff, #fefefe);
         }
         
-        /* Estilo para quando uma turma é selecionada - APENAS O CAMPO */
         #class-select.turma-selecionada {
             background: #ffeb3b !important;
             color: #333 !important;
             font-weight: bold !important;
         }
         
-        /* Estilo para lista suspensa de turmas com cores alternadas claro/branco */
         #class-select option:nth-child(even) {
             background-color: #f0f8ff;
         }
@@ -264,14 +266,12 @@
             font-weight: bold !important;
         }
         
-        /* Estilo para quando um aluno é selecionado - APENAS O CAMPO */
         #student-select.aluno-selecionado {
             background: #1a237e !important;
             color: #ffffff !important;
             font-weight: bold !important;
         }
         
-        /* Estilo para lista suspensa de alunos - TODOS OS NOMES EM NEGRITO E PRETOS */
         #student-select option {
             font-weight: bold !important;
             color: #000000 !important;
@@ -302,7 +302,7 @@
             padding: 12px 20px;
             border-radius: 8px;
             cursor: pointer;
-            font-size: 1rem;
+            font-size: clamp(0.9rem, 2vw, 1rem);
             font-weight: 600;
             transition: all 0.3s ease;
             box-shadow: 
@@ -311,6 +311,7 @@
             width: 100%;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            height: 46px;
         }
         
         .btn:hover {
@@ -341,7 +342,7 @@
             flex-wrap: wrap;
             gap: 15px;
             margin-bottom: 25px;
-            justify-content: space-between;
+            justify-content: center;
         }
         
         .bimester-card {
@@ -355,9 +356,9 @@
             flex-direction: column;
             position: relative;
             z-index: 1;
-            flex: 1;
-            min-width: 19%; /* 5 cards com pequeno espaço entre eles */
-            max-width: 19%;
+            flex: 1 1 300px;
+            min-width: 300px;
+            max-width: 100%;
             max-height: 500px;
         }
         
@@ -371,7 +372,7 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 80%;
+            width: 90%;
             max-width: 800px;
             max-height: 80vh;
             z-index: 1000;
@@ -392,13 +393,16 @@
         .bimester-header {
             background: linear-gradient(135deg, var(--primary-color), #34495e);
             color: white;
-            padding: 12px; /* Reduzido para economizar espaço */
+            padding: 12px;
             text-align: center;
             font-weight: 700;
-            font-size: 1.1rem; /* Reduzido para caber melhor */
+            font-size: clamp(1rem, 2vw, 1.1rem);
             text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
             cursor: pointer;
             transition: all 0.3s ease;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         
         .bimester-header:hover {
@@ -406,7 +410,7 @@
         }
         
         .bimester-content {
-            padding: 12px; /* Reduzido para economizar espaço */
+            padding: 12px;
             flex: 1;
             overflow-y: auto;
         }
@@ -414,11 +418,11 @@
         .subject-grid {
             display: grid;
             grid-template-columns: 1fr auto auto;
-            gap: 6px; /* Reduzido para economizar espaço */
+            gap: 6px;
         }
         
         .subject-cell {
-            padding: 8px 10px; /* Reduzido para economizar espaço */
+            padding: 8px 10px;
             border-radius: 6px;
             font-weight: 600;
             color: #ffffff;
@@ -428,25 +432,25 @@
             transition: all 0.2s ease;
             display: flex;
             align-items: center;
-            font-size: 0.85rem; /* Reduzido para caber melhor */
-            line-height: 1.2; /* Melhor legibilidade com texto menor */
-            word-break: break-word; /* Garante que nomes longos quebrem corretamente */
-            overflow-wrap: break-word; /* Garante que nomes longos quebrem corretamente */
+            font-size: clamp(0.8rem, 1.5vw, 0.85rem);
+            line-height: 1.2;
+            word-break: break-word;
+            overflow-wrap: break-word;
         }
         
         .grade-cell {
-            padding: 8px 10px; /* Reduzido para economizar espaço */
+            padding: 8px 10px;
             border-radius: 6px;
             font-weight: 700;
             text-align: center;
-            min-width: 55px; /* Reduzido para caber melhor */
+            min-width: 55px;
             border: 1px solid rgba(255, 255, 255, 0.2);
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             transition: all 0.2s ease;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.9rem; /* Reduzido para caber melhor */
+            font-size: clamp(0.85rem, 1.5vw, 0.9rem);
         }
         
         .grade-cell.nota-baixa {
@@ -465,11 +469,11 @@
         }
         
         .faltas-cell {
-            padding: 8px 10px; /* Reduzido para economizar espaço */
+            padding: 8px 10px;
             border-radius: 6px;
             font-weight: bold;
             text-align: center;
-            min-width: 55px; /* Reduzido para caber melhor */
+            min-width: 55px;
             border: 2px solid rgba(255, 255, 255, 0.3);
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             transition: all 0.2s ease;
@@ -478,11 +482,9 @@
             justify-content: center;
             background-color: #ffffff;
             color: #000000;
-            font-size: 1rem; /* Reduzido para caber melhor */
-            /* text-shadow removido para fundo branco */
+            font-size: clamp(0.9rem, 1.5vw, 1rem);
         }
         
-        /* Estilo específico para as faltas do 5º conceito - fundo branco, texto preto em negrito */
         .faltas-total-cell {
             background-color: #ffffff !important;
             color: #000000 !important;
@@ -493,7 +495,7 @@
             text-align: center;
             margin-top: 40px;
             color: #6c757d;
-            font-size: 0.95rem;
+            font-size: clamp(0.85rem, 2vw, 0.95rem);
             padding: 20px;
             border-top: 1px solid #e9ecef;
         }
@@ -502,7 +504,7 @@
             text-align: center;
             padding: 30px;
             color: var(--dark-color);
-            font-size: 1.1rem;
+            font-size: clamp(1rem, 2vw, 1.1rem);
         }
         
         .error {
@@ -521,83 +523,35 @@
             padding: 40px;
             color: #6c757d;
             font-style: italic;
-            font-size: 1.1rem;
+            font-size: clamp(1rem, 2vw, 1.1rem);
             background: linear-gradient(135deg, #f8f9fa, #e9ecef);
             border-radius: 10px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.05);
             width: 100%;
         }
-        
+
         /* Ajustes responsivos */
-        @media (max-width: 1800px) {
-            .container {
-                max-width: 1700px;
-            }
-            
-            .bimester-card {
-                min-width: 19%;
-                max-width: 19%;
-            }
-        }
-        
-        @media (max-width: 1600px) {
-            .container {
-                max-width: 1500px;
-            }
-            
-            .bimester-card {
-                min-width: 19%;
-                max-width: 19%;
-            }
-        }
-        
         @media (max-width: 1400px) {
-            .container {
-                max-width: 1300px;
-            }
-            
             .bimester-card {
-                min-width: 19%;
-                max-width: 19%;
-            }
-            
-            .subject-cell {
-                font-size: 0.8rem;
-            }
-            
-            .grade-cell, .faltas-cell {
-                font-size: 0.85rem;
-                min-width: 50px;
+                flex: 1 1 280px;
+                min-width: 280px;
             }
         }
         
-        @media (max-width: 1240px) {
-            .container {
-                max-width: 1200px;
-            }
-            
+        @media (max-width: 1200px) {
             .bimester-card {
-                min-width: 48%;
-                max-width: 48%;
-                margin-bottom: 15px;
+                flex: 1 1 250px;
+                min-width: 250px;
             }
             
-            /* Garante que o 5º card tenha a mesma largura dos outros em telas médias */
-            .bimester-card:nth-child(5) {
-                min-width: 48%;
-                max-width: 48%;
-            }
-        }
-        
-        @media (max-width: 1024px) {
             .controls-panel {
-                flex-direction: column;
-                gap: 20px;
+                padding: 15px;
             }
             
             .controls-center {
-                width: 100%;
                 order: 2;
+                width: 100%;
+                flex: 1 1 100%;
             }
             
             .nav-btn.prev {
@@ -607,59 +561,160 @@
             .nav-btn.next {
                 order: 3;
             }
+        }
+        
+        @media (max-width: 992px) {
+            .controls-panel {
+                flex-direction: column;
+                align-items: stretch;
+            }
             
-            .form-group, .form-group.turma, .form-group.aluno, .form-group.btn-container {
-                min-width: 100%;
+            .nav-btn {
                 max-width: 100%;
-                width: 100%;
+                flex: 0 0 auto;
             }
             
-            .form-group.aluno {
-                flex: 1;
+            .bimester-card {
+                flex: 1 1 calc(50% - 20px);
+                min-width: calc(50% - 20px);
             }
             
-            #class-select, #student-select {
-                width: 100%;
+            .form-group {
+                min-width: 100%;
             }
             
-            .bimester-card.expanded {
-                width: 90%;
+            .controls-center {
+                gap: 10px;
             }
         }
         
         @media (max-width: 768px) {
             .container {
-                padding: 15px;
+                padding: 15px 10px;
             }
             
-            h1 {
-                font-size: 1.8rem;
+            header {
+                padding: 15px 10px;
+                margin-bottom: 20px;
             }
             
             .controls-panel {
-                padding: 15px 20px 20px;
+                padding: 15px 12px;
+                margin-bottom: 20px;
             }
             
             .bimester-card {
+                flex: 1 1 100%;
                 min-width: 100%;
-                max-width: 100%;
-            }
-            
-            select, input {
-                padding: 12px 15px;
+                max-height: 400px;
             }
             
             .subject-grid {
                 grid-template-columns: 1fr;
-                gap: 12px;
+                gap: 8px;
             }
             
-            .subject-cell, .grade-cell, .faltas-cell {
+            .grade-cell, .faltas-cell {
                 min-width: 100%;
+                justify-content: flex-start;
+                padding-left: 15px;
+            }
+            
+            .nav-btn {
+                padding: 10px 12px;
+                font-size: 0.9rem;
+            }
+            
+            .btn {
+                padding: 10px 15px;
+                height: 44px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .container {
+                padding: 10px 8px;
+            }
+            
+            header {
+                padding: 12px 8px;
+                border-radius: 8px 8px 0 0;
+            }
+            
+            .controls-panel {
+                padding: 12px 10px;
+                border-radius: 8px;
+                gap: 10px;
+            }
+            
+            .controls-center {
+                gap: 8px;
+            }
+            
+            .form-group {
+                min-width: 100%;
+            }
+            
+            label {
+                font-size: 0.9rem;
+                margin-bottom: 6px;
+            }
+            
+            select, input {
+                padding: 10px 12px;
+                font-size: 0.95rem;
+            }
+            
+            .nav-btn {
+                font-size: 0.85rem;
+                min-width: 100px;
+                padding: 8px 10px;
+            }
+            
+            .btn {
+                font-size: 0.9rem;
+                padding: 10px 12px;
+                height: 42px;
             }
             
             .bimester-card.expanded {
                 width: 95%;
+                max-height: 85vh;
+            }
+            
+            .subject-cell, .grade-cell, .faltas-cell {
+                padding: 6px 8px;
+                font-size: 0.85rem;
+            }
+        }
+        
+        @media (max-width: 400px) {
+            h1 {
+                font-size: 1.3rem;
+            }
+            
+            .controls-panel {
+                padding: 10px 8px;
+            }
+            
+            .nav-btn {
+                font-size: 0.8rem;
+                padding: 8px;
+                min-width: 90px;
+            }
+            
+            .btn {
+                font-size: 0.85rem;
+                padding: 8px 10px;
+            }
+            
+            .bimester-header {
+                padding: 10px 8px;
+                font-size: 0.95rem;
+            }
+            
+            .bimester-content {
+                padding: 10px 8px;
             }
         }
     </style>
@@ -708,440 +763,402 @@
     <div class="overlay" id="overlay"></div>
 
     <script>
-      // URL DO WEB APP
-      const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyfze2Cj_WBI2-DtCfIhFxHzQrHkjjp687MCJxapA2L3FBLtgBoHqaSSxeryvc4abkO/exec';
+        // URL DO WEB APP
+        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyfze2Cj_WBI2-DtCfIhFxHzQrHkjjp687MCJxapA2L3FBLtgBoHqaSSxeryvc4abkO/exec';
 
-      // Elementos DOM
-      const classSelect = document.getElementById('class-select');
-      const studentSelect = document.getElementById('student-select');
-      const loadButton = document.getElementById('load-data');
-      const resultsContainer = document.getElementById('results');
-      const prevBtn = document.getElementById('prev-btn');
-      const nextBtn = document.getElementById('next-btn');
-      const overlay = document.getElementById('overlay');
+        // Elementos DOM
+        const classSelect = document.getElementById('class-select');
+        const studentSelect = document.getElementById('student-select');
+        const loadButton = document.getElementById('load-data');
+        const resultsContainer = document.getElementById('results');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const overlay = document.getElementById('overlay');
 
-      // Variáveis globais para navegação
-      let currentStudents = [];
-      let currentStudentIndex = -1;
-      let currentTurma = '';
-      let currentExpandedCard = null;
+        // Variáveis globais para navegação
+        let currentStudents = [];
+        let currentStudentIndex = -1;
+        let currentTurma = '';
+        let currentExpandedCard = null;
 
-      /* ===================== CARREGAR TURMAS ===================== */
-      async function populateClassSelect() {
-        try {
-          showLoading('Carregando turmas...');
+        /* ===================== CARREGAR TURMAS ===================== */
+        async function populateClassSelect() {
+            try {
+                showLoading('Carregando turmas...');
 
-          const response = await fetch(`${WEB_APP_URL}?action=getTurmas`);
-          const turmas = await response.json();
+                const response = await fetch(`${WEB_APP_URL}?action=getTurmas`);
+                const turmas = await response.json();
 
-          if (turmas.error) throw new Error(turmas.error);
+                if (turmas.error) throw new Error(turmas.error);
 
-          classSelect.innerHTML = '<option value="">-- Selecione uma turma --</option>';
-          turmas.forEach(turma => {
-            const option = document.createElement('option');
-            option.value = turma;
-            option.textContent = turma;
-            classSelect.appendChild(option);
-          });
+                classSelect.innerHTML = '<option value="">-- Selecione uma turma --</option>';
+                turmas.forEach(turma => {
+                    const option = document.createElement('option');
+                    option.value = turma;
+                    option.textContent = turma;
+                    classSelect.appendChild(option);
+                });
 
-          hideLoading();
-
-          // Ajustar a largura do campo de turmas baseado no conteúdo (Removido para otimização)
-
-        } catch (err) {
-          showError("Erro ao carregar turmas.");
-          console.error(err);
-        }
-      }
-
-
-
-      /* ===================== CARREGAR ALUNOS ===================== */
-      classSelect.addEventListener('change', async function () {
-        const turma = this.value;
-
-        if (turma) classSelect.classList.add('turma-selecionada');
-        else classSelect.classList.remove('turma-selecionada');
-
-        studentSelect.disabled = true;
-        loadButton.disabled = true;
-        prevBtn.disabled = true;
-        nextBtn.disabled = true;
-
-        if (!turma) {
-          studentSelect.innerHTML = '<option value="">-- Primeiro selecione uma turma --</option>';
-          showNoData();
-          return;
+                hideLoading();
+            } catch (err) {
+                showError("Erro ao carregar turmas.");
+                console.error(err);
+            }
         }
 
-        studentSelect.innerHTML = '<option>Carregando alunos...</option>';
+        /* ===================== CARREGAR ALUNOS ===================== */
+        classSelect.addEventListener('change', async function () {
+            const turma = this.value;
 
-        try {
-          const response = await fetch(`${WEB_APP_URL}?action=getAlunos&turma=${encodeURIComponent(turma)}`);
-          const alunos = await response.json();
+            if (turma) classSelect.classList.add('turma-selecionada');
+            else classSelect.classList.remove('turma-selecionada');
 
-          if (alunos.error) throw new Error(alunos.error);
+            studentSelect.disabled = true;
+            loadButton.disabled = true;
+            prevBtn.disabled = true;
+            nextBtn.disabled = true;
 
-          studentSelect.innerHTML = '<option value="">-- Selecione um aluno --</option>';
-
-          // Armazena a lista de alunos para navegação
-          currentStudents = Array.isArray(alunos) ? alunos : [];
-          currentTurma = turma;
-
-          currentStudents.forEach((a) => {
-            const option = document.createElement('option');
-            option.value = a;
-            option.textContent = a;
-            studentSelect.appendChild(option);
-          });
-
-          studentSelect.disabled = false;
-
-          // Ajustar a largura do campo de alunos baseado no conteúdo
-          adjustStudentSelectWidth();
-
-        } catch (err) {
-          studentSelect.innerHTML = '<option value="">Erro ao carregar alunos</option>';
-          console.error(err);
-        }
-      });
-
-      // Função para ajustar a largura do campo de alunos
-      function adjustStudentSelectWidth() {
-        let maxWidth = 0;
-        Array.from(studentSelect.options).forEach(option => {
-          const text = option.textContent;
-          const tempSpan = document.createElement('span');
-          tempSpan.style.visibility = 'hidden';
-          tempSpan.style.position = 'absolute';
-          tempSpan.style.whiteSpace = 'nowrap';
-          tempSpan.style.fontSize = '1.05rem';
-          tempSpan.style.fontFamily = 'Segoe UI, Tahoma, Geneva, Verdana, sans-serif';
-          tempSpan.textContent = text;
-          document.body.appendChild(tempSpan);
-          const textWidth = tempSpan.offsetWidth;
-          document.body.removeChild(tempSpan);
-          if (textWidth > maxWidth) maxWidth = textWidth;
-        });
-
-        const padding = 60;
-        const newWidth = Math.min(Math.max(maxWidth + padding, 350), 600);
-        studentSelect.style.width = `${newWidth}px`;
-      }
-
-      /* Habilitar botão quando aluno for selecionado */
-      studentSelect.addEventListener('change', function () {
-        const hasStudent = !!this.value;
-        loadButton.disabled = !hasStudent;
-
-        if (hasStudent) studentSelect.classList.add('aluno-selecionado');
-        else studentSelect.classList.remove('aluno-selecionado');
-
-        if (hasStudent) {
-          currentStudentIndex = currentStudents.indexOf(this.value);
-          updateNavigationButtons();
-        } else {
-          currentStudentIndex = -1;
-          prevBtn.disabled = true;
-          nextBtn.disabled = true;
-        }
-      });
-
-      /* ===================== NAVEGAÇÃO ENTRE ALUNOS ===================== */
-      function updateNavigationButtons() {
-        prevBtn.disabled = currentStudentIndex <= 0;
-        nextBtn.disabled = currentStudentIndex >= currentStudents.length - 1 || currentStudents.length === 0;
-      }
-
-      async function navigateStudents(direction) {
-        if (direction === 'prev' && currentStudentIndex > 0) {
-          currentStudentIndex--;
-        } else if (direction === 'next' && currentStudentIndex < currentStudents.length - 1) {
-          currentStudentIndex++;
-        } else {
-          return;
-        }
-
-        studentSelect.value = currentStudents[currentStudentIndex];
-        studentSelect.classList.add('aluno-selecionado');
-
-        // Carrega os dados do aluno automaticamente
-        await loadStudentData();
-        updateNavigationButtons();
-      }
-
-      prevBtn.addEventListener('click', () => navigateStudents('prev'));
-      nextBtn.addEventListener('click', () => navigateStudents('next'));
-
-      /* ===================== CARREGAR DADOS DO ALUNO ===================== */
-      loadButton.addEventListener('click', loadStudentData);
-
-      async function loadStudentData() {
-        const turma = classSelect.value;
-        const aluno = studentSelect.value;
-
-        currentStudentIndex = currentStudents.indexOf(aluno);
-        updateNavigationButtons();
-
-        showLoading("Carregando dados...");
-
-        try {
-          const response = await fetch(`${WEB_APP_URL}?action=getDadosAluno&turma=${encodeURIComponent(turma)}&aluno=${encodeURIComponent(aluno)}`);
-          const dados = await response.json();
-
-          if (dados.error) throw new Error(dados.error);
-
-          // Verifica estrutura mínima esperada
-          const hasNotas = Array.isArray(dados.notas) && dados.notas.length >= 1;
-          const hasDisciplinas = Array.isArray(dados.disciplinas);
-          if (!hasNotas || !hasDisciplinas) {
-            console.error("Resposta do backend:", dados);
-            showError("Estrutura de dados inválida.");
-            return;
-          }
-
-          // normalize shape: garantir indices 0..3 (bimestres)
-          const notas = Array.isArray(dados.notas) ? dados.notas : [];
-          const faltas = Array.isArray(dados.faltas) ? dados.faltas : [[],[],[],[]];
-          const disciplinas = Array.isArray(dados.disciplinas) ? dados.disciplinas : [];
-          const conceito5 = Array.isArray(dados.conceito5) ? dados.conceito5 : [];
-          const coresConceito5 = Array.isArray(dados.coresConceito5) ? dados.coresConceito5 : [];
-          const totalFaltasPorDisciplina = Array.isArray(dados.totalFaltasPorDisciplina) ? dados.totalFaltasPorDisciplina : [];
-          const faltasTotal = typeof dados.faltasTotal === 'number' ? dados.faltasTotal : (totalFaltasPorDisciplina.reduce((a,b)=>a+(b||0),0) || 0);
-
-          displayStudentData({ disciplinas, notas, faltas, conceito5, coresConceito5, totalFaltasPorDisciplina, faltasTotal, bimestres: dados.bimestres || {} });
-
-        } catch (err) {
-          showError("Erro ao carregar dados do aluno.");
-          console.error(err);
-        }
-      }
-
-      /* ===================== EXIBIR DADOS DO ALUNO ===================== */
-      function displayStudentData(dados) {
-        resultsContainer.innerHTML = "";
-
-        // Valida
-        if (!dados || !Array.isArray(dados.disciplinas) || !Array.isArray(dados.notas)) {
-          showError("Estrutura de dados inválida.");
-          return;
-        }
-
-        const disciplinas = dados.disciplinas;
-        const disciplinasCount = disciplinas.length || 0;
-
-        // Ensure notas and faltas are arrays of 4 arrays
-        const notas = [];
-        const faltas = [];
-        for (let b = 0; b < 4; b++) {
-          notas[b] = Array.isArray(dados.notas[b]) ? dados.notas[b] : new Array(disciplinasCount).fill(null);
-          faltas[b] = Array.isArray(dados.faltas[b]) ? dados.faltas[b] : new Array(disciplinasCount).fill(0);
-          // if shorter, pad
-          if (notas[b].length < disciplinasCount) notas[b] = notas[b].concat(new Array(disciplinasCount - notas[b].length).fill(null));
-          if (faltas[b].length < disciplinasCount) faltas[b] = faltas[b].concat(new Array(disciplinasCount - faltas[b].length).fill(0));
-        }
-
-        // Cria cards para cada bimestre (1..4) e 5º conceito
-        for (let b = 0; b < 5; b++) {
-          const card = document.createElement('div');
-          card.className = "bimester-card";
-
-          const header = document.createElement('div');
-          header.className = "bimester-header";
-          
-          if (b < 4) {
-            header.textContent = `${b+1}º Bimestre`;
-          } else {
-            header.textContent = "5º CONCEITO";
-            header.style.background = "linear-gradient(135deg, #27ae60, #2ecc71)";
-          }
-
-          // Adiciona funcionalidade de duplo clique para expandir
-          header.addEventListener('dblclick', function() {
-            toggleCardExpansion(card);
-          });
-
-          const content = document.createElement('div');
-          content.className = "bimester-content";
-
-          // Cria grid para as disciplinas, notas e faltas
-          const grid = document.createElement('div');
-          grid.className = "subject-grid";
-
-          // Itera pelas disciplinas
-          for (let i = 0; i < disciplinasCount; i++) {
-            const nomeDisc = disciplinas[i] || (`Disciplina ${i+1}`);
-            
-            // Célula do nome da disciplina
-            const nomeCell = document.createElement("div");
-            nomeCell.className = "subject-cell";
-            nomeCell.textContent = nomeDisc;
-
-            // Célula da nota
-            const gradeCell = document.createElement("div");
-            gradeCell.className = "grade-cell";
-
-            // Célula das faltas
-            const faltasCell = document.createElement("div");
-            faltasCell.className = "faltas-cell";
-
-            if (b < 4) {
-              // Bimestres 1-4
-              const notaRaw = notas[b][i];
-              const faltaRaw = faltas[b][i];
-
-              let nota = null;
-              if (notaRaw !== null && notaRaw !== undefined && notaRaw !== "") {
-                const parsed = parseFloat(notaRaw);
-                nota = isNaN(parsed) ? null : parsed;
-              }
-
-              const falta = (faltaRaw === null || faltaRaw === undefined || faltaRaw === "") ? 0 : (parseInt(faltaRaw) || 0);
-
-              // Aplica a cor baseada na nota
-              if (nota !== null) {
-                if (nota >= 5) {
-                  gradeCell.classList.add("nota-alta");
-                } else {
-                  gradeCell.classList.add("nota-baixa");
-                }
-                gradeCell.textContent = nota.toFixed(1);
-              } else {
-                gradeCell.classList.add("sem-nota");
-                gradeCell.textContent = "--";
-              }
-
-              // Preenche a célula de faltas
-              faltasCell.textContent = falta;
-            } else {
-              // 5º Conceito (médias e totais)
-              let medias = Array.isArray(dados.conceito5) && dados.conceito5.length >= disciplinasCount ? 
-                dados.conceito5.slice(0, disciplinasCount) : null;
-              
-              if (!medias) {
-                // Calcula as médias se não vierem do backend
-                medias = new Array(disciplinasCount).fill(null);
-                for (let i = 0; i < disciplinasCount; i++) {
-                  let soma = 0, cont = 0;
-                  for (let b = 0; b < 4; b++) {
-                    const n = notas[b][i];
-                    if (n !== null && n !== undefined && n !== "" && !isNaN(parseFloat(n))) { 
-                      soma += parseFloat(n); 
-                      cont++; 
-                    }
-                  }
-                  
-                  // Cálculo da média com arredondamento
-                  if (cont > 0) {
-                    const mediaCalculada = soma / cont;
-                    // Arredondar para inteiro (apenas um algarismo) - Requisito do usuário
-                    medias[i] = Math.round(mediaCalculada);
-                  } else {
-                    medias[i] = null;
-                  }
-                }
-              }
-
-              const totalFaltasPorDisciplina = Array.isArray(dados.totalFaltasPorDisciplina) && dados.totalFaltasPorDisciplina.length >= disciplinasCount
-                ? dados.totalFaltasPorDisciplina
-                : (function() {
-                    // calcula somando faltas por disciplina
-                    const totals = new Array(disciplinasCount).fill(0);
-                    for (let i = 0; i < disciplinasCount; i++) {
-                      let tot = 0;
-                      for (let b = 0; b < 4; b++) tot += (parseInt(faltas[b][i]) || 0);
-                      totals[i] = tot;
-                    }
-                    return totals;
-                  })();
-
-              const media = medias[i];
-              const faltasDisc = totalFaltasPorDisciplina[i] || 0;
-
-              // Aplica a cor baseada na média
-              if (media !== null && media !== undefined && !isNaN(media)) {
-                if (media >= 5) {
-                  gradeCell.classList.add("nota-alta");
-                } else {
-                  gradeCell.classList.add("nota-baixa");
-                }
-               gradeCell.textContent = Math.round(media); // Garante que o valor exibido seja inteiro
-              } else {
-                gradeCell.classList.add("sem-nota");
-                gradeCell.textContent = "--";
-              }
-
-              // Preenche a célula de faltas totais com estilo específico
-              faltasCell.textContent = faltasDisc;
-              faltasCell.classList.add("faltas-total-cell");
+            if (!turma) {
+                studentSelect.innerHTML = '<option value="">-- Primeiro selecione uma turma --</option>';
+                showNoData();
+                return;
             }
 
-            grid.appendChild(nomeCell);
-            grid.appendChild(gradeCell);
-            grid.appendChild(faltasCell);
-          }
+            studentSelect.innerHTML = '<option>Carregando alunos...</option>';
 
-          content.appendChild(grid);
-          card.appendChild(header);
-          card.appendChild(content);
-          resultsContainer.appendChild(card);
+            try {
+                const response = await fetch(`${WEB_APP_URL}?action=getAlunos&turma=${encodeURIComponent(turma)}`);
+                const alunos = await response.json();
+
+                if (alunos.error) throw new Error(alunos.error);
+
+                studentSelect.innerHTML = '<option value="">-- Selecione um aluno --</option>';
+
+                // Armazena a lista de alunos para navegação
+                currentStudents = Array.isArray(alunos) ? alunos : [];
+                currentTurma = turma;
+
+                currentStudents.forEach((a) => {
+                    const option = document.createElement('option');
+                    option.value = a;
+                    option.textContent = a;
+                    studentSelect.appendChild(option);
+                });
+
+                studentSelect.disabled = false;
+            } catch (err) {
+                studentSelect.innerHTML = '<option value="">Erro ao carregar alunos</option>';
+                console.error(err);
+            }
+        });
+
+        /* Habilitar botão quando aluno for selecionado */
+        studentSelect.addEventListener('change', function () {
+            const hasStudent = !!this.value;
+            loadButton.disabled = !hasStudent;
+
+            if (hasStudent) studentSelect.classList.add('aluno-selecionado');
+            else studentSelect.classList.remove('aluno-selecionado');
+
+            if (hasStudent) {
+                currentStudentIndex = currentStudents.indexOf(this.value);
+                updateNavigationButtons();
+            } else {
+                currentStudentIndex = -1;
+                prevBtn.disabled = true;
+                nextBtn.disabled = true;
+            }
+        });
+
+        /* ===================== NAVEGAÇÃO ENTRE ALUNOS ===================== */
+        function updateNavigationButtons() {
+            prevBtn.disabled = currentStudentIndex <= 0;
+            nextBtn.disabled = currentStudentIndex >= currentStudents.length - 1 || currentStudents.length === 0;
         }
-      }
 
-      /* ===================== FUNÇÃO PARA EXPANDIR/RETRAIR CARD ===================== */
-      function toggleCardExpansion(card) {
-        // Se o card já está expandido, retrai
-        if (card.classList.contains('expanded')) {
-          card.classList.remove('expanded');
-          overlay.style.display = 'none';
-          currentExpandedCard = null;
-        } else {
-          // Remove a classe expanded de todos os cards
-          document.querySelectorAll('.bimester-card').forEach(c => {
-            c.classList.remove('expanded');
-          });
-          
-          // Adiciona a classe expanded no card clicado
-          card.classList.add('expanded');
-          overlay.style.display = 'block';
-          currentExpandedCard = card;
+        async function navigateStudents(direction) {
+            if (direction === 'prev' && currentStudentIndex > 0) {
+                currentStudentIndex--;
+            } else if (direction === 'next' && currentStudentIndex < currentStudents.length - 1) {
+                currentStudentIndex++;
+            } else {
+                return;
+            }
+
+            studentSelect.value = currentStudents[currentStudentIndex];
+            studentSelect.classList.add('aluno-selecionado');
+
+            // Carrega os dados do aluno automaticamente
+            await loadStudentData();
+            updateNavigationButtons();
         }
-      }
 
-      // Fechar card expandido ao clicar no overlay
-      overlay.addEventListener('click', function() {
-        if (currentExpandedCard) {
-          currentExpandedCard.classList.remove('expanded');
-          overlay.style.display = 'none';
-          currentExpandedCard = null;
+        prevBtn.addEventListener('click', () => navigateStudents('prev'));
+        nextBtn.addEventListener('click', () => navigateStudents('next'));
+
+        /* ===================== CARREGAR DADOS DO ALUNO ===================== */
+        loadButton.addEventListener('click', loadStudentData);
+
+        async function loadStudentData() {
+            const turma = classSelect.value;
+            const aluno = studentSelect.value;
+
+            currentStudentIndex = currentStudents.indexOf(aluno);
+            updateNavigationButtons();
+
+            showLoading("Carregando dados...");
+
+            try {
+                const response = await fetch(`${WEB_APP_URL}?action=getDadosAluno&turma=${encodeURIComponent(turma)}&aluno=${encodeURIComponent(aluno)}`);
+                const dados = await response.json();
+
+                if (dados.error) throw new Error(dados.error);
+
+                // Verifica estrutura mínima esperada
+                const hasNotas = Array.isArray(dados.notas) && dados.notas.length >= 1;
+                const hasDisciplinas = Array.isArray(dados.disciplinas);
+                if (!hasNotas || !hasDisciplinas) {
+                    console.error("Resposta do backend:", dados);
+                    showError("Estrutura de dados inválida.");
+                    return;
+                }
+
+                // normalize shape: garantir indices 0..3 (bimestres)
+                const notas = Array.isArray(dados.notas) ? dados.notas : [];
+                const faltas = Array.isArray(dados.faltas) ? dados.faltas : [[],[],[],[]];
+                const disciplinas = Array.isArray(dados.disciplinas) ? dados.disciplinas : [];
+                const conceito5 = Array.isArray(dados.conceito5) ? dados.conceito5 : [];
+                const coresConceito5 = Array.isArray(dados.coresConceito5) ? dados.coresConceito5 : [];
+                const totalFaltasPorDisciplina = Array.isArray(dados.totalFaltasPorDisciplina) ? dados.totalFaltasPorDisciplina : [];
+                const faltasTotal = typeof dados.faltasTotal === 'number' ? dados.faltasTotal : (totalFaltasPorDisciplina.reduce((a,b)=>a+(b||0),0) || 0);
+
+                displayStudentData({ disciplinas, notas, faltas, conceito5, coresConceito5, totalFaltasPorDisciplina, faltasTotal, bimestres: dados.bimestres || {} });
+            } catch (err) {
+                showError("Erro ao carregar dados do aluno.");
+                console.error(err);
+            }
         }
-      });
 
-      /* ===================== FUNÇÕES DE AUXÍLIO ===================== */
-      function showLoading(msg) {
-        resultsContainer.innerHTML = `<div class="loading">${msg}</div>`;
-      }
+        /* ===================== EXIBIR DADOS DO ALUNO ===================== */
+        function displayStudentData(dados) {
+            resultsContainer.innerHTML = "";
 
-      function hideLoading() {
-        const loading = resultsContainer.querySelector('.loading');
-        if (loading) loading.remove();
-      }
+            // Valida
+            if (!dados || !Array.isArray(dados.disciplinas) || !Array.isArray(dados.notas)) {
+                showError("Estrutura de dados inválida.");
+                return;
+            }
 
-      function showError(msg) {
-        resultsContainer.innerHTML = `<div class="error">${msg}</div>`;
-      }
+            const disciplinas = dados.disciplinas;
+            const disciplinasCount = disciplinas.length || 0;
 
-      function showNoData() {
-        resultsContainer.innerHTML = '<div class="no-data">Selecione uma turma e um aluno para visualizar os dados</div>';
-      }
+            // Ensure notas and faltas are arrays of 4 arrays
+            const notas = [];
+            const faltas = [];
+            for (let b = 0; b < 4; b++) {
+                notas[b] = Array.isArray(dados.notas[b]) ? dados.notas[b] : new Array(disciplinasCount).fill(null);
+                faltas[b] = Array.isArray(dados.faltas[b]) ? dados.faltas[b] : new Array(disciplinasCount).fill(0);
+                // if shorter, pad
+                if (notas[b].length < disciplinasCount) notas[b] = notas[b].concat(new Array(disciplinasCount - notas[b].length).fill(null));
+                if (faltas[b].length < disciplinasCount) faltas[b] = faltas[b].concat(new Array(disciplinasCount - faltas[b].length).fill(0));
+            }
 
-      /* ===================== INICIAR ===================== */
-      document.addEventListener("DOMContentLoaded", populateClassSelect);
+            // Cria cards para cada bimestre (1..4) e 5º conceito
+            for (let b = 0; b < 5; b++) {
+                const card = document.createElement('div');
+                card.className = "bimester-card";
+
+                const header = document.createElement('div');
+                header.className = "bimester-header";
+                
+                if (b < 4) {
+                    header.textContent = `${b+1}º Bimestre`;
+                } else {
+                    header.textContent = "5º CONCEITO";
+                    header.style.background = "linear-gradient(135deg, #27ae60, #2ecc71)";
+                }
+
+                // Adiciona funcionalidade de duplo clique para expandir
+                header.addEventListener('dblclick', function() {
+                    toggleCardExpansion(card);
+                });
+
+                const content = document.createElement('div');
+                content.className = "bimester-content";
+
+                // Cria grid para as disciplinas, notas e faltas
+                const grid = document.createElement('div');
+                grid.className = "subject-grid";
+
+                // Itera pelas disciplinas
+                for (let i = 0; i < disciplinasCount; i++) {
+                    const nomeDisc = disciplinas[i] || (`Disciplina ${i+1}`);
+                    
+                    // Célula do nome da disciplina
+                    const nomeCell = document.createElement("div");
+                    nomeCell.className = "subject-cell";
+                    nomeCell.textContent = nomeDisc;
+
+                    // Célula da nota
+                    const gradeCell = document.createElement("div");
+                    gradeCell.className = "grade-cell";
+
+                    // Célula das faltas
+                    const faltasCell = document.createElement("div");
+                    faltasCell.className = "faltas-cell";
+
+                    if (b < 4) {
+                        // Bimestres 1-4
+                        const notaRaw = notas[b][i];
+                        const faltaRaw = faltas[b][i];
+
+                        let nota = null;
+                        if (notaRaw !== null && notaRaw !== undefined && notaRaw !== "") {
+                            const parsed = parseFloat(notaRaw);
+                            nota = isNaN(parsed) ? null : parsed;
+                        }
+
+                        const falta = (faltaRaw === null || faltaRaw === undefined || faltaRaw === "") ? 0 : (parseInt(faltaRaw) || 0);
+
+                        // Aplica a cor baseada na nota
+                        if (nota !== null) {
+                            if (nota >= 5) {
+                                gradeCell.classList.add("nota-alta");
+                            } else {
+                                gradeCell.classList.add("nota-baixa");
+                            }
+                            gradeCell.textContent = nota.toFixed(1);
+                        } else {
+                            gradeCell.classList.add("sem-nota");
+                            gradeCell.textContent = "--";
+                        }
+
+                        // Preenche a célula de faltas
+                        faltasCell.textContent = falta;
+                    } else {
+                        // 5º Conceito (médias e totais)
+                        let medias = Array.isArray(dados.conceito5) && dados.conceito5.length >= disciplinasCount ? 
+                            dados.conceito5.slice(0, disciplinasCount) : null;
+                        
+                        if (!medias) {
+                            // Calcula as médias se não vierem do backend
+                            medias = new Array(disciplinasCount).fill(null);
+                            for (let i = 0; i < disciplinasCount; i++) {
+                                let soma = 0, cont = 0;
+                                for (let b = 0; b < 4; b++) {
+                                    const n = notas[b][i];
+                                    if (n !== null && n !== undefined && n !== "" && !isNaN(parseFloat(n))) { 
+                                        soma += parseFloat(n); 
+                                        cont++; 
+                                    }
+                                }
+                                
+                                // Cálculo da média com arredondamento
+                                if (cont > 0) {
+                                    const mediaCalculada = soma / cont;
+                                    // Arredondar para inteiro (apenas um algarismo) - Requisito do usuário
+                                    medias[i] = Math.round(mediaCalculada);
+                                } else {
+                                    medias[i] = null;
+                                }
+                            }
+                        }
+
+                        const totalFaltasPorDisciplina = Array.isArray(dados.totalFaltasPorDisciplina) && dados.totalFaltasPorDisciplina.length >= disciplinasCount
+                            ? dados.totalFaltasPorDisciplina
+                            : (function() {
+                                // calcula somando faltas por disciplina
+                                const totals = new Array(disciplinasCount).fill(0);
+                                for (let i = 0; i < disciplinasCount; i++) {
+                                    let tot = 0;
+                                    for (let b = 0; b < 4; b++) tot += (parseInt(faltas[b][i]) || 0);
+                                    totals[i] = tot;
+                                }
+                                return totals;
+                            })();
+
+                        const media = medias[i];
+                        const faltasDisc = totalFaltasPorDisciplina[i] || 0;
+
+                        // Aplica a cor baseada na média
+                        if (media !== null && media !== undefined && !isNaN(media)) {
+                            if (media >= 5) {
+                                gradeCell.classList.add("nota-alta");
+                            } else {
+                                gradeCell.classList.add("nota-baixa");
+                            }
+                            gradeCell.textContent = Math.round(media); // Garante que o valor exibido seja inteiro
+                        } else {
+                            gradeCell.classList.add("sem-nota");
+                            gradeCell.textContent = "--";
+                        }
+
+                        // Preenche a célula de faltas totais com estilo específico
+                        faltasCell.textContent = faltasDisc;
+                        faltasCell.classList.add("faltas-total-cell");
+                    }
+
+                    grid.appendChild(nomeCell);
+                    grid.appendChild(gradeCell);
+                    grid.appendChild(faltasCell);
+                }
+
+                content.appendChild(grid);
+                card.appendChild(header);
+                card.appendChild(content);
+                resultsContainer.appendChild(card);
+            }
+        }
+
+        /* ===================== FUNÇÃO PARA EXPANDIR/RETRAIR CARD ===================== */
+        function toggleCardExpansion(card) {
+            // Se o card já está expandido, retrai
+            if (card.classList.contains('expanded')) {
+                card.classList.remove('expanded');
+                overlay.style.display = 'none';
+                currentExpandedCard = null;
+            } else {
+                // Remove a classe expanded de todos os cards
+                document.querySelectorAll('.bimester-card').forEach(c => {
+                    c.classList.remove('expanded');
+                });
+                
+                // Adiciona a classe expanded no card clicado
+                card.classList.add('expanded');
+                overlay.style.display = 'block';
+                currentExpandedCard = card;
+            }
+        }
+
+        // Fechar card expandido ao clicar no overlay
+        overlay.addEventListener('click', function() {
+            if (currentExpandedCard) {
+                currentExpandedCard.classList.remove('expanded');
+                overlay.style.display = 'none';
+                currentExpandedCard = null;
+            }
+        });
+
+        /* ===================== FUNÇÕES DE AUXÍLIO ===================== */
+        function showLoading(msg) {
+            resultsContainer.innerHTML = `<div class="loading">${msg}</div>`;
+        }
+
+        function hideLoading() {
+            const loading = resultsContainer.querySelector('.loading');
+            if (loading) loading.remove();
+        }
+
+        function showError(msg) {
+            resultsContainer.innerHTML = `<div class="error">${msg}</div>`;
+        }
+
+        function showNoData() {
+            resultsContainer.innerHTML = '<div class="no-data">Selecione uma turma e um aluno para visualizar os dados</div>';
+        }
+
+        /* ===================== INICIAR ===================== */
+        document.addEventListener("DOMContentLoaded", populateClassSelect);
     </script>
 </body>
 </html>
-
-
-
-
-
