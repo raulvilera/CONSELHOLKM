@@ -344,12 +344,30 @@
         }
         
         .results-container {
-            display: flex;
-            flex-wrap: wrap;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 20px;
-            justify-content: center;
-            align-items: stretch;
             margin-top: 20px;
+        }
+        
+        /* Layout especial para telas grandes */
+        @media (min-width: 1200px) {
+            .results-container {
+                grid-template-columns: repeat(3, 1fr);
+                grid-template-areas: 
+                    "b1 b2 b3"
+                    "b4 b5 b5";
+            }
+            
+            .bimester-card:nth-child(1) { grid-area: b1; }
+            .bimester-card:nth-child(2) { grid-area: b2; }
+            .bimester-card:nth-child(3) { grid-area: b3; }
+            .bimester-card:nth-child(4) { grid-area: b4; }
+            .bimester-card:nth-child(5) { 
+                grid-area: b5; 
+                min-height: 0;
+                height: 100%;
+            }
         }
         
         .bimester-card {
@@ -357,15 +375,14 @@
             border-radius: 10px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.08);
             overflow: hidden;
-            flex: 1 1 300px;
-            min-width: 300px;
             transition: all 0.3s ease;
             display: flex;
             flex-direction: column;
             border: 1px solid rgba(0,0,0,0.05);
             position: relative;
             z-index: 1;
-            max-height: 500px;
+            height: fit-content;
+            min-height: 300px;
         }
         
         .bimester-card:hover {
@@ -438,6 +455,7 @@
             line-height: 1.2;
             word-break: break-word;
             overflow-wrap: break-word;
+            min-height: 40px;
         }
         
         .subject-cell {
@@ -500,6 +518,7 @@
             padding: 20px 0 10px;
             color: #6c757d;
             font-size: 0.9rem;
+            margin-top: 20px;
         }
         
         .overlay {
@@ -541,30 +560,19 @@
             border-radius: 10px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.05);
             width: 100%;
-        }
-        
-        /* Posicionamento especial para o 5º conceito */
-        @media (min-width: 992px) {
-            .bimester-card:nth-child(4),
-            .bimester-card:nth-child(5) {
-                flex: 1 1 calc(50% - 20px);
-                min-width: calc(50% - 20px);
-                max-width: calc(50% - 20px);
-            }
+            grid-column: 1 / -1;
         }
 
         /* Ajustes responsivos */
         @media (max-width: 1400px) {
             .bimester-card {
-                flex: 1 1 280px;
                 min-width: 280px;
             }
         }
         
         @media (max-width: 1200px) {
-            .bimester-card {
-                flex: 1 1 250px;
-                min-width: 250px;
+            .results-container {
+                grid-template-columns: repeat(2, 1fr);
             }
             
             .controls-panel {
@@ -597,9 +605,8 @@
                 flex: 0 0 auto;
             }
             
-            .bimester-card {
-                flex: 1 1 calc(50% - 20px);
-                min-width: calc(50% - 20px);
+            .results-container {
+                grid-template-columns: repeat(2, 1fr);
             }
             
             .form-group {
@@ -608,14 +615,6 @@
             
             .controls-center {
                 gap: 10px;
-            }
-            
-            /* Em telas menores, o 5º conceito volta para o fluxo normal */
-            .bimester-card:nth-child(4),
-            .bimester-card:nth-child(5) {
-                flex: 1 1 calc(50% - 20px);
-                min-width: calc(50% - 20px);
-                max-width: 100%;
             }
         }
         
@@ -634,10 +633,9 @@
                 margin-bottom: 20px;
             }
             
-            .bimester-card {
-                flex: 1 1 100%;
-                min-width: 100%;
-                max-height: 400px;
+            .results-container {
+                grid-template-columns: 1fr;
+                gap: 15px;
             }
             
             .subject-grid {
@@ -659,13 +657,6 @@
             .btn {
                 padding: 10px 15px;
                 height: 44px;
-            }
-            
-            .bimester-card:nth-child(4),
-            .bimester-card:nth-child(5) {
-                flex: 1 1 100%;
-                min-width: 100%;
-                max-width: 100%;
             }
         }
         
@@ -1001,6 +992,9 @@
                 if (faltas[b].length < disciplinasCount) faltas[b] = faltas[b].concat(new Array(disciplinasCount - faltas[b].length).fill(0));
             }
 
+            // Array para armazenar os cards
+            const cards = [];
+
             // Cria cards para cada bimestre (1..4) e 5º conceito
             for (let b = 0; b < 5; b++) {
                 const card = document.createElement('div');
@@ -1156,8 +1150,11 @@
                 content.appendChild(grid);
                 card.appendChild(header);
                 card.appendChild(content);
-                resultsContainer.appendChild(card);
+                cards.push(card);
             }
+            
+            // Adiciona todos os cards ao container
+            cards.forEach(card => resultsContainer.appendChild(card));
         }
 
         /* ===================== FUNÇÃO PARA EXPANDIR/RETRAIR CARD ===================== */
