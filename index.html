@@ -33,7 +33,7 @@
         }
         
         .container {
-            max-width: 2000px; /* Aumentado para acomodar 5 cards lado a lado */
+            max-width: 2000px;
             margin: 0 auto;
             padding: 20px;
         }
@@ -571,9 +571,9 @@
             }
         }
         
-        @media (max-width: 1200px) {
+        @media (max-width: 1240px) {
             .container {
-                max-width: 1100px;
+                max-width: 1200px;
             }
             
             .bimester-card {
@@ -708,7 +708,7 @@
 
     <script>
       // URL DO WEB APP
-      const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzuNk65pBReNfhlawYDr_wkHBprIXAX0IqPrhY5xps-_H8mSyHhwy6krkQS2VmG2cNw/exec';
+      const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxF4TenKe_NzCjycMhNvc6X5bjiRXztz7_So-FjVjFsInOl0WmCY2TfsXV-kOkq5QxV/exec';
 
       // Elementos DOM
       const classSelect = document.getElementById('class-select');
@@ -911,7 +911,6 @@
 
           if (dados.error) throw new Error(dados.error);
 
-          // Novo formato: objeto direto (não dados.dados)
           // Verifica estrutura mínima esperada
           const hasNotas = Array.isArray(dados.notas) && dados.notas.length >= 1;
           const hasDisciplinas = Array.isArray(dados.disciplinas);
@@ -922,7 +921,6 @@
           }
 
           // normalize shape: garantir indices 0..3 (bimestres)
-          // garantir que notas/faltas sejam arrays de 4 arrays (pode vir como array[0..3])
           const notas = Array.isArray(dados.notas) ? dados.notas : [];
           const faltas = Array.isArray(dados.faltas) ? dados.faltas : [[],[],[],[]];
           const disciplinas = Array.isArray(dados.disciplinas) ? dados.disciplinas : [];
@@ -963,14 +961,20 @@
           if (faltas[b].length < disciplinasCount) faltas[b] = faltas[b].concat(new Array(disciplinasCount - faltas[b].length).fill(0));
         }
 
-        // Cria cards para cada bimestre (1..4)
-        for (let b = 0; b < 4; b++) {
+        // Cria cards para cada bimestre (1..4) e 5º conceito
+        for (let b = 0; b < 5; b++) {
           const card = document.createElement('div');
           card.className = "bimester-card";
 
           const header = document.createElement('div');
           header.className = "bimester-header";
-          header.textContent = `${b+1}º Bimestre`;
+          
+          if (b < 4) {
+            header.textContent = `${b+1}º Bimestre`;
+          } else {
+            header.textContent = "5º CONCEITO";
+            header.style.background = "linear-gradient(135deg, #27ae60, #2ecc71)";
+          }
 
           // Adiciona funcionalidade de duplo clique para expandir
           header.addEventListener('dblclick', function() {
@@ -987,9 +991,7 @@
           // Itera pelas disciplinas
           for (let i = 0; i < disciplinasCount; i++) {
             const nomeDisc = disciplinas[i] || (`Disciplina ${i+1}`);
-            const notaRaw = notas[b][i];
-            const faltaRaw = faltas[b][i];
-
+            
             // Célula do nome da disciplina
             const nomeCell = document.createElement("div");
             nomeCell.className = "subject-cell";
@@ -999,33 +1001,100 @@
             const gradeCell = document.createElement("div");
             gradeCell.className = "grade-cell";
 
-            let nota = null;
-            if (notaRaw !== null && notaRaw !== undefined && notaRaw !== "") {
-              const parsed = parseFloat(notaRaw);
-              nota = isNaN(parsed) ? null : parsed;
-            }
-
             // Célula das faltas
             const faltasCell = document.createElement("div");
             faltasCell.className = "faltas-cell";
 
-            const falta = (faltaRaw === null || faltaRaw === undefined || faltaRaw === "") ? 0 : (parseInt(faltaRaw) || 0);
+            if (b < 4) {
+              // Bimestres 1-4
+              const notaRaw = notas[b][i];
+              const faltaRaw = faltas[b][i];
 
-            // Aplica a cor baseada na nota
-            if (nota !== null) {
-              if (nota >= 5) {
-                gradeCell.classList.add("nota-alta");
-              } else {
-                gradeCell.classList.add("nota-baixa");
+              let nota = null;
+              if (notaRaw !== null && notaRaw !== undefined && notaRaw !== "") {
+                const parsed = parseFloat(notaRaw);
+                nota = isNaN(parsed) ? null : parsed;
               }
-              gradeCell.textContent = nota.toFixed(1);
-            } else {
-              gradeCell.classList.add("sem-nota");
-              gradeCell.textContent = "--";
-            }
 
-            // Preenche a célula de faltas
-            faltasCell.textContent = falta;
+              const falta = (faltaRaw === null || faltaRaw === undefined || faltaRaw === "") ? 0 : (parseInt(faltaRaw) || 0);
+
+              // Aplica a cor baseada na nota
+              if (nota !== null) {
+                if (nota >= 5) {
+                  gradeCell.classList.add("nota-alta");
+                } else {
+                  gradeCell.classList.add("nota-baixa");
+                }
+                gradeCell.textContent = nota.toFixed(1);
+              } else {
+                gradeCell.classList.add("sem-nota");
+                gradeCell.textContent = "--";
+              }
+
+              // Preenche a célula de faltas
+              faltasCell.textContent = falta;
+            } else {
+              // 5º Conceito (médias e totais)
+              let medias = Array.isArray(dados.conceito5) && dados.conceito5.length >= disciplinasCount ? 
+                dados.conceito5.slice(0, disciplinasCount) : null;
+              
+              if (!medias) {
+                // Calcula as médias se não vierem do backend
+                medias = new Array(disciplinasCount).fill(null);
+                for (let i = 0; i < disciplinasCount; i++) {
+                  let soma = 0, cont = 0;
+                  for (let b = 0; b < 4; b++) {
+                    const n = notas[b][i];
+                    if (n !== null && n !== undefined && n !== "" && !isNaN(parseFloat(n))) { 
+                      soma += parseFloat(n); 
+                      cont++; 
+                    }
+                  }
+                  
+                  // Cálculo da média com arredondamento
+                  if (cont > 0) {
+                    const mediaCalculada = soma / cont;
+                    // Arredondar para inteiro (apenas um algarismo)
+                    medias[i] = Math.round(mediaCalculada);
+                  } else {
+                    medias[i] = null;
+                  }
+                }
+              }
+
+              const totalFaltasPorDisciplina = Array.isArray(dados.totalFaltasPorDisciplina) && dados.totalFaltasPorDisciplina.length >= disciplinasCount
+                ? dados.totalFaltasPorDisciplina
+                : (function() {
+                    // calcula somando faltas por disciplina
+                    const totals = new Array(disciplinasCount).fill(0);
+                    for (let i = 0; i < disciplinasCount; i++) {
+                      let tot = 0;
+                      for (let b = 0; b < 4; b++) tot += (parseInt(faltas[b][i]) || 0);
+                      totals[i] = tot;
+                    }
+                    return totals;
+                  })();
+
+              const media = medias[i];
+              const faltasDisc = totalFaltasPorDisciplina[i] || 0;
+
+              // Aplica a cor baseada na média
+              if (media !== null && media !== undefined && !isNaN(media)) {
+                if (media >= 5) {
+                  gradeCell.classList.add("nota-alta");
+                } else {
+                  gradeCell.classList.add("nota-baixa");
+                }
+                gradeCell.textContent = media;
+              } else {
+                gradeCell.classList.add("sem-nota");
+                gradeCell.textContent = "--";
+              }
+
+              // Preenche a célula de faltas totais com estilo específico
+              faltasCell.textContent = faltasDisc;
+              faltasCell.classList.add("faltas-total-cell");
+            }
 
             grid.appendChild(nomeCell);
             grid.appendChild(gradeCell);
@@ -1037,108 +1106,6 @@
           card.appendChild(content);
           resultsContainer.appendChild(card);
         }
-
-        // 5º CONCEITO (médias e totais)
-        const conceitoCard = document.createElement('div');
-        conceitoCard.className = "bimester-card";
-
-        const conceitoHeader = document.createElement('div');
-        conceitoHeader.className = "bimester-header";
-        conceitoHeader.textContent = "5º CONCEITO";
-        conceitoHeader.style.background = "linear-gradient(135deg, #27ae60, #2ecc71)";
-
-        // Adiciona funcionalidade de duplo clique para expandir
-        conceitoHeader.addEventListener('dblclick', function() {
-          toggleCardExpansion(conceitoCard);
-        });
-
-        const conceitoContent = document.createElement('div');
-        conceitoContent.className = "bimester-content";
-
-        // Cria grid para as disciplinas e médias
-        const grid = document.createElement('div');
-        grid.className = "subject-grid";
-
-        // Preferir conceito5 vindo do backend; se não houver, calcula localmente
-        let medias = Array.isArray(dados.conceito5) && dados.conceito5.length >= disciplinasCount ? dados.conceito5.slice(0, disciplinasCount) : null;
-        if (!medias) {
-          medias = new Array(disciplinasCount).fill(null);
-          for (let i = 0; i < disciplinasCount; i++) {
-            let soma = 0, cont = 0;
-            for (let b = 0; b < 4; b++) {
-              const n = notas[b][i];
-              if (n !== null && n !== undefined && n !== "" && !isNaN(parseFloat(n))) { 
-                soma += parseFloat(n); 
-                cont++; 
-              }
-            }
-            
-            // Cálculo da média com arredondamento conforme especificado
-            if (cont > 0) {
-              const mediaCalculada = soma / cont;
-              // Arredondar para inteiro (apenas um algarismo)
-              medias[i] = Math.round(mediaCalculada);
-            } else {
-              medias[i] = null;
-            }
-          }
-        }
-
-        const totalFaltasPorDisciplina = Array.isArray(dados.totalFaltasPorDisciplina) && dados.totalFaltasPorDisciplina.length >= disciplinasCount
-          ? dados.totalFaltasPorDisciplina
-          : (function() {
-              // calcula somando faltas por disciplina
-              const totals = new Array(disciplinasCount).fill(0);
-              for (let i = 0; i < disciplinasCount; i++) {
-                let tot = 0;
-                for (let b = 0; b < 4; b++) tot += (parseInt(faltas[b][i]) || 0);
-                totals[i] = tot;
-              }
-              return totals;
-            })();
-
-        for (let i = 0; i < disciplinasCount; i++) {
-          // Célula do nome da disciplina
-          const nomeCell = document.createElement("div");
-          nomeCell.className = "subject-cell";
-          nomeCell.textContent = disciplinas[i] || (`Disciplina ${i+1}`);
-
-          // Célula da média
-          const gradeCell = document.createElement("div");
-          gradeCell.className = "grade-cell";
-
-          // Célula das faltas totais
-          const faltasCell = document.createElement("div");
-          faltasCell.className = "faltas-cell faltas-total-cell"; // Adiciona classe específica para o 5º conceito
-
-          const media = medias[i];
-          const faltasDisc = totalFaltasPorDisciplina[i] || 0;
-
-          // Aplica a cor baseada na média
-          if (media !== null && media !== undefined && !isNaN(media)) {
-            if (media >= 5) {
-              gradeCell.classList.add("nota-alta");
-            } else {
-              gradeCell.classList.add("nota-baixa");
-            }
-            gradeCell.textContent = media;
-          } else {
-            gradeCell.classList.add("sem-nota");
-            gradeCell.textContent = "--";
-          }
-
-          // Preenche a célula de faltas totais
-          faltasCell.textContent = faltasDisc;
-
-          grid.appendChild(nomeCell);
-          grid.appendChild(gradeCell);
-          grid.appendChild(faltasCell);
-        }
-
-        conceitoContent.appendChild(grid);
-        conceitoCard.appendChild(conceitoHeader);
-        conceitoCard.appendChild(conceitoContent);
-        resultsContainer.appendChild(conceitoCard);
       }
 
       /* ===================== FUNÇÃO PARA EXPANDIR/RETRAIR CARD ===================== */
