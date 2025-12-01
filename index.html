@@ -31,15 +31,13 @@
             color: #333;
             line-height: 1.6;
             min-height: 100vh;
-            overflow-x: auto;
         }
         
         .container {
             width: 100%;
             margin: 0 auto;
             padding: 20px;
-            max-width: 2400px;
-            min-width: 1200px;
+            max-width: 100%;
         }
         
         header {
@@ -69,9 +67,6 @@
             text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
             margin: 0;
             line-height: 1.2;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
         }
         
         .controls-panel {
@@ -347,17 +342,16 @@
                 0 2px 4px rgba(0,0,0,0.05);
         }
         
-        /* CONTAINER PRINCIPAL DOS CARDS - LADO A LADO */
+        /* CONTAINER PRINCIPAL DOS CARDS - LADO A LADO OCUPANDO TODA A LINHA */
         .results-container {
             display: flex;
             gap: 15px;
             margin-top: 20px;
-            overflow-x: auto;
-            padding-bottom: 10px;
-            min-height: 600px;
+            width: 100%;
+            min-height: 700px;
         }
         
-        /* CARD DE BIMESTRE - DIMENSIONADO PARA FICAR LADO A LADO */
+        /* CARD DE BIMESTRE - LADO A LADO COM LARGURA IGUAL */
         .bimester-card {
             background-color: var(--card-bg);
             border-radius: 10px;
@@ -370,9 +364,8 @@
             position: relative;
             z-index: 1;
             flex: 1;
-            min-width: 230px;
-            max-width: 230px;
-            height: 580px;
+            min-width: 0;
+            height: 700px;
         }
         
         .bimester-card:hover {
@@ -396,10 +389,10 @@
         .bimester-header {
             background: linear-gradient(135deg, var(--primary-color), var(--dark-color));
             color: white;
-            padding: 12px 8px;
+            padding: 15px 10px;
             text-align: center;
             font-weight: 700;
-            font-size: 1rem;
+            font-size: 1.2rem;
             cursor: pointer;
             user-select: none;
             flex-shrink: 0;
@@ -408,7 +401,7 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            height: 50px;
+            height: 60px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -419,7 +412,7 @@
         }
         
         .bimester-content {
-            padding: 12px;
+            padding: 15px;
             overflow-y: auto;
             flex-grow: 1;
         }
@@ -428,14 +421,14 @@
         .subject-grid {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 4px;
+            gap: 6px;
         }
         
         .subject-row {
             display: grid;
             grid-template-columns: 2fr 0.8fr 0.8fr;
-            gap: 4px;
-            min-height: 36px;
+            gap: 6px;
+            min-height: 50px;
             align-items: stretch;
         }
         
@@ -444,8 +437,8 @@
             color: white;
             font-weight: bold;
             text-transform: uppercase;
-            font-size: 0.8rem;
-            padding: 8px 6px;
+            font-size: 0.9rem;
+            padding: 12px 8px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -456,17 +449,17 @@
         }
         
         .subject-cell, .grade-cell, .faltas-cell {
-            padding: 6px 4px;
+            padding: 10px 8px;
             font-weight: 600;
             display: flex;
             align-items: center;
-            font-size: 0.75rem;
-            line-height: 1.1;
+            font-size: 0.9rem;
+            line-height: 1.2;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            height: 36px;
-            border-radius: 4px;
+            height: 50px;
+            border-radius: 6px;
         }
         
         .subject-cell {
@@ -476,20 +469,20 @@
             color: #ffffff;
             border: 1px solid rgba(255, 255, 255, 0.2);
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            padding-left: 8px;
-            padding-right: 8px;
+            padding-left: 12px;
+            padding-right: 12px;
         }
         
         .grade-cell {
             font-weight: 700;
             text-align: center;
-            min-width: 40px;
+            min-width: 60px;
             border: 1px solid rgba(255, 255, 255, 0.2);
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.8rem;
+            font-size: 1rem;
             color: white;
         }
         
@@ -510,14 +503,14 @@
             color: #000000;
             font-weight: bold;
             text-align: center;
-            min-width: 40px;
+            min-width: 60px;
             border: 2px solid rgba(255, 255, 255, 0.3);
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
             display: flex;
             align-items: center;
             justify-content: center;
             background-color: #ffffff;
-            font-size: 0.85rem;
+            font-size: 1rem;
         }
         
         .faltas-total-cell {
@@ -585,45 +578,71 @@
         }
 
         /* AJUSTES RESPONSIVOS - PARA TELAS MENORES */
-        @media (max-width: 1400px) {
-            .container {
-                min-width: 1000px;
-                padding: 15px;
-            }
-            
+        @media (max-width: 1600px) {
             .bimester-card {
-                min-width: 200px;
-                max-width: 200px;
-                height: 550px;
+                height: 650px;
             }
             
             .subject-cell, .grade-cell, .faltas-cell {
-                font-size: 0.7rem;
-                height: 34px;
+                font-size: 0.85rem;
+                height: 48px;
+                padding: 8px 6px;
+            }
+            
+            .grid-header {
+                font-size: 0.85rem;
+                padding: 10px 6px;
+            }
+        }
+        
+        @media (max-width: 1400px) {
+            .bimester-card {
+                height: 600px;
+            }
+            
+            .subject-cell, .grade-cell, .faltas-cell {
+                font-size: 0.8rem;
+                height: 46px;
+                padding: 8px 5px;
+            }
+            
+            .grid-header {
+                font-size: 0.8rem;
+                padding: 10px 5px;
+            }
+            
+            .bimester-header {
+                font-size: 1.1rem;
+                height: 55px;
             }
         }
         
         @media (max-width: 1200px) {
-            .container {
-                min-width: 900px;
-                padding: 15px;
+            .results-container {
+                flex-wrap: wrap;
+                min-height: auto;
             }
             
             .bimester-card {
-                min-width: 180px;
-                max-width: 180px;
-                height: 520px;
+                flex: 1 1 calc(33.333% - 15px);
+                height: 550px;
+                min-width: 300px;
             }
             
             .subject-cell, .grade-cell, .faltas-cell {
-                font-size: 0.65rem;
-                height: 32px;
-                padding: 4px 3px;
+                font-size: 0.75rem;
+                height: 44px;
+                padding: 7px 4px;
             }
             
             .grid-header {
                 font-size: 0.75rem;
-                padding: 6px 4px;
+                padding: 9px 4px;
+            }
+            
+            .bimester-header {
+                font-size: 1rem;
+                height: 50px;
             }
             
             .controls-panel {
@@ -646,8 +665,10 @@
         }
         
         @media (max-width: 992px) {
-            .container {
-                min-width: 800px;
+            .bimester-card {
+                flex: 1 1 calc(50% - 15px);
+                height: 500px;
+                min-width: 280px;
             }
             
             .controls-panel {
@@ -668,31 +689,25 @@
                 gap: 10px;
             }
             
-            .bimester-card {
-                min-width: 160px;
-                max-width: 160px;
-                height: 500px;
+            .subject-cell, .grade-cell, .faltas-cell {
+                font-size: 0.7rem;
+                height: 42px;
+                padding: 6px 3px;
+            }
+            
+            .grid-header {
+                font-size: 0.7rem;
+                padding: 8px 3px;
             }
             
             .bimester-header {
-                font-size: 0.9rem;
-                height: 45px;
-                padding: 10px 6px;
-            }
-            
-            .subject-cell, .grade-cell, .faltas-cell {
-                font-size: 0.6rem;
-                height: 30px;
+                font-size: 0.95rem;
+                height: 48px;
             }
         }
         
         @media (max-width: 768px) {
-            body {
-                overflow-x: auto;
-            }
-            
             .container {
-                min-width: 700px;
                 padding: 15px 10px;
             }
             
@@ -708,30 +723,28 @@
             
             .results-container {
                 gap: 12px;
-                min-height: 480px;
             }
             
             .bimester-card {
-                min-width: 150px;
-                max-width: 150px;
+                flex: 1 1 100%;
                 height: 480px;
-            }
-            
-            .bimester-header {
-                font-size: 0.85rem;
-                height: 42px;
-                padding: 8px 4px;
+                min-width: 100%;
             }
             
             .subject-cell, .grade-cell, .faltas-cell {
-                font-size: 0.58rem;
-                height: 28px;
-                padding: 3px 2px;
+                font-size: 0.8rem;
+                height: 44px;
+                padding: 8px 4px;
             }
             
             .grid-header {
-                font-size: 0.7rem;
-                padding: 5px 3px;
+                font-size: 0.8rem;
+                padding: 10px 4px;
+            }
+            
+            .bimester-header {
+                font-size: 1rem;
+                height: 50px;
             }
             
             .nav-btn {
@@ -747,7 +760,6 @@
         
         @media (max-width: 576px) {
             .container {
-                min-width: 600px;
                 padding: 10px 8px;
             }
             
@@ -794,28 +806,27 @@
             }
             
             .bimester-card {
-                min-width: 140px;
-                max-width: 140px;
                 height: 460px;
             }
             
-            .bimester-header {
-                font-size: 0.8rem;
-                height: 40px;
-                padding: 6px 3px;
+            .subject-cell, .grade-cell, .faltas-cell {
+                font-size: 0.75rem;
+                height: 42px;
+                padding: 7px 3px;
             }
             
-            .subject-cell, .grade-cell, .faltas-cell {
-                font-size: 0.55rem;
-                height: 26px;
+            .grid-header {
+                font-size: 0.75rem;
+                padding: 9px 3px;
+            }
+            
+            .bimester-header {
+                font-size: 0.9rem;
+                height: 46px;
             }
         }
         
         @media (max-width: 400px) {
-            .container {
-                min-width: 500px;
-            }
-            
             h1 {
                 font-size: 1.3rem;
             }
@@ -837,22 +848,27 @@
             
             .bimester-header {
                 padding: 8px 3px;
-                font-size: 0.75rem;
+                font-size: 0.85rem;
+                height: 44px;
             }
             
             .bimester-content {
-                padding: 8px;
+                padding: 10px;
             }
             
             .bimester-card {
-                min-width: 130px;
-                max-width: 130px;
                 height: 440px;
             }
             
             .subject-cell, .grade-cell, .faltas-cell {
-                font-size: 0.5rem;
-                height: 24px;
+                font-size: 0.7rem;
+                height: 40px;
+                padding: 6px 2px;
+            }
+            
+            .grid-header {
+                font-size: 0.7rem;
+                padding: 8px 2px;
             }
         }
     </style>
@@ -1172,7 +1188,7 @@
                     faltasCell.className = "faltas-cell";
 
                     if (b < 4) {
-                        // Bimestres 1-4
+                        // Bimestres 1-4 - NOTAS INTEIRAS
                         const notaRaw = notas[b][i];
                         const faltaRaw = faltas[b][i];
 
@@ -1184,14 +1200,15 @@
 
                         const falta = (faltaRaw === null || faltaRaw === undefined || faltaRaw === "") ? 0 : (parseInt(faltaRaw) || 0);
 
-                        // Aplica a cor baseada na nota
+                        // Aplica a cor baseada na nota (NOTAS INTEIRAS)
                         if (nota !== null) {
                             if (nota >= 5) {
                                 gradeCell.classList.add("nota-alta");
                             } else {
                                 gradeCell.classList.add("nota-baixa");
                             }
-                            gradeCell.textContent = nota.toFixed(1);
+                            // Exibe como número inteiro
+                            gradeCell.textContent = Math.round(nota);
                         } else {
                             gradeCell.classList.add("sem-nota");
                             gradeCell.textContent = "--";
@@ -1200,7 +1217,7 @@
                         // Preenche a célula de faltas
                         faltasCell.textContent = falta;
                     } else {
-                        // 5º Conceito (médias e totais)
+                        // 5º Conceito (médias e totais) - JÁ É INTEIRO
                         let medias = Array.isArray(dados.conceito5) && dados.conceito5.length >= disciplinasCount ? 
                             dados.conceito5.slice(0, disciplinasCount) : null;
                         
@@ -1217,10 +1234,9 @@
                                     }
                                 }
                                 
-                                // Cálculo da média com arredondamento
+                                // Cálculo da média com arredondamento para inteiro
                                 if (cont > 0) {
                                     const mediaCalculada = soma / cont;
-                                    // Arredondar para inteiro (apenas um algarismo) - Requisito do usuário
                                     medias[i] = Math.round(mediaCalculada);
                                 } else {
                                     medias[i] = null;
@@ -1244,14 +1260,14 @@
                         const media = medias[i];
                         const faltasDisc = totalFaltasPorDisciplina[i] || 0;
 
-                        // Aplica a cor baseada na média
+                        // Aplica a cor baseada na média (JÁ É INTEIRA)
                         if (media !== null && media !== undefined && !isNaN(media)) {
                             if (media >= 5) {
                                 gradeCell.classList.add("nota-alta");
                             } else {
                                 gradeCell.classList.add("nota-baixa");
                             }
-                            gradeCell.textContent = Math.round(media); // Garante que o valor exibido seja inteiro
+                            gradeCell.textContent = media; // Já é inteiro
                         } else {
                             gradeCell.classList.add("sem-nota");
                             gradeCell.textContent = "--";
