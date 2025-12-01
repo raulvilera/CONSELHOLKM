@@ -338,7 +338,7 @@
         
         .results-container {
             display: grid;
-            grid-template-columns: repeat(5, 1fr);
+            grid-template-columns: repeat(3, 1fr); /* Alterado de 5 para 3 colunas */
             gap: 25px;
             margin-bottom: 25px;
         }
@@ -354,7 +354,7 @@
             flex-direction: column;
             position: relative;
             z-index: 1;
-            max-height: 600px;
+            max-height: 500px; /* Reduzido de 600px */
         }
         
         .bimester-card:hover {
@@ -410,11 +410,11 @@
         .subject-grid {
             display: grid;
             grid-template-columns: 1fr auto auto;
-            gap: 15px;
+            gap: 12px; /* Reduzido de 15px */
         }
         
         .subject-cell {
-            padding: 15px 18px;
+            padding: 12px 15px; /* Reduzido de 15px 18px */
             border-radius: 6px;
             font-weight: 600;
             color: #ffffff;
@@ -424,22 +424,22 @@
             transition: all 0.2s ease;
             display: flex;
             align-items: center;
-            font-size: 1.1rem;
+            font-size: 1rem; /* Reduzido de 1.1rem */
         }
         
         .grade-cell {
-            padding: 15px 18px;
+            padding: 12px 15px; /* Reduzido de 15px 18px */
             border-radius: 6px;
             font-weight: 700;
             text-align: center;
-            min-width: 90px;
+            min-width: 80px; /* Reduzido de 90px */
             border: 1px solid rgba(255, 255, 255, 0.2);
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             transition: all 0.2s ease;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.3rem;
+            font-size: 1.1rem; /* Reduzido de 1.3rem */
         }
         
         .grade-cell.nota-baixa {
@@ -458,11 +458,11 @@
         }
         
         .faltas-cell {
-            padding: 15px 18px;
+            padding: 12px 15px; /* Reduzido de 15px 18px */
             border-radius: 6px;
             font-weight: 900;
             text-align: center;
-            min-width: 90px;
+            min-width: 80px; /* Reduzido de 90px */
             border: 2px solid rgba(255, 255, 255, 0.3);
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             transition: all 0.2s ease;
@@ -471,7 +471,7 @@
             justify-content: center;
             background-color: var(--faltas-cor);
             color: #000;
-            font-size: 1.5rem;
+            font-size: 1.3rem; /* Reduzido de 1.5rem */
             text-shadow: 0 1px 1px rgba(255,255,255,0.5);
         }
         
