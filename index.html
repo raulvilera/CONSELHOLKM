@@ -342,7 +342,7 @@
                 0 2px 4px rgba(0,0,0,0.05);
         }
         
-        /* CONTAINER PRINCIPAL DOS CARDS - LADO A LADO OCUPANDO TODA A LINHA */
+        /* CONTAINER PRINCIPAL DOS CARDS */
         .results-container {
             display: flex;
             gap: 15px;
@@ -351,7 +351,7 @@
             min-height: 700px;
         }
         
-        /* CARD DE BIMESTRE - LADO A LADO COM LARGURA IGUAL */
+        /* CARD DE BIMESTRE */
         .bimester-card {
             background-color: var(--card-bg);
             border-radius: 10px;
@@ -481,20 +481,9 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-        }
-        
-        /* ESTILO PARA NOMES COM DUAS PALAVRAS */
-        .subject-cell.two-words {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-        }
-        
-        .subject-cell.two-words span {
-            display: block;
-            width: 100%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         
         .grade-cell {
@@ -603,7 +592,7 @@
             background: linear-gradient(135deg, #229954, #27ae60);
         }
 
-        /* AJUSTES RESPONSIVOS - PARA TELAS MENORES */
+        /* AJUSTES RESPONSIVOS */
         @media (max-width: 1600px) {
             .bimester-card {
                 height: 650px;
@@ -1281,23 +1270,10 @@
                     const row = document.createElement('div');
                     row.className = "subject-row";
                     
-                    // Célula do nome da disciplina - COM SUPORTE PARA DUAS PALAVRAS
+                    // Célula do nome da disciplina - SEM QUEBRA
                     const nomeCell = document.createElement("div");
                     nomeCell.className = "subject-cell";
-                    
-                    // Verifica se tem duas palavras
-                    const palavras = nomeDisc.trim().split(/\s+/);
-                    if (palavras.length === 2) {
-                        nomeCell.classList.add("two-words");
-                        const span1 = document.createElement("span");
-                        span1.textContent = palavras[0];
-                        const span2 = document.createElement("span");
-                        span2.textContent = palavras[1];
-                        nomeCell.appendChild(span1);
-                        nomeCell.appendChild(span2);
-                    } else {
-                        nomeCell.textContent = nomeDisc;
-                    }
+                    nomeCell.textContent = nomeDisc;
 
                     // Célula da nota
                     const gradeCell = document.createElement("div");
@@ -1388,7 +1364,7 @@
                                 gradeCell.classList.add("nota-baixa");
                             }
                             // Exibe como número inteiro SEM VÍRGULAS
-                            gradeCell.textContent = media;
+                            gradeCell.textContent = Math.round(media);
                         } else {
                             gradeCell.classList.add("sem-nota");
                             gradeCell.textContent = "--";
