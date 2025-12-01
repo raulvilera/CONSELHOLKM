@@ -467,7 +467,7 @@
         .faltas-cell {
             padding: 8px 10px; /* Reduzido para economizar espaço */
             border-radius: 6px;
-            font-weight: 900;
+            font-weight: bold;
             text-align: center;
             min-width: 55px; /* Reduzido para caber melhor */
             border: 2px solid rgba(255, 255, 255, 0.3);
@@ -476,10 +476,10 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background-color: var(--faltas-cor);
-            color: #000;
+            background-color: #ffffff;
+            color: #000000;
             font-size: 1rem; /* Reduzido para caber melhor */
-            text-shadow: 0 1px 1px rgba(255,255,255,0.5);
+            /* text-shadow removido para fundo branco */
         }
         
         /* Estilo específico para as faltas do 5º conceito - fundo branco, texto preto em negrito */
@@ -746,36 +746,15 @@
 
           hideLoading();
 
-          // Ajustar a largura do campo de turmas baseado no conteúdo
-          adjustClassSelectWidth();
+          // Ajustar a largura do campo de turmas baseado no conteúdo (Removido para otimização)
+
         } catch (err) {
           showError("Erro ao carregar turmas.");
           console.error(err);
         }
       }
 
-      // Função para ajustar a largura do campo de turmas
-      function adjustClassSelectWidth() {
-        let maxWidth = 0;
-        Array.from(classSelect.options).forEach(option => {
-          const text = option.textContent;
-          const tempSpan = document.createElement('span');
-          tempSpan.style.visibility = 'hidden';
-          tempSpan.style.position = 'absolute';
-          tempSpan.style.whiteSpace = 'nowrap';
-          tempSpan.style.fontSize = '1.05rem';
-          tempSpan.style.fontFamily = 'Segoe UI, Tahoma, Geneva, Verdana, sans-serif';
-          tempSpan.textContent = text;
-          document.body.appendChild(tempSpan);
-          const textWidth = tempSpan.offsetWidth;
-          document.body.removeChild(tempSpan);
-          if (textWidth > maxWidth) maxWidth = textWidth;
-        });
 
-        const padding = 60;
-        const newWidth = Math.min(Math.max(maxWidth + padding, 150), 300);
-        classSelect.style.width = `${newWidth}px`;
-      }
 
       /* ===================== CARREGAR ALUNOS ===================== */
       classSelect.addEventListener('change', async function () {
@@ -1161,4 +1140,3 @@
     </script>
 </body>
 </html>
-
