@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel Conselho de Classe</title>
+    <title>Painel Conselho de Classe Otimizado</title>
     <style>
         :root {
             --primary-color: #2c3e50;
@@ -17,6 +17,12 @@
             --nota-alta: #2196f3;
             --faltas-cor: #ff9800;
             --card-bg: #4a5568;
+            /* Cores para linhas alternadas */
+            --odd-row-bg: #f8f9fa; /* Cinza claro */
+            --even-row-bg: #ffffff; /* Branco */
+            --odd-option-bg: #e9ecef; /* Cinza mais escuro para opções */
+            --even-option-bg: #f8f9fa; /* Cinza claro para opções */
+            --selected-option-bg: #d0e7ff; /* Azul claro para seleção */
         }
         
         * {
@@ -242,57 +248,28 @@
             background: linear-gradient(to bottom, #ffffff, #fefefe);
         }
         
-        #class-select.turma-selecionada {
-            background: #ffeb3b !important;
-            color: #333 !important;
-            font-weight: bold !important;
+        /* Estilização das opções com cores alternadas */
+        #class-select option:nth-child(odd) {
+            background-color: var(--odd-option-bg);
         }
         
         #class-select option:nth-child(even) {
-            background-color: #f0f8ff;
-        }
-        
-        #class-select option:nth-child(odd) {
-            background-color: #ffffff;
-        }
-        
-        #class-select option:hover {
-            background-color: #e1f0ff !important;
-        }
-        
-        #class-select option:checked {
-            background-color: #ffeb3b !important;
-            color: #000000 !important;
-            font-weight: bold !important;
-        }
-        
-        #student-select.aluno-selecionado {
-            background: #1a237e !important;
-            color: #ffffff !important;
-            font-weight: bold !important;
-        }
-        
-        #student-select option {
-            font-weight: bold !important;
-            color: #000000 !important;
-        }
-        
-        #student-select option:nth-child(even) {
-            background-color: #f0f8ff;
+            background-color: var(--even-option-bg);
         }
         
         #student-select option:nth-child(odd) {
-            background-color: #ffffff;
+            background-color: var(--odd-option-bg);
         }
         
-        #student-select option:hover {
-            background-color: #e1f0ff !important;
+        #student-select option:nth-child(even) {
+            background-color: var(--even-option-bg);
         }
         
-        #student-select option:checked {
-            background-color: #d0e7ff !important;
-            font-weight: bold;
+        /* Estilo para a opção selecionada */
+        #class-select option:checked, #student-select option:checked {
+            background-color: var(--selected-option-bg) !important;
             color: #000000 !important;
+            font-weight: bold !important;
         }
         
         .btn {
@@ -340,31 +317,23 @@
         .results-container {
             display: flex;
             flex-wrap: wrap;
-            gap: 15px;
-            margin-bottom: 25px;
+            gap: 20px;
             justify-content: center;
+            align-items: stretch;
+            margin-top: 20px;
         }
         
         .bimester-card {
-            background: var(--card-bg);
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            background-color: var(--light-color);
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             overflow: hidden;
+            flex: 1 1 300px; /* Base dimension */
+            min-width: 300px;
             transition: all 0.3s ease;
-            border: 1px solid rgba(0,0,0,0.05);
             display: flex;
             flex-direction: column;
-            position: relative;
-            z-index: 1;
-            flex: 1 1 300px;
-            min-width: 300px;
-            max-width: 100%;
-            max-height: 500px;
-        }
-        
-        .bimester-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            border: 1px solid #ddd;
         }
         
         .bimester-card.expanded {
@@ -372,11 +341,110 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 90%;
-            max-width: 800px;
-            max-height: 80vh;
             z-index: 1000;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+            width: 90%;
+            max-width: 1200px;
+            height: 90%;
+            max-height: 90vh;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .bimester-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--dark-color));
+            color: white;
+            padding: 15px 10px;
+            text-align: center;
+            font-weight: 700;
+            font-size: clamp(1rem, 2vw, 1.2rem);
+            cursor: pointer;
+            user-select: none;
+            flex-shrink: 0;
+        }
+        
+        .bimester-content {
+            padding: 15px;
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+        
+        .subject-grid {
+            display: grid;
+            grid-template-columns: 3fr 1fr 1fr; /* Disciplina | Nota | Falta */
+            gap: 1px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .subject-cell, .grade-cell, .faltas-cell {
+            padding: 8px 10px;
+            font-size: clamp(0.85rem, 1.5vw, 0.95rem);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            word-break: break-word;
+        }
+        
+        .subject-cell {
+            justify-content: flex-start;
+            text-align: left;
+            font-weight: 600;
+            background-color: var(--odd-row-bg);
+        }
+        
+        /* Cores alternadas para as linhas da tabela */
+        .subject-grid > div:nth-child(6n+1), /* Disciplina (1ª coluna) */
+        .subject-grid > div:nth-child(6n+2), /* Nota (2ª coluna) */
+        .subject-grid > div:nth-child(6n+3)  /* Falta (3ª coluna) */
+        {
+            background-color: var(--odd-row-bg);
+        }
+        
+        .subject-grid > div:nth-child(6n+4), /* Disciplina (1ª coluna) */
+        .subject-grid > div:nth-child(6n+5), /* Nota (2ª coluna) */
+        .subject-grid > div:nth-child(6n+6)  /* Falta (3ª coluna) */
+        {
+            background-color: var(--even-row-bg);
+        }
+        
+        /* Estilo para a linha de cabeçalho (Disciplina | Nota | Falta) */
+        .subject-grid > div:nth-child(-n+3) {
+            background-color: var(--dark-color) !important;
+            color: white;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            padding: 10px 10px;
+        }
+        
+        .grade-cell {
+            font-weight: 700;
+        }
+        
+        .faltas-cell {
+            color: var(--faltas-cor);
+            font-weight: 700;
+        }
+        
+        .nota-baixa {
+            color: var(--nota-baixa);
+        }
+        
+        .nota-alta {
+            color: var(--nota-alta);
+        }
+        
+        .sem-nota {
+            color: #999;
+            font-style: italic;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 20px 0 10px;
+            color: #6c757d;
+            font-size: 0.9rem;
         }
         
         .overlay {
@@ -385,119 +453,9 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.7);
+            background: rgba(0, 0, 0, 0.6);
             z-index: 999;
             display: none;
-        }
-        
-        .bimester-header {
-            background: linear-gradient(135deg, var(--primary-color), #34495e);
-            color: white;
-            padding: 12px;
-            text-align: center;
-            font-weight: 700;
-            font-size: clamp(1rem, 2vw, 1.1rem);
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        
-        .bimester-header:hover {
-            background: linear-gradient(135deg, #34495e, #2c3e50);
-        }
-        
-        .bimester-content {
-            padding: 12px;
-            flex: 1;
-            overflow-y: auto;
-        }
-        
-        .subject-grid {
-            display: grid;
-            grid-template-columns: 1fr auto auto;
-            gap: 6px;
-        }
-        
-        .subject-cell {
-            padding: 8px 10px;
-            border-radius: 6px;
-            font-weight: 600;
-            color: #ffffff;
-            background-color: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            font-size: clamp(0.8rem, 1.5vw, 0.85rem);
-            line-height: 1.2;
-            word-break: break-word;
-            overflow-wrap: break-word;
-        }
-        
-        .grade-cell {
-            padding: 8px 10px;
-            border-radius: 6px;
-            font-weight: 700;
-            text-align: center;
-            min-width: 55px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: clamp(0.85rem, 1.5vw, 0.9rem);
-        }
-        
-        .grade-cell.nota-baixa {
-            background-color: var(--nota-baixa);
-            color: white;
-        }
-        
-        .grade-cell.nota-alta {
-            background-color: var(--nota-alta);
-            color: white;
-        }
-        
-        .grade-cell.sem-nota {
-            background-color: rgba(255, 255, 255, 0.1);
-            color: #ffffff;
-        }
-        
-        .faltas-cell {
-            padding: 8px 10px;
-            border-radius: 6px;
-            font-weight: bold;
-            text-align: center;
-            min-width: 55px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: #ffffff;
-            color: #000000;
-            font-size: clamp(0.9rem, 1.5vw, 1rem);
-        }
-        
-        .faltas-total-cell {
-            background-color: #ffffff !important;
-            color: #000000 !important;
-            font-weight: bold !important;
-        }
-        
-        .footer {
-            text-align: center;
-            margin-top: 40px;
-            color: #6c757d;
-            font-size: clamp(0.85rem, 2vw, 0.95rem);
-            padding: 20px;
-            border-top: 1px solid #e9ecef;
         }
         
         .loading {
@@ -610,14 +568,53 @@
             }
             
             .subject-grid {
-                grid-template-columns: 1fr;
-                gap: 8px;
+                grid-template-columns: 1fr; /* Em telas muito pequenas, transforma em lista */
+                gap: 0;
+                border: none;
+            }
+            
+            .subject-grid > div {
+                display: flex;
+                justify-content: space-between;
+                padding: 8px 10px;
+                border-bottom: 1px solid #eee;
+            }
+            
+            .subject-grid > div:nth-child(-n+3) {
+                display: none !important; /* Esconde o cabeçalho da tabela */
+            }
+            
+            .subject-cell {
+                justify-content: flex-start;
+                flex: 1 1 60%;
+                font-weight: 600;
             }
             
             .grade-cell, .faltas-cell {
-                min-width: 100%;
-                justify-content: flex-start;
-                padding-left: 15px;
+                justify-content: flex-end;
+                flex: 1 1 20%;
+                text-align: right;
+            }
+            
+            /* Cores alternadas para as linhas da lista em mobile */
+            .subject-grid > div:nth-child(3n+4) { /* Disciplina */
+                background-color: var(--odd-row-bg);
+            }
+            .subject-grid > div:nth-child(3n+5) { /* Nota */
+                background-color: var(--odd-row-bg);
+            }
+            .subject-grid > div:nth-child(3n+6) { /* Falta */
+                background-color: var(--odd-row-bg);
+            }
+            
+            .subject-grid > div:nth-child(3n+7) { /* Disciplina */
+                background-color: var(--even-row-bg);
+            }
+            .subject-grid > div:nth-child(3n+8) { /* Nota */
+                background-color: var(--even-row-bg);
+            }
+            .subject-grid > div:nth-child(3n+9) { /* Falta */
+                background-color: var(--even-row-bg);
             }
             
             .nav-btn {
@@ -680,11 +677,6 @@
             .bimester-card.expanded {
                 width: 95%;
                 max-height: 85vh;
-            }
-            
-            .subject-cell, .grade-cell, .faltas-cell {
-                padding: 6px 8px;
-                font-size: 0.85rem;
             }
         }
         
@@ -763,7 +755,7 @@
     <div class="overlay" id="overlay"></div>
 
     <script>
-        // URL DO WEB APP
+        // URL DO WEB APP (Mantenha a URL do seu script Apps Script aqui)
         const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbw1E7S5gM15r8Ct0LFLi4tNz4_TQWO_tfRfSZ3ODRDHZZxXkDJWBpcXqqzUCe2Vna9f/exec';
 
         // Elementos DOM
@@ -780,6 +772,36 @@
         let currentStudentIndex = -1;
         let currentTurma = '';
         let currentExpandedCard = null;
+
+        /* ===================== FUNÇÕES AUXILIARES ===================== */
+        function showLoading(message = 'Carregando...') {
+            resultsContainer.innerHTML = `<div class="loading">${message}</div>`;
+            overlay.style.display = 'block';
+        }
+
+        function hideLoading() {
+            overlay.style.display = 'none';
+        }
+
+        function showError(message) {
+            resultsContainer.innerHTML = `<div class="error">Erro: ${message}</div>`;
+            hideLoading();
+        }
+
+        function showNoData() {
+            resultsContainer.innerHTML = `<div class="no-data">Selecione uma turma e um aluno para visualizar os dados</div>`;
+            hideLoading();
+        }
+
+        function toggleCardExpansion(card) {
+            if (currentExpandedCard && currentExpandedCard !== card) {
+                currentExpandedCard.classList.remove('expanded');
+            }
+
+            card.classList.toggle('expanded');
+            overlay.style.display = card.classList.contains('expanded') ? 'block' : 'none';
+            currentExpandedCard = card.classList.contains('expanded') ? card : null;
+        }
 
         /* ===================== CARREGAR TURMAS ===================== */
         async function populateClassSelect() {
@@ -939,7 +961,7 @@
             }
         }
 
-        /* ===================== EXIBIR DADOS DO ALUNO ===================== */
+        /* ===================== EXIBIR DADOS DO ALUNO (Lógica de renderização ajustada) ===================== */
         function displayStudentData(dados) {
             resultsContainer.innerHTML = "";
 
@@ -963,202 +985,181 @@
                 if (faltas[b].length < disciplinasCount) faltas[b] = faltas[b].concat(new Array(disciplinasCount - faltas[b].length).fill(0));
             }
 
-            // Cria cards para cada bimestre (1..4) e 5º conceito
-            for (let b = 0; b < 5; b++) {
-                const card = document.createElement('div');
-                card.className = "bimester-card";
+            // Array para armazenar os cards na ordem desejada
+            const cards = [];
 
-                const header = document.createElement('div');
-                header.className = "bimester-header";
+            // Cria cards para cada bimestre (1..4)
+            for (let b = 0; b < 4; b++) {
+                const card = createBimesterCard(b, disciplinas, notas, faltas);
+                cards.push(card);
+            }
+
+            // Cria o card do 5º Conceito
+            const conceitoCard = createConceitoCard(disciplinas, dados.conceito5, dados.coresConceito5, dados.totalFaltasPorDisciplina, notas, faltas);
+            
+            // Inserir o 5º Conceito após o 4º Bimestre (índice 3)
+            cards.splice(4, 0, conceitoCard);
+
+            // Adiciona todos os cards ao container
+            cards.forEach(card => resultsContainer.appendChild(card));
+            
+            hideLoading();
+        }
+        
+        function createBimesterCard(bimesterIndex, disciplinas, notas, faltas) {
+            const disciplinasCount = disciplinas.length;
+            const b = bimesterIndex;
+            
+            const card = document.createElement('div');
+            card.className = "bimester-card";
+
+            const header = document.createElement('div');
+            header.className = "bimester-header";
+            header.textContent = `${b + 1}º Bimestre`;
+
+            // Adiciona funcionalidade de duplo clique para expandir
+            header.addEventListener('dblclick', function() {
+                toggleCardExpansion(card);
+            });
+
+            const content = document.createElement('div');
+            content.className = "bimester-content";
+
+            // Cria grid para as disciplinas, notas e faltas
+            const grid = document.createElement('div');
+            grid.className = "subject-grid";
+            
+            // Cabeçalho da tabela
+            grid.appendChild(createCell("Disciplina", "subject-cell"));
+            grid.appendChild(createCell("Nota", "grade-cell"));
+            grid.appendChild(createCell("Faltas", "faltas-cell"));
+
+            // Itera pelas disciplinas
+            for (let i = 0; i < disciplinasCount; i++) {
+                const nomeDisc = disciplinas[i] || (`Disciplina ${i+1}`);
                 
-                if (b < 4) {
-                    header.textContent = `${b+1}º Bimestre`;
-                } else {
-                    header.textContent = "5º CONCEITO";
-                    header.style.background = "linear-gradient(135deg, #27ae60, #2ecc71)";
+                // Célula do nome da disciplina
+                grid.appendChild(createCell(nomeDisc, "subject-cell"));
+
+                // Célula da nota
+                const notaRaw = notas[b][i];
+                let nota = null;
+                if (notaRaw !== null && notaRaw !== undefined && notaRaw !== "") {
+                    const parsed = parseFloat(notaRaw);
+                    nota = isNaN(parsed) ? null : parsed;
                 }
-
-                // Adiciona funcionalidade de duplo clique para expandir
-                header.addEventListener('dblclick', function() {
-                    toggleCardExpansion(card);
-                });
-
-                const content = document.createElement('div');
-                content.className = "bimester-content";
-
-                // Cria grid para as disciplinas, notas e faltas
-                const grid = document.createElement('div');
-                grid.className = "subject-grid";
-
-                // Itera pelas disciplinas
-                for (let i = 0; i < disciplinasCount; i++) {
-                    const nomeDisc = disciplinas[i] || (`Disciplina ${i+1}`);
-                    
-                    // Célula do nome da disciplina
-                    const nomeCell = document.createElement("div");
-                    nomeCell.className = "subject-cell";
-                    nomeCell.textContent = nomeDisc;
-
-                    // Célula da nota
-                    const gradeCell = document.createElement("div");
-                    gradeCell.className = "grade-cell";
-
-                    // Célula das faltas
-                    const faltasCell = document.createElement("div");
-                    faltasCell.className = "faltas-cell";
-
-                    if (b < 4) {
-                        // Bimestres 1-4
-                        const notaRaw = notas[b][i];
-                        const faltaRaw = faltas[b][i];
-
-                        let nota = null;
-                        if (notaRaw !== null && notaRaw !== undefined && notaRaw !== "") {
-                            const parsed = parseFloat(notaRaw);
-                            nota = isNaN(parsed) ? null : parsed;
-                        }
-
-                        const falta = (faltaRaw === null || faltaRaw === undefined || faltaRaw === "") ? 0 : (parseInt(faltaRaw) || 0);
-
-                        // Aplica a cor baseada na nota
-                        if (nota !== null) {
-                            if (nota >= 5) {
-                                gradeCell.classList.add("nota-alta");
-                            } else {
-                                gradeCell.classList.add("nota-baixa");
-                            }
-                            gradeCell.textContent = nota.toFixed(1);
-                        } else {
-                            gradeCell.classList.add("sem-nota");
-                            gradeCell.textContent = "--";
-                        }
-
-                        // Preenche a célula de faltas
-                        faltasCell.textContent = falta;
+                
+                const gradeCell = createCell(nota !== null ? nota.toFixed(1) : "--", "grade-cell");
+                if (nota !== null) {
+                    if (nota >= 5) {
+                        gradeCell.classList.add("nota-alta");
                     } else {
-                        // 5º Conceito (médias e totais)
-                        let medias = Array.isArray(dados.conceito5) && dados.conceito5.length >= disciplinasCount ? 
-                            dados.conceito5.slice(0, disciplinasCount) : null;
-                        
-                        if (!medias) {
-                            // Calcula as médias se não vierem do backend
-                            medias = new Array(disciplinasCount).fill(null);
-                            for (let i = 0; i < disciplinasCount; i++) {
-                                let soma = 0, cont = 0;
-                                for (let b = 0; b < 4; b++) {
-                                    const n = notas[b][i];
-                                    if (n !== null && n !== undefined && n !== "" && !isNaN(parseFloat(n))) { 
-                                        soma += parseFloat(n); 
-                                        cont++; 
-                                    }
-                                }
-                                
-                                // Cálculo da média com arredondamento
-                                if (cont > 0) {
-                                    const mediaCalculada = soma / cont;
-                                    // Arredondar para inteiro (apenas um algarismo) - Requisito do usuário
-                                    medias[i] = Math.round(mediaCalculada);
-                                } else {
-                                    medias[i] = null;
-                                }
-                            }
-                        }
-
-                        const totalFaltasPorDisciplina = Array.isArray(dados.totalFaltasPorDisciplina) && dados.totalFaltasPorDisciplina.length >= disciplinasCount
-                            ? dados.totalFaltasPorDisciplina
-                            : (function() {
-                                // calcula somando faltas por disciplina
-                                const totals = new Array(disciplinasCount).fill(0);
-                                for (let i = 0; i < disciplinasCount; i++) {
-                                    let tot = 0;
-                                    for (let b = 0; b < 4; b++) tot += (parseInt(faltas[b][i]) || 0);
-                                    totals[i] = tot;
-                                }
-                                return totals;
-                            })();
-
-                        const media = medias[i];
-                        const faltasDisc = totalFaltasPorDisciplina[i] || 0;
-
-                        // Aplica a cor baseada na média
-                        if (media !== null && media !== undefined && !isNaN(media)) {
-                            if (media >= 5) {
-                                gradeCell.classList.add("nota-alta");
-                            } else {
-                                gradeCell.classList.add("nota-baixa");
-                            }
-                            gradeCell.textContent = Math.round(media); // Garante que o valor exibido seja inteiro
-                        } else {
-                            gradeCell.classList.add("sem-nota");
-                            gradeCell.textContent = "--";
-                        }
-
-                        // Preenche a célula de faltas totais com estilo específico
-                        faltasCell.textContent = faltasDisc;
-                        faltasCell.classList.add("faltas-total-cell");
+                        gradeCell.classList.add("nota-baixa");
                     }
-
-                    grid.appendChild(nomeCell);
-                    grid.appendChild(gradeCell);
-                    grid.appendChild(faltasCell);
+                } else {
+                    gradeCell.classList.add("sem-nota");
                 }
+                grid.appendChild(gradeCell);
 
-                content.appendChild(grid);
-                card.appendChild(header);
-                card.appendChild(content);
-                resultsContainer.appendChild(card);
+                // Célula das faltas
+                const faltaRaw = faltas[b][i];
+                const falta = (faltaRaw === null || faltaRaw === undefined || faltaRaw === "") ? 0 : (parseInt(faltaRaw) || 0);
+                grid.appendChild(createCell(falta, "faltas-cell"));
             }
+            
+            content.appendChild(grid);
+            card.appendChild(header);
+            card.appendChild(content);
+            
+            return card;
         }
+        
+        function createConceitoCard(disciplinas, conceito5, coresConceito5, totalFaltasPorDisciplina, notas, faltas) {
+            const disciplinasCount = disciplinas.length;
+            
+            const card = document.createElement('div');
+            card.className = "bimester-card";
 
-        /* ===================== FUNÇÃO PARA EXPANDIR/RETRAIR CARD ===================== */
-        function toggleCardExpansion(card) {
-            // Se o card já está expandido, retrai
-            if (card.classList.contains('expanded')) {
-                card.classList.remove('expanded');
-                overlay.style.display = 'none';
-                currentExpandedCard = null;
-            } else {
-                // Remove a classe expanded de todos os cards
-                document.querySelectorAll('.bimester-card').forEach(c => {
-                    c.classList.remove('expanded');
-                });
+            const header = document.createElement('div');
+            header.className = "bimester-header";
+            header.textContent = "5º CONCEITO (Média Final)";
+            header.style.background = "linear-gradient(135deg, var(--success-color), #27ae60)";
+
+            // Adiciona funcionalidade de duplo clique para expandir
+            header.addEventListener('dblclick', function() {
+                toggleCardExpansion(card);
+            });
+
+            const content = document.createElement('div');
+            content.className = "bimester-content";
+
+            // Cria grid para as disciplinas, notas e faltas
+            const grid = document.createElement('div');
+            grid.className = "subject-grid";
+            
+            // Cabeçalho da tabela
+            grid.appendChild(createCell("Disciplina", "subject-cell"));
+            grid.appendChild(createCell("Média", "grade-cell"));
+            grid.appendChild(createCell("Total Faltas", "faltas-cell"));
+
+            // Itera pelas disciplinas
+            for (let i = 0; i < disciplinasCount; i++) {
+                const nomeDisc = disciplinas[i] || (`Disciplina ${i+1}`);
                 
-                // Adiciona a classe expanded no card clicado
-                card.classList.add('expanded');
-                overlay.style.display = 'block';
-                currentExpandedCard = card;
+                // Célula do nome da disciplina
+                grid.appendChild(createCell(nomeDisc, "subject-cell"));
+
+                // Célula da Média
+                let media = conceito5[i];
+                let cor = coresConceito5[i];
+                
+                // Recalcula se necessário (fallback)
+                if (media === null || media === undefined) {
+                    let soma = 0, cont = 0;
+                    for (let b = 0; b < 4; b++) {
+                        const n = notas[b][i];
+                        if (n !== null && n !== undefined && n !== "" && !isNaN(parseFloat(n))) { 
+                            soma += parseFloat(n); 
+                            cont++; 
+                        }
+                    }
+                    media = cont > 0 ? (soma / cont) : null;
+                    cor = media !== null ? (media >= 5 ? "#000080" : "#FF0000") : null;
+                }
+                
+                const gradeCell = createCell(media !== null ? media.toFixed(1) : "--", "grade-cell");
+                if (media !== null) {
+                    if (media >= 5) {
+                        gradeCell.classList.add("nota-alta");
+                    } else {
+                        gradeCell.classList.add("nota-baixa");
+                    }
+                } else {
+                    gradeCell.classList.add("sem-nota");
+                }
+                grid.appendChild(gradeCell);
+
+                // Célula do Total de Faltas
+                const totalFaltas = totalFaltasPorDisciplina[i] || 0;
+                grid.appendChild(createCell(totalFaltas, "faltas-cell"));
             }
+            
+            content.appendChild(grid);
+            card.appendChild(header);
+            card.appendChild(content);
+            
+            return card;
+        }
+        
+        function createCell(text, className) {
+            const cell = document.createElement("div");
+            cell.className = className;
+            cell.textContent = text;
+            return cell;
         }
 
-        // Fechar card expandido ao clicar no overlay
-        overlay.addEventListener('click', function() {
-            if (currentExpandedCard) {
-                currentExpandedCard.classList.remove('expanded');
-                overlay.style.display = 'none';
-                currentExpandedCard = null;
-            }
-        });
-
-        /* ===================== FUNÇÕES DE AUXÍLIO ===================== */
-        function showLoading(msg) {
-            resultsContainer.innerHTML = `<div class="loading">${msg}</div>`;
-        }
-
-        function hideLoading() {
-            const loading = resultsContainer.querySelector('.loading');
-            if (loading) loading.remove();
-        }
-
-        function showError(msg) {
-            resultsContainer.innerHTML = `<div class="error">${msg}</div>`;
-        }
-
-        function showNoData() {
-            resultsContainer.innerHTML = '<div class="no-data">Selecione uma turma e um aluno para visualizar os dados</div>';
-        }
-
-        /* ===================== INICIAR ===================== */
-        document.addEventListener("DOMContentLoaded", populateClassSelect);
+        /* ===================== INICIALIZAÇÃO ===================== */
+        document.addEventListener('DOMContentLoaded', populateClassSelect);
     </script>
 </body>
 </html>
