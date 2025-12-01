@@ -529,7 +529,7 @@
         }
         
         /* Ajustes responsivos */
-        @media (max-width: 1800px) {
+        /* @media (max-width: 1800px) {
             .container {
                 max-width: 1700px;
             }
@@ -540,7 +540,7 @@
             }
         }
         
-        @media (max-width: 1600px) {
+        /* @media (max-width: 1600px) {
             .container {
                 max-width: 1500px;
             }
@@ -551,7 +551,7 @@
             }
         }
         
-        @media (max-width: 1400px) {
+        /* @media (max-width: 1400px) {
             .container {
                 max-width: 1300px;
             }
@@ -571,7 +571,7 @@
             }
         }
         
-        @media (max-width: 1240px) {
+        /* @media (max-width: 1240px) {
             .container {
                 max-width: 1200px;
             }
@@ -589,7 +589,7 @@
             }
         }
         
-        @media (max-width: 1024px) {
+        /* @media (max-width: 1024px) {
             .controls-panel {
                 flex-direction: column;
                 gap: 20px;
@@ -627,7 +627,7 @@
             }
         }
         
-        @media (max-width: 768px) {
+        /* @media (max-width: 768px) {
             .container {
                 padding: 15px;
             }
@@ -709,7 +709,7 @@
 
     <script>
       // URL DO WEB APP
-      const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxF4TenKe_NzCjycMhNvc6X5bjiRXztz7_So-FjVjFsInOl0WmCY2TfsXV-kOkq5QxV/exec';
+      const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwr-COZVNhtRSoub_fArfPdxOKmQlGC4bWGJDTHvCQI0N4F5iydxl039aSdrlvB1Klo/exec';
 
       // Elementos DOM
       const classSelect = document.getElementById('class-select');
@@ -1055,7 +1055,7 @@
                   // Cálculo da média com arredondamento
                   if (cont > 0) {
                     const mediaCalculada = soma / cont;
-                    // Arredondar para inteiro (apenas um algarismo)
+                    // Arredondar para inteiro (apenas um algarismo) - Requisito do usuário
                     medias[i] = Math.round(mediaCalculada);
                   } else {
                     medias[i] = null;
@@ -1086,7 +1086,7 @@
                 } else {
                   gradeCell.classList.add("nota-baixa");
                 }
-                gradeCell.textContent = media;
+                gradeCell.textContent = Math.round(media); // Garante que o valor exibido seja inteiro
               } else {
                 gradeCell.classList.add("sem-nota");
                 gradeCell.textContent = "--";
