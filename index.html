@@ -482,6 +482,13 @@
             text-shadow: 0 1px 1px rgba(255,255,255,0.5);
         }
         
+        /* Estilo específico para as faltas do 5º conceito - fundo branco, texto preto em negrito */
+        .faltas-total-cell {
+            background-color: #ffffff !important;
+            color: #000000 !important;
+            font-weight: bold !important;
+        }
+        
         .footer {
             text-align: center;
             margin-top: 40px;
@@ -1069,14 +1076,8 @@
             // Cálculo da média com arredondamento conforme especificado
             if (cont > 0) {
               const mediaCalculada = soma / cont;
-              const parteDecimal = mediaCalculada - Math.floor(mediaCalculada);
-              
-              // Arredondamento: se a parte decimal for >= 0.5, arredonda para cima, senão mantém
-              if (parteDecimal >= 0.5) {
-                medias[i] = Math.ceil(mediaCalculada);
-              } else {
-                medias[i] = Math.floor(mediaCalculada);
-              }
+              // Arredondar para inteiro (apenas um algarismo)
+              medias[i] = Math.round(mediaCalculada);
             } else {
               medias[i] = null;
             }
@@ -1108,7 +1109,7 @@
 
           // Célula das faltas totais
           const faltasCell = document.createElement("div");
-          faltasCell.className = "faltas-cell";
+          faltasCell.className = "faltas-cell faltas-total-cell"; // Adiciona classe específica para o 5º conceito
 
           const media = medias[i];
           const faltasDisc = totalFaltasPorDisciplina[i] || 0;
