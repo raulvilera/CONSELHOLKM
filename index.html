@@ -1166,7 +1166,7 @@
 
     <script>
         // URL DO WEB APP
-        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzCe6_5wDKtO-WHf40KobSrTZ6mveAJiT4Bwl7zL0U-vkx2ME7-hWe2praJcFW9Zc0g/exec';
+        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycby5A3p2VZGikVjAxH43_VQ0_RlixY8Q7zc5mbpnTUv3eYlQ2Jq2h8UAIvFcERKg6Rlo/exec';
 
         // Elementos DOM
         const classSelect = document.getElementById('class-select');
@@ -1337,7 +1337,7 @@
                 displayStudentData({ disciplinas, notas, faltas, conceito5, coresConceito5, totalFaltasPorDisciplina, faltasTotal, bimestres: dados.bimestres || {} });
                 
                 // Exibir ranking do aluno
-                await exibirRankingAluno(turma, aluno);
+                await exibirRankingAno(turma, aluno);
             } catch (err) {
                 showError("Erro ao carregar dados do aluno.");
                 console.error(err);
@@ -1688,10 +1688,13 @@
             resultsContainer.innerHTML = '<div class="no-data">Selecione uma turma e um aluno para visualizar os dados</div>';
         }
 
-        /* ===================== FUNÇÃO PARA BUSCAR E EXIBIR O RANKING ===================== */
-        async function exibirRankingAluno(turma, aluno) {
+        /* ===================== FUNÇÃO PARA BUSCAR E EXIBIR O RANKING DO ANO ===================== */
+        async function exibirRankingAno(turma, aluno) {
             try {
-                const response = await fetch(`${WEB_APP_URL}?action=getRankingAluno&turma=${encodeURIComponent(turma)}&aluno=${encodeURIComponent(aluno)}`);
+                // Extrair o ano/série da turma (ex: "6º Ano A" -> "6º Ano")
+                const anoSerie = extrairAnoSerie(turma);
+                
+                const response = await fetch(`${WEB_APP_URL}?action=getRankingAno&ano=${encodeURIComponent(anoSerie)}&aluno=${encodeURIComponent(aluno)}`);
                 const data = await response.json();
                 
                 if (data.error) {
@@ -1706,9 +1709,8 @@
                     popup.id = 'ranking-popup';
                     popup.style.cssText = `
                         position: fixed;
-                        bottom: 20px;
-                        left: 50%;
-                        transform: translateX(-50%);
+                        top: 20px;
+                        left: 20px;
                         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
                         color: white;
                         padding: 15px 25px;
@@ -1728,8 +1730,8 @@
                     const style = document.createElement('style');
                     style.textContent = `
                         @keyframes piscar {
-                            0%, 100% { opacity: 1; transform: translateX(-50%) scale(1); }
-                            50% { opacity: 0.8; transform: translateX(-50%) scale(1.05); }
+                            0%, 100% { opacity: 1; transform: scale(1); }
+                            50% { opacity: 0.8; transform: scale(1.05); }
                         }
                     `;
                     document.head.appendChild(style);
@@ -1738,15 +1740,15 @@
                 // Definir mensagem baseada na posição
                 let mensagem = '';
                 if (data.alunoNoTop20) {
-                    mensagem = `🎉 ALUNO TOP ${data.alunoNoTop20.posicao} DE ${data.totalAlunos} 🎉`;
+                    mensagem = `🎉 TOP ${data.alunoNoTop20.posicao} DO ${anoSerie.toUpperCase()} 🎉`;
                     popup.style.background = 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)';
                 } else {
-                    mensagem = `📊 Posição: ${data.posicaoGeral}º de ${data.totalAlunos}`;
+                    mensagem = `📊 Posição no ${anoSerie}: ${data.posicaoGeral}º de ${data.totalAlunos}`;
                     popup.style.background = 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)';
                 }
                 
                 popup.innerHTML = `
-                    <div style="margin-bottom: 5px; font-size: 16px;">🏆 RANKING DA TURMA</div>
+                    <div style="margin-bottom: 5px; font-size: 16px;">🏆 RANKING DO ANO</div>
                     <div style="font-size: 20px;">${mensagem}</div>
                     <div style="font-size: 12px; opacity: 0.8; margin-top: 5px;">
                         ${data.alunoNoTop20 ? `Média: ${data.alunoNoTop20.mediaGeral}` : ''}
@@ -1769,6 +1771,30 @@
             } catch (error) {
                 console.error("Erro ao exibir ranking:", error);
             }
+        }
+
+        /* ===================== FUNÇÃO PARA EXTRAIR ANO/SÉRIE ===================== */
+        function extrairAnoSerie(turmaNome) {
+            // Extrai o ano/série do nome da turma
+            // Exemplos:
+            // "6º Ano A" -> "6º Ano"
+            // "1ª Série A" -> "1ª Série"
+            // "2ª Série ADM" -> "2ª Série"
+            
+            // Remove a letra da turma e espaços extras
+            const partes = turmaNome.trim().split(' ');
+            
+            // Para turmas do Ensino Fundamental (6º ao 9º Ano)
+            if (turmaNome.includes('º Ano')) {
+                return partes.slice(0, 2).join(' ');
+            }
+            // Para turmas do Ensino Médio (1ª a 3ª Série)
+            else if (turmaNome.includes('ª Série')) {
+                return partes.slice(0, 2).join(' ');
+            }
+            
+            // Fallback: retorna as duas primeiras palavras
+            return partes.slice(0, 2).join(' ');
         }
 
         /* ===================== INICIAR ===================== */
