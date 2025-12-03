@@ -1166,7 +1166,7 @@
 
     <script>
         // URL DO WEB APP
-        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyxDGGjwrtn8eYYEva34GhrV_-aLJuQOMll-lvM3dHc32MnJ4fDhPg95eNGzsjRuZGW/exec';
+        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzCe6_5wDKtO-WHf40KobSrTZ6mveAJiT4Bwl7zL0U-vkx2ME7-hWe2praJcFW9Zc0g/exec';
 
         // Elementos DOM
         const classSelect = document.getElementById('class-select');
@@ -1335,6 +1335,9 @@
                 const faltasTotal = typeof dados.faltasTotal === 'number' ? dados.faltasTotal : (totalFaltasPorDisciplina.reduce((a,b)=>a+(b||0),0) || 0);
 
                 displayStudentData({ disciplinas, notas, faltas, conceito5, coresConceito5, totalFaltasPorDisciplina, faltasTotal, bimestres: dados.bimestres || {} });
+                
+                // Exibir ranking do aluno
+                await exibirRankingAluno(turma, aluno);
             } catch (err) {
                 showError("Erro ao carregar dados do aluno.");
                 console.error(err);
@@ -1685,9 +1688,91 @@
             resultsContainer.innerHTML = '<div class="no-data">Selecione uma turma e um aluno para visualizar os dados</div>';
         }
 
+        /* ===================== FUNÇÃO PARA BUSCAR E EXIBIR O RANKING ===================== */
+        async function exibirRankingAluno(turma, aluno) {
+            try {
+                const response = await fetch(`${WEB_APP_URL}?action=getRankingAluno&turma=${encodeURIComponent(turma)}&aluno=${encodeURIComponent(aluno)}`);
+                const data = await response.json();
+                
+                if (data.error) {
+                    console.error("Erro ao buscar ranking:", data.error);
+                    return;
+                }
+                
+                // Criar ou atualizar o elemento do pop-up
+                let popup = document.getElementById('ranking-popup');
+                if (!popup) {
+                    popup = document.createElement('div');
+                    popup.id = 'ranking-popup';
+                    popup.style.cssText = `
+                        position: fixed;
+                        bottom: 20px;
+                        left: 50%;
+                        transform: translateX(-50%);
+                        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                        color: white;
+                        padding: 15px 25px;
+                        border-radius: 10px;
+                        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+                        font-weight: bold;
+                        font-size: 18px;
+                        text-align: center;
+                        z-index: 1000;
+                        min-width: 300px;
+                        animation: piscar 2s infinite;
+                        border: 3px solid gold;
+                    `;
+                    document.body.appendChild(popup);
+                    
+                    // Adicionar animação de piscar
+                    const style = document.createElement('style');
+                    style.textContent = `
+                        @keyframes piscar {
+                            0%, 100% { opacity: 1; transform: translateX(-50%) scale(1); }
+                            50% { opacity: 0.8; transform: translateX(-50%) scale(1.05); }
+                        }
+                    `;
+                    document.head.appendChild(style);
+                }
+                
+                // Definir mensagem baseada na posição
+                let mensagem = '';
+                if (data.alunoNoTop20) {
+                    mensagem = `🎉 ALUNO TOP ${data.alunoNoTop20.posicao} DE ${data.totalAlunos} 🎉`;
+                    popup.style.background = 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)';
+                } else {
+                    mensagem = `📊 Posição: ${data.posicaoGeral}º de ${data.totalAlunos}`;
+                    popup.style.background = 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)';
+                }
+                
+                popup.innerHTML = `
+                    <div style="margin-bottom: 5px; font-size: 16px;">🏆 RANKING DA TURMA</div>
+                    <div style="font-size: 20px;">${mensagem}</div>
+                    <div style="font-size: 12px; opacity: 0.8; margin-top: 5px;">
+                        ${data.alunoNoTop20 ? `Média: ${data.alunoNoTop20.mediaGeral}` : ''}
+                    </div>
+                `;
+                
+                // Auto-remover após 10 segundos
+                setTimeout(() => {
+                    if (popup && popup.parentNode) {
+                        popup.style.opacity = '0';
+                        popup.style.transition = 'opacity 0.5s';
+                        setTimeout(() => {
+                            if (popup && popup.parentNode) {
+                                popup.parentNode.removeChild(popup);
+                            }
+                        }, 500);
+                    }
+                }, 10000);
+                
+            } catch (error) {
+                console.error("Erro ao exibir ranking:", error);
+            }
+        }
+
         /* ===================== INICIAR ===================== */
         document.addEventListener("DOMContentLoaded", populateClassSelect);
     </script>
 </body>
 </html>
-
