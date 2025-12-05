@@ -1623,6 +1623,21 @@
             // Converte para maiúsculas e remove espaços extras
             let nomeFormatado = nome.toUpperCase().trim();
             
+            // Mapeamento específico para disciplinas longas
+            const disciplinasEspeciais = {
+                "CARREIRA E COMPETÊNCIAS PARA O MERCADO DE TRABALHO EM ADMINISTRAÇÃO 51064": 
+                    "CARREIRA E COMPETÊNCIAS<br>PARA O MERCADO<br>DE TRABALHO EM ADM 51064",
+                "INTRODUÇÃO À ADMINISTRAÇÃO, LEGISLAÇÃO E PESSOAS 51061": 
+                    "INTRODUÇÃO À ADMINISTRAÇÃO,<br>LEGISLAÇÃO E PESSOAS 51061",
+                "MATEMATICA APLICADA À ADMINISTRAÇÃO 51063": 
+                    "MATEMÁTICA APLICADA<br>À ADMINISTRAÇÃO 51063"
+            };
+
+            // Se a disciplina está no mapa, retorna a versão formatada
+            if (disciplinasEspeciais[nomeFormatado]) {
+                return disciplinasEspeciais[nomeFormatado];
+            }
+
             // Se já tiver duas palavras, coloca uma embaixo da outra
             const palavras = nomeFormatado.split(/\s+/);
             
@@ -1639,6 +1654,55 @@
             
             // Uma palavra apenas
             return nomeFormatado;
+        }
+
+        /* ===================== CORREÇÃO DAS CÉLULAS DE NOTAS E FALTAS ===================== */
+        function corrigirReferenciasCelulas(dados) {
+            // Função para corrigir as referências de células problemáticas
+            if (!dados || !dados.bimestres) return dados;
+            
+            const bimestresCorrigidos = {};
+            const correcoes = {
+                // Disciplina 1: CARREIRA E COMPETÊNCIAS PARA O MERCADO DE TRABALHO EM ADMINISTRAÇÃO 51064
+                "CARREIRA E COMPETÊNCIAS PARA O MERCADODE TRABALHO EM ADMINISTRAÇÃO 51064": {
+                    1: { notas: "BCL249:BCL286", faltas: "BLM249:BLM286" },
+                    2: { notas: "BCL310:BCL347", faltas: "BLM310:BLM347" },
+                    3: { notas: "BCL372:BCL409", faltas: "BLM372:BLM409" },
+                    4: { notas: "BCL434:BCL471", faltas: "BLM434:BLM471" }
+                },
+                // Disciplina 2: INTRODUÇÃO À ADMINISTRAÇÃO, LEGISLAÇÃO E PESSOAS 51061
+                "INTRODUÇÃO À ADMINISTRAÇÃO, LEGISLAÇÃOE PESSOAS 51061": {
+                    1: { notas: "BCP249:BCP286", faltas: "BCQ249:BCQ286" },
+                    2: { notas: "BCP310:BCP347", faltas: "BCQ310:BCQ347" },
+                    3: { notas: "BCP372:BCP409", faltas: "BCQ372:BCQ409" },
+                    4: { notas: "BCP434:BCP471", faltas: "BCQ434:BCQ471" }
+                },
+                // Disciplina 3: MATEMATICA APLICADA À ADMINISTRAÇÃO 51063
+                "MATEMATICA APLICADA À ADMINISTRAÇÃO 51063": {
+                    1: { notas: "BCT249:BCT286", faltas: "BCU249:BCU286" },
+                    2: { notas: "BCT310:BCT347", faltas: "BCU310:BCU347" },
+                    3: { notas: "BCT372:BCT409", faltas: "BCU372:BCU409" },
+                    4: { notas: "BCT434:BCT471", faltas: "BCU434:BCU471" }
+                }
+            };
+            
+            // Aplica correções se necessário
+            for (const [disciplina, correcao] of Object.entries(correcoes)) {
+                if (dados.disciplinas && dados.disciplinas.includes(disciplina)) {
+                    // Corrige o nome da disciplina
+                    const index = dados.disciplinas.indexOf(disciplina);
+                    if (index !== -1) {
+                        // Corrige o nome
+                        if (disciplina === "CARREIRA E COMPETÊNCIAS PARA O MERCADODE TRABALHO EM ADMINISTRAÇÃO 51064") {
+                            dados.disciplinas[index] = "CARREIRA E COMPETÊNCIAS PARA O MERCADO DE TRABALHO EM ADMINISTRAÇÃO 51064";
+                        } else if (disciplina === "INTRODUÇÃO À ADMINISTRAÇÃO, LEGISLAÇÃOE PESSOAS 51061") {
+                            dados.disciplinas[index] = "INTRODUÇÃO À ADMINISTRAÇÃO, LEGISLAÇÃO E PESSOAS 51061";
+                        }
+                    }
+                }
+            }
+            
+            return dados;
         }
 
         /* ===================== FUNÇÃO PARA EXPANDIR/RETRAIR CARD ===================== */
