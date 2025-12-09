@@ -17,6 +17,14 @@
             --nota-alta: #2196f3;
             --faltas-cor: #ff9800;
             --card-bg: #4a5568;
+            --grid-gap: 12px;
+            --turma-selected-bg: #ffeb3b;
+            --aluno-selected-bg: #1565c0;
+            --dropdown-selected-bg: #1976d2;
+            --dropdown-text: #000000;
+            --dropdown-text-selected: #ffffff;
+            --turma-verde: #d4edda;
+            --aluno-azul: #d1ecf1;
         }
         
         * {
@@ -31,25 +39,27 @@
             color: #333;
             line-height: 1.6;
             min-height: 100vh;
+            overflow-x: hidden;
+            padding-top: 160px; /* Espaço para header + controls-panel */
         }
         
-        .container {
-            width: 100%;
-            margin: 0 auto;
-            padding: 20px;
-            max-width: 100%;
-        }
-        
+        /* HEADER FIXO - AUMENTADO O Z-INDEX */
         header {
             background: linear-gradient(135deg, var(--primary-color), #1a252f);
             color: white;
-            padding: 18px 15px;
+            padding: 15px 10px;
             text-align: center;
-            border-radius: 12px 12px 0 0;
-            margin-bottom: 25px;
-            box-shadow: 0 6px 15px rgba(0,0,0,0.15);
-            position: relative;
+            border-radius: 0;
+            margin-bottom: 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 2000;
+            width: 100%;
             overflow: hidden;
+            height: auto;
         }
         
         header::before {
@@ -58,449 +68,471 @@
             top: 0;
             left: 0;
             right: 0;
-            height: 4px;
+            height: 3px;
             background: linear-gradient(90deg, var(--secondary-color), var(--accent-color));
         }
         
         h1 {
-            font-size: clamp(1.5rem, 4vw, 2.2rem);
+            font-size: clamp(1.3rem, 3vw, 2rem);
             text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
             margin: 0;
             line-height: 1.2;
+            padding: 0 5px;
         }
         
+        /* CONTROLS PANEL FIXO - AUMENTADO O Z-INDEX */
         .controls-panel {
             background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-            padding: 18px 20px 23px;
-            border-radius: 12px;
+            padding: 15px;
+            border-radius: 0 0 10px 10px;
             box-shadow: 
-                0 8px 25px rgba(0,0,0,0.1),
-                0 4px 6px rgba(0,0,0,0.05),
+                0 4px 15px rgba(0,0,0,0.1),
+                0 2px 4px rgba(0,0,0,0.05),
                 inset 0 1px 0 rgba(255,255,255,0.8);
-            margin-bottom: 25px;
-            display: flex;
-            flex-wrap: wrap;
-            align-items: flex-start;
-            justify-content: space-between;
-            gap: 15px;
-            position: relative;
+            position: fixed;
+            top: 60px;
+            left: 0;
+            right: 0;
+            z-index: 1900;
+            width: 100%;
             border: 1px solid rgba(255,255,255,0.5);
-            margin-top: -12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100px;
         }
         
-        .controls-panel::after {
-            content: '';
-            position: absolute;
-            bottom: -12px;
-            left: 2%;
-            right: 2%;
-            height: 18px;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.6), transparent);
-            border-radius: 50%;
-            filter: blur(8px);
-            z-index: -1;
+        .controls-wrapper {
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+        
+        .controls-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: nowrap;
+            gap: 20px;
+            width: 100%;
         }
         
         .nav-btn {
-            padding: 12px 15px;
-            font-size: clamp(0.9rem, 2vw, 1.1rem);
-            font-weight: bold;
+            padding: 10px 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
             border: none;
-            border-radius: 8px;
+            border-radius: 6px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-            box-shadow: 
-                0 5px 0 #1a5276,
-                0 8px 15px rgba(0,0,0,0.2);
-            background: linear-gradient(145deg, #3498db, #2980b9);
-            color: white;
+            transition: all 0.2s ease;
+            white-space: nowrap;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            height: 42px;
             min-width: 120px;
-            flex: 1;
-            max-width: 200px;
-            white-space: nowrap;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
-        .nav-btn:hover {
+        .nav-btn.prev {
+            background: linear-gradient(145deg, #e74c3c, #c0392b);
+            color: white;
+            box-shadow: 
+                0 3px 0 #a93226,
+                0 4px 8px rgba(0,0,0,0.15);
+            order: 1;
+        }
+        
+        .nav-btn.prev:hover {
+            background: linear-gradient(145deg, #ec7063, #e74c3c);
+            transform: translateY(-2px);
+            box-shadow: 
+                0 5px 0 #1a5276,
+                0 6px 12px rgba(0,0,0,0.2);
+        }
+        
+        .nav-btn.next {
+            background: linear-gradient(145deg, #3498db, #2980b9);
+            color: white;
+            box-shadow: 
+                0 3px 0 #1a5276,
+                0 4px 8px rgba(0,0,0,0.15);
+            order: 5;
+        }
+        
+        .nav-btn.next:hover {
             background: linear-gradient(145deg, #3cb0fd, #3498db);
-            transform: translateY(-3px);
+            transform: translateY(-2px);
             box-shadow: 
-                0 8px 0 #1a5276,
-                0 12px 20px rgba(0,0,0,0.25);
-        }
-        
-        .nav-btn:active {
-            transform: translateY(4px);
-            box-shadow: 
-                0 1px 0 #1a5276,
-                0 3px 8px rgba(0,0,0,0.2);
+                0 5px 0 #1a5276,
+                0 6px 12px rgba(0,0,0,0.2);
         }
         
         .nav-btn:disabled {
             background: linear-gradient(145deg, #bdc3c7, #95a5a6);
             box-shadow: 
-                0 4px 0 #7f8c8d,
-                0 6px 10px rgba(0,0,0,0.1);
+                0 2px 0 #7f8c8d,
+                0 3px 6px rgba(0,0,0,0.1);
             cursor: not-allowed;
             transform: none;
         }
         
-        .nav-btn:disabled:active {
-            transform: none;
-            box-shadow: 
-                0 4px 0 #7f8c8d,
-                0 6px 10px rgba(0,0,0,0.1);
-        }
-        
-        .nav-btn.prev {
-            background: linear-gradient(145deg, #e74c3c, #c0392b);
-            box-shadow: 
-                0 5px 0 #a93226,
-                0 8px 15px rgba(0,0,0,0.2);
-        }
-        
-        .nav-btn.prev:hover {
-            background: linear-gradient(145deg, #ec7063, #e74c3c);
-        }
-        
         .controls-center {
             display: flex;
-            flex-wrap: wrap;
-            align-items: flex-start;
-            gap: 15px;
-            flex: 3;
+            flex: 1;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: nowrap;
+            gap: 20px;
             min-width: 0;
-            justify-content: center;
+            order: 2;
+            max-width: 1000px;
         }
         
         .form-group {
             display: flex;
             flex-direction: column;
+            flex-shrink: 0;
+            text-align: center;
             flex: 1;
-            min-width: 200px;
+            min-width: 0;
         }
         
+        /* TURMA - LARGURA AJUSTÁVEL */
         .form-group.turma {
-            flex: 1;
-            min-width: 150px;
+            min-width: 180px;
+            max-width: 250px;
         }
         
+        /* ALUNO - LARGURA FLEXÍVEL */
         .form-group.aluno {
-            flex: 2;
             min-width: 250px;
+            flex: 2;
         }
         
+        /* BOTÃO CARREGAR DADOS */
         .form-group.btn-container {
-            flex: 0 1 auto;
             min-width: 140px;
+            max-width: 160px;
         }
         
         label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             font-weight: 700;
             color: var(--dark-color);
-            font-size: clamp(0.9rem, 2vw, 1.05rem);
-            text-shadow: 0 1px 1px rgba(255,255,255,0.8);
+            font-size: 0.9rem;
             white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-align: center;
         }
         
-        select, input {
-            padding: 12px 15px;
+        select {
+            padding: 10px 12px;
             border: 1px solid #ced4da;
-            border-radius: 8px;
-            font-size: clamp(0.95rem, 2vw, 1.05rem);
+            border-radius: 6px;
+            font-size: 0.95rem;
             background: linear-gradient(to bottom, #ffffff, #f8f9fa);
             transition: all 0.3s ease;
             box-shadow: 
-                inset 0 2px 4px rgba(0,0,0,0.05),
-                0 2px 4px rgba(0,0,0,0.05);
-            position: relative;
+                inset 0 1px 3px rgba(0,0,0,0.05),
+                0 1px 2px rgba(0,0,0,0.05);
             color: #495057;
+            text-align: left;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23495057' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-size: 16px;
+            padding-right: 35px;
             width: 100%;
         }
         
-        #class-select {
-            text-align: center;
-            width: 100%;
-        }
-        
-        #student-select {
-            width: 100%;
-        }
-        
-        select:focus, input:focus {
-            border-color: var(--secondary-color);
-            outline: none;
+        /* TURMA SELECIONADA - TEXTO CENTRALIZADO */
+        select.turma-selecionada {
+            text-align: center !important;
+            background-color: var(--turma-selected-bg) !important;
+            color: #000000 !important;
+            font-weight: 800 !important;
+            border-color: #ffc107 !important;
             box-shadow: 
-                inset 0 2px 4px rgba(0,0,0,0.05),
-                0 0 0 3px rgba(52, 152, 219, 0.2),
-                0 2px 8px rgba(0,0,0,0.1);
-            background: linear-gradient(to bottom, #ffffff, #fefefe);
+                inset 0 1px 3px rgba(0,0,0,0.1),
+                0 0 0 2px rgba(255, 193, 7, 0.3) !important;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e") !important;
         }
         
+        /* CENTRALIZAR TURMA NO CAMPO - IMPORTANTE */
         #class-select.turma-selecionada {
-            background: #ffeb3b !important;
-            color: #333 !important;
-            font-weight: bold !important;
+            text-align: center !important;
+        }
+        
+        /* Garantir que as opções da turma também fiquem centralizadas quando abertas */
+        #class-select.turma-selecionada option {
+            text-align: center !important;
+        }
+        
+        /* ALUNO SELECIONADO */
+        select.aluno-selecionado {
+            background-color: var(--aluno-selected-bg) !important;
+            color: #ffffff !important;
+            font-weight: 800 !important;
+            border-color: #0d47a1 !important;
+            box-shadow: 
+                inset 0 1px 3px rgba(0,0,0,0.1),
+                0 0 0 2px rgba(13, 71, 161, 0.3) !important;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e") !important;
+        }
+        
+        /* ESTILOS PARA OPTIONS - COM CORES ALTERNADAS */
+        select option {
+            text-align: left !important;
+            padding: 10px 15px !important;
+            font-weight: 700 !important;
+            border-bottom: 1px solid #eee;
+            font-size: 0.9rem;
+        }
+        
+        /* DROPDOWN DE TURMAS - CORES ALTERNADAS VERDE/BRANCO */
+        #class-select option:nth-child(odd):not(:first-child) {
+            background-color: var(--turma-verde) !important;
+            color: #000000 !important;
         }
         
         #class-select option:nth-child(even) {
-            background-color: #f0f8ff;
-        }
-        
-        #class-select option:nth-child(odd) {
-            background-color: #ffffff;
-        }
-        
-        #class-select option:hover {
-            background-color: #e1f0ff !important;
-        }
-        
-        #class-select option:checked {
-            background-color: #ffeb3b !important;
+            background-color: #ffffff !important;
             color: #000000 !important;
-            font-weight: bold !important;
         }
         
-        #student-select.aluno-selecionado {
-            background: #1a237e !important;
-            color: #ffffff !important;
-            font-weight: bold !important;
+        /* Primeira opção (placeholder) - estilo especial */
+        #class-select option:first-child {
+            background-color: #ffffff !important;
+            color: #6c757d !important;
+            font-style: italic;
         }
         
-        #student-select option {
-            font-weight: bold !important;
+        /* DROPDOWN DE ALUNOS - CORES ALTERNADAS AZUL CLARO/BRANCO */
+        #student-select option:nth-child(odd):not(:first-child) {
+            background-color: var(--aluno-azul) !important;
             color: #000000 !important;
         }
         
         #student-select option:nth-child(even) {
-            background-color: #f0f8ff;
-        }
-        
-        #student-select option:nth-child(odd) {
-            background-color: #ffffff;
-        }
-        
-        #student-select option:hover {
-            background-color: #e1f0ff !important;
-        }
-        
-        #student-select option:checked {
-            background-color: #d0e7ff !important;
-            font-weight: bold;
+            background-color: #ffffff !important;
             color: #000000 !important;
+        }
+        
+        /* Primeira opção (placeholder) - estilo especial */
+        #student-select option:first-child {
+            background-color: #ffffff !important;
+            color: #6c757d !important;
+            font-style: italic;
+        }
+        
+        /* OPÇÃO SELECIONADA NO DROPDOWN - DESTAQUE */
+        select option:checked,
+        select option[selected] {
+            background-color: var(--dropdown-selected-bg) !important;
+            color: var(--dropdown-text-selected) !important;
+            font-weight: 800 !important;
+        }
+        
+        /* HOVER NAS OPTIONS */
+        select option:hover,
+        select option:focus {
+            background-color: #e3f2fd !important;
+            color: #1565c0 !important;
+            font-weight: 800 !important;
+        }
+        
+        select:focus {
+            border-color: var(--secondary-color);
+            outline: none;
+            box-shadow: 
+                inset 0 1px 3px rgba(0,0,0,0.05),
+                0 0 0 3px rgba(52, 152, 219, 0.15);
         }
         
         .btn {
             background: linear-gradient(135deg, var(--secondary-color), #2980b9);
             color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: clamp(0.9rem, 2vw, 1rem);
-            font-weight: 600;
-            transition: all 0.3s ease;
             box-shadow: 
-                0 4px 6px rgba(0,0,0,0.1),
-                0 2px 4px rgba(0,0,0,0.06);
+                0 2px 4px rgba(0,0,0,0.1);
             width: 100%;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            height: 46px;
+            padding: 10px 15px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            height: 42px;
         }
         
         .btn:hover {
             background: linear-gradient(135deg, #3cb0fd, #3498db);
-            transform: translateY(-2px);
+            transform: translateY(-1px);
             box-shadow: 
-                0 6px 12px rgba(0,0,0,0.15),
-                0 4px 6px rgba(0,0,0,0.1);
+                0 3px 6px rgba(0,0,0,0.15);
         }
         
-        .btn:active {
-            transform: translateY(1px);
-            box-shadow: 
-                0 2px 4px rgba(0,0,0,0.1),
-                0 1px 2px rgba(0,0,0,0.06);
+        /* CONTAINER PRINCIPAL DOS CARDS - REMOVIDA MARGEM SUPERIOR */
+        .container {
+            width: 100%;
+            margin: 0 auto;
+            padding: 15px;
+            max-width: 100%;
+            min-width: 320px;
+            margin-top: 0; /* Removido margin-top pois o padding-top do body já cuida do espaço */
+            position: relative;
+            z-index: 1;
         }
         
-        .btn:disabled {
-            background: linear-gradient(135deg, #bdc3c7, #95a5a6);
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: 
-                0 2px 4px rgba(0,0,0,0.05);
-        }
-        
-        .btn:disabled:active {
-            transform: none;
-            box-shadow: 
-                0 2px 4px rgba(0,0,0,0.05);
-        }
-        
-        /* CONTAINER PRINCIPAL DOS CARDS */
+        /* CONTAINER PRINCIPAL DOS CARDS - RESPONSIVO */
         .results-container {
-            display: flex;
-            gap: 15px;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: var(--grid-gap);
             margin-top: 20px;
             width: 100%;
-            min-height: 700px;
+            min-height: 600px;
+            overflow: visible;
         }
         
-        /* CARD DE BIMESTRE */
+        /* CARD DE BIMESTRE - RESPONSIVO */
         .bimester-card {
             background-color: var(--card-bg);
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
             overflow: hidden;
-            transition: all 0.3s ease;
             display: flex;
             flex-direction: column;
             border: 1px solid rgba(0,0,0,0.05);
             position: relative;
-            z-index: 1;
-            flex: 1;
-            min-width: 0;
-            height: 700px;
+            height: 100%;
+            min-height: 500px;
+            transition: transform 0.2s ease;
         }
         
         .bimester-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-        }
-        
-        .bimester-card.expanded {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 1000;
-            width: 90%;
-            max-width: 1200px;
-            height: 90%;
-            max-height: 90vh;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.12);
         }
         
         .bimester-header {
             background: linear-gradient(135deg, var(--primary-color), var(--dark-color));
             color: white;
-            padding: 15px 10px;
+            padding: 12px 8px;
             text-align: center;
             font-weight: 700;
-            font-size: 1.2rem;
+            font-size: 0.95rem;
             cursor: pointer;
             user-select: none;
             flex-shrink: 0;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
-            transition: all 0.3s ease;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            height: 60px;
+            min-height: 50px;
             display: flex;
             align-items: center;
             justify-content: center;
-        }
-        
-        .bimester-header:hover {
-            background: linear-gradient(135deg, #34495e, #2c3e50);
+            transition: all 0.2s ease;
+            word-wrap: break-word;
+            white-space: normal;
+            line-height: 1.2;
         }
         
         .bimester-content {
-            padding: 15px;
+            padding: 10px;
             overflow-y: auto;
             flex-grow: 1;
+            min-height: 0;
         }
         
-        /* GRID DE DISCIPLINAS - ALTURAS FIXAS E SEM QUEBRA */
+        /* GRID DE DISCIPLINAS - ALTURAS FLEXÍVEIS */
         .subject-grid {
-            display: grid;
-            grid-template-columns: 1fr;
+            display: flex;
+            flex-direction: column;
             gap: 6px;
+            height: 100%;
+        }
+        
+        .grid-header-row {
+            display: grid;
+            grid-template-columns: 2fr 0.8fr 0.8fr;
+            gap: 4px;
+            margin-bottom: 4px;
+            flex-shrink: 0;
+        }
+        
+        .subject-rows-container {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex-grow: 1;
+            min-height: 0;
+            overflow-y: auto;
         }
         
         .subject-row {
             display: grid;
             grid-template-columns: 2fr 0.8fr 0.8fr;
-            gap: 6px;
-            min-height: 70px;
+            gap: 4px;
+            min-height: 40px;
             align-items: stretch;
         }
         
         .grid-header {
-            background-color: var(--dark-color) !important;
+            background-color: var(--dark-color);
             color: white;
             font-weight: bold;
-            text-transform: uppercase;
-            font-size: 0.9rem;
-            padding: 12px 8px;
+            font-size: 0.75rem;
+            padding: 8px 4px;
             display: flex;
             align-items: center;
             justify-content: center;
             text-align: center;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            min-height: 50px;
+            word-wrap: break-word;
+            min-height: 35px;
+            border-radius: 4px;
         }
         
         .subject-cell, .grade-cell, .faltas-cell {
-            padding: 10px 8px;
+            padding: 6px 4px;
             font-weight: 600;
             display: flex;
             align-items: center;
-            font-size: 0.9rem;
-            line-height: 1.2;
-            white-space: normal;
+            font-size: 0.8rem;
+            line-height: 1.1;
             word-break: break-word;
-            overflow: visible;
-            height: 70px;
-            border-radius: 6px;
-            min-height: 70px;
-            max-height: 70px;
-            width: 100%;
-            box-sizing: border-box;
+            overflow: hidden;
+            border-radius: 4px;
+            min-height: 40px;
+            text-align: center;
         }
         
         .subject-cell {
             justify-content: center;
-            text-align: center;
             background-color: rgba(255, 255, 255, 0.1);
             color: #ffffff;
             border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            padding: 5px 3px;
-            font-size: 0.75rem;
-            line-height: 1.15;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            white-space: normal;
-            overflow: visible;
+            padding: 4px 2px;
+            font-size: 0.7rem;
             text-transform: uppercase;
-            letter-spacing: 0.2px;
+            letter-spacing: 0.1px;
             word-wrap: break-word;
             hyphens: auto;
         }
         
         .grade-cell {
             font-weight: 700;
-            text-align: center;
-            min-width: 60px;
             border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
             color: white;
             font-family: 'Arial', sans-serif;
+            font-size: 0.9rem;
+            justify-content: center;
         }
         
         .grade-cell.nota-baixa {
@@ -519,30 +551,50 @@
         .faltas-cell {
             color: #000000;
             font-weight: bold;
-            text-align: center;
-            min-width: 60px;
             border: 2px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
             background-color: #ffffff;
-            font-size: 1.2rem;
+            font-size: 0.9rem;
             font-family: 'Arial', sans-serif;
+            justify-content: center;
         }
         
         .faltas-total-cell {
-            background-color: #ffffff !important;
-            color: #000000 !important;
-            font-weight: bold !important;
+            background-color: #ffffff;
+            color: #000000;
+            font-weight: bold;
         }
         
-        .footer {
-            text-align: center;
-            padding: 20px 0 10px;
-            color: #6c757d;
-            font-size: 0.9rem;
-            margin-top: 20px;
+        /* 5º CONCEITO - COR ESPECIAL PARA O CABEÇALHO */
+        .bimester-card.conceito5 .bimester-header {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+        }
+        
+        .bimester-card.conceito5 .bimester-header:hover {
+            background: linear-gradient(135deg, #229954, #27ae60);
+        }
+        
+        /* ESTILO ESPECÍFICO PARA NOTAS DO 5º CONCEITO */
+        .bimester-card.conceito5 .grade-cell.nota-alta {
+            background-color: #2196f3 !important; /* Azul para notas 5 ou mais */
+        }
+        
+        .bimester-card.conceito5 .grade-cell.nota-baixa {
+            background-color: #ff5252 !important; /* Vermelho para notas 4 ou abaixo */
+        }
+        
+        /* MODAL EXPANDIDO */
+        .bimester-card.expanded {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 2000;
+            width: 95%;
+            max-width: 1200px;
+            height: 90%;
+            max-height: 90vh;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+            border-radius: 12px;
         }
         
         .overlay {
@@ -552,468 +604,392 @@
             width: 100%;
             height: 100%;
             background: rgba(0, 0, 0, 0.6);
-            z-index: 999;
+            z-index: 1999;
             display: none;
         }
         
-        .loading {
+        .footer {
             text-align: center;
-            padding: 30px;
+            padding: 15px 0 5px;
+            color: #6c757d;
+            font-size: 0.85rem;
+            margin-top: 20px;
+        }
+        
+        .loading, .error, .no-data {
+            text-align: center;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+            font-size: 0.95rem;
+        }
+        
+        .loading {
             color: var(--dark-color);
-            font-size: clamp(1rem, 2vw, 1.1rem);
         }
         
         .error {
             background: linear-gradient(135deg, #ffeaea, #ffdada);
             color: var(--accent-color);
-            padding: 20px;
-            border-radius: 8px;
-            margin: 25px 0;
-            text-align: center;
             border-left: 4px solid var(--accent-color);
             font-weight: 600;
         }
         
         .no-data {
-            text-align: center;
-            padding: 40px;
             color: #6c757d;
             font-style: italic;
-            font-size: clamp(1rem, 2vw, 1.1rem);
             background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            width: 100%;
-        }
-
-        /* 5º CONCEITO - COR ESPECIAL */
-        .bimester-card.conceito5 .bimester-header {
-            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            box-shadow: 0 3px 6px rgba(0,0,0,0.04);
         }
         
-        .bimester-card.conceito5 .bimester-header:hover {
-            background: linear-gradient(135deg, #229954, #27ae60);
-        }
-
-        /* AJUSTES RESPONSIVOS */
+        /* RESPONSIVIDADE AVANÇADA */
         @media (max-width: 1600px) {
-            .bimester-card {
-                height: 650px;
-            }
-            
-            .subject-row {
-                min-height: 65px;
-            }
-            
-            .subject-cell, .grade-cell, .faltas-cell {
-                font-size: 0.85rem;
-                height: 65px;
-                min-height: 65px;
-                max-height: 65px;
-                padding: 8px 6px;
-            }
-            
-            .grid-header {
-                font-size: 0.85rem;
-                padding: 10px 6px;
-                min-height: 45px;
-            }
-            
-            .subject-cell {
-                font-size: 0.7rem;
-                line-height: 1.1;
-                padding: 4px 2px;
-            }
-        }
-        
-        @media (max-width: 1400px) {
-            .bimester-card {
-                height: 600px;
-            }
-            
-            .subject-row {
-                min-height: 60px;
-            }
-            
-            .subject-cell, .grade-cell, .faltas-cell {
-                font-size: 0.8rem;
-                height: 60px;
-                min-height: 60px;
-                max-height: 60px;
-                padding: 8px 5px;
-            }
-            
-            .grid-header {
-                font-size: 0.8rem;
-                padding: 10px 5px;
-                min-height: 40px;
-            }
-            
-            .bimester-header {
-                font-size: 1.1rem;
-                height: 55px;
+            .results-container {
+                grid-template-columns: repeat(5, minmax(240px, 1fr));
+                gap: 10px;
             }
             
             .subject-cell {
                 font-size: 0.65rem;
-                line-height: 1.1;
-                padding: 3px 2px;
+                padding: 3px 1px;
+            }
+            
+            .controls-wrapper {
+                max-width: 1200px;
+            }
+        }
+        
+        @media (max-width: 1400px) {
+            .results-container {
+                grid-template-columns: repeat(5, minmax(220px, 1fr));
+            }
+            
+            .bimester-header {
+                font-size: 0.9rem;
+                padding: 10px 6px;
+            }
+            
+            .form-group.turma {
+                min-width: 150px;
+                max-width: 220px;
+            }
+            
+            .controls-center {
+                gap: 15px;
             }
         }
         
         @media (max-width: 1200px) {
             .results-container {
+                grid-template-columns: repeat(5, minmax(200px, 1fr));
+                gap: 8px;
+            }
+            
+            .controls-row {
                 flex-wrap: wrap;
-                min-height: auto;
-            }
-            
-            .bimester-card {
-                flex: 1 1 calc(33.333% - 15px);
-                height: 550px;
-                min-width: 300px;
-            }
-            
-            .subject-row {
-                min-height: 55px;
-            }
-            
-            .subject-cell, .grade-cell, .faltas-cell {
-                font-size: 0.75rem;
-                height: 55px;
-                min-height: 55px;
-                max-height: 55px;
-                padding: 7px 4px;
-            }
-            
-            .grid-header {
-                font-size: 0.75rem;
-                padding: 9px 4px;
-                min-height: 38px;
-            }
-            
-            .bimester-header {
-                font-size: 1rem;
-                height: 50px;
-            }
-            
-            .controls-panel {
-                padding: 15px;
-            }
-            
-            .controls-center {
-                order: 2;
-                width: 100%;
-                flex: 1 1 100%;
-            }
-            
-            .nav-btn.prev {
-                order: 1;
-            }
-            
-            .nav-btn.next {
-                order: 3;
-            }
-            
-            .subject-cell {
-                font-size: 0.6rem;
-                line-height: 1.05;
-                padding: 3px 1px;
-            }
-        }
-        
-        @media (max-width: 992px) {
-            .bimester-card {
-                flex: 1 1 calc(50% - 15px);
-                height: 500px;
-                min-width: 280px;
-            }
-            
-            .subject-row {
-                min-height: 50px;
-            }
-            
-            .subject-cell, .grade-cell, .faltas-cell {
-                font-size: 0.7rem;
-                height: 50px;
-                min-height: 50px;
-                max-height: 50px;
-                padding: 6px 3px;
-            }
-            
-            .grid-header {
-                font-size: 0.7rem;
-                padding: 8px 3px;
-                min-height: 35px;
-            }
-            
-            .controls-panel {
-                flex-direction: column;
-                align-items: stretch;
+                gap: 15px;
             }
             
             .nav-btn {
                 max-width: 100%;
-                flex: 0 0 auto;
-            }
-            
-            .form-group {
-                min-width: 100%;
             }
             
             .controls-center {
-                gap: 10px;
+                order: 3;
+                width: 100%;
+                margin-top: 10px;
+            }
+            
+            .nav-btn.prev, .nav-btn.next {
+                order: unset;
+                flex: 1;
             }
             
             .bimester-header {
-                font-size: 0.95rem;
-                height: 48px;
+                font-size: 0.85rem;
+                min-height: 45px;
             }
             
             .subject-cell {
-                font-size: 0.55rem;
+                font-size: 0.6rem;
                 line-height: 1.0;
-                padding: 2px 1px;
+            }
+            
+            .form-group.turma {
+                min-width: 140px;
+                max-width: 200px;
+            }
+            
+            body {
+                padding-top: 170px;
+            }
+        }
+        
+        @media (max-width: 992px) {
+            .results-container {
+                grid-template-columns: repeat(3, 1fr);
+                grid-template-rows: repeat(2, auto);
+            }
+            
+            .bimester-card:nth-child(4),
+            .bimester-card:nth-child(5) {
+                grid-column: span 1;
+            }
+            
+            .bimester-card:nth-child(5) {
+                grid-column: 2 / 3;
+                grid-row: 2 / 3;
+            }
+            
+            .form-group.turma {
+                min-width: 130px;
+                max-width: 180px;
+            }
+            
+            body {
+                padding-top: 180px;
+            }
+            
+            .controls-panel {
+                height: 110px;
             }
         }
         
         @media (max-width: 768px) {
             .container {
-                padding: 15px 10px;
-            }
-            
-            header {
-                padding: 15px 10px;
-                margin-bottom: 20px;
-            }
-            
-            .controls-panel {
-                padding: 15px 12px;
-                margin-bottom: 20px;
+                padding: 10px;
             }
             
             .results-container {
-                gap: 12px;
-            }
-            
-            .bimester-card {
-                flex: 1 1 100%;
-                height: 480px;
-                min-width: 100%;
-            }
-            
-            .subject-row {
-                min-height: 48px;
-            }
-            
-            .subject-cell, .grade-cell, .faltas-cell {
-                font-size: 0.8rem;
-                height: 48px;
-                min-height: 48px;
-                max-height: 48px;
-                padding: 8px 4px;
-            }
-            
-            .grid-header {
-                font-size: 0.8rem;
-                padding: 10px 4px;
-                min-height: 38px;
-            }
-            
-            .bimester-header {
-                font-size: 1rem;
-                height: 50px;
-            }
-            
-            .nav-btn {
-                padding: 10px 12px;
-                font-size: 0.9rem;
-            }
-            
-            .btn {
-                padding: 10px 15px;
-                height: 44px;
-            }
-            
-            .subject-cell {
-                font-size: 0.65rem;
-                line-height: 1.05;
-                padding: 3px 2px;
-            }
-        }
-        
-        @media (max-width: 576px) {
-            .container {
-                padding: 10px 8px;
-            }
-            
-            header {
-                padding: 12px 8px;
-                border-radius: 8px 8px 0 0;
-            }
-            
-            .controls-panel {
-                padding: 12px 10px;
-                border-radius: 8px;
-                gap: 10px;
-            }
-            
-            .controls-center {
+                grid-template-columns: repeat(2, 1fr);
+                grid-template-rows: repeat(3, auto);
                 gap: 8px;
             }
             
-            label {
-                font-size: 0.9rem;
-                margin-bottom: 6px;
-            }
-            
-            select, input {
-                padding: 10px 12px;
-                font-size: 0.95rem;
-            }
-            
-            .nav-btn {
-                font-size: 0.85rem;
-                min-width: 100px;
-                padding: 8px 10px;
-            }
-            
-            .btn {
-                font-size: 0.9rem;
-                padding: 10px 12px;
-                height: 42px;
-            }
-            
-            .bimester-card.expanded {
-                width: 95%;
-                max-height: 85vh;
-            }
-            
             .bimester-card {
-                height: 460px;
+                min-height: 450px;
             }
             
-            .subject-row {
-                min-height: 46px;
+            .bimester-card:nth-child(5) {
+                grid-column: 1 / -1;
+                grid-row: 3 / 4;
             }
             
-            .subject-cell, .grade-cell, .faltas-cell {
-                font-size: 0.75rem;
-                height: 46px;
-                min-height: 46px;
-                max-height: 46px;
-                padding: 7px 3px;
+            .controls-center {
+                flex-direction: column;
+                gap: 10px;
             }
             
-            .grid-header {
-                font-size: 0.75rem;
-                padding: 9px 3px;
-                min-height: 36px;
+            .form-group {
+                min-width: 100%;
+                max-width: 100%;
+            }
+            
+            .form-group.turma {
+                min-width: 100%;
+                max-width: 100%;
+            }
+            
+            .form-group.aluno {
+                min-width: 100%;
+            }
+            
+            .form-group.btn-container {
+                min-width: 100%;
+                max-width: 100%;
             }
             
             .bimester-header {
-                font-size: 0.9rem;
-                height: 46px;
+                font-size: 0.8rem;
+                padding: 8px 4px;
+                min-height: 40px;
             }
             
             .subject-cell {
                 font-size: 0.55rem;
                 line-height: 0.95;
-                padding: 2px 1px;
+            }
+            
+            .controls-panel {
+                padding: 12px;
+                height: 120px;
+            }
+            
+            .controls-row {
+                gap: 10px;
+            }
+            
+            body {
+                padding-top: 190px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .results-container {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            
+            .bimester-card {
+                min-height: 400px;
+            }
+            
+            .bimester-card:nth-child(5) {
+                grid-column: 1 / -1;
+                grid-row: 5 / 6;
+            }
+            
+            .nav-btn {
+                min-width: 100%;
+                max-width: 100%;
+            }
+            
+            .bimester-header {
+                font-size: 0.9rem;
+                padding: 10px 5px;
+            }
+            
+            .subject-cell, .grade-cell, .faltas-cell {
+                font-size: 0.75rem;
+                min-height: 35px;
+            }
+            
+            .subject-cell {
+                font-size: 0.7rem;
+                line-height: 1.0;
+            }
+            
+            select {
+                font-size: 0.9rem;
+                padding: 12px 12px 12px 12px;
+            }
+            
+            body {
+                padding-top: 200px;
+            }
+            
+            header {
+                padding: 12px 8px;
+            }
+            
+            .controls-panel {
+                top: 55px;
+                height: 130px;
+            }
+            
+            .controls-wrapper {
+                padding: 0 10px;
             }
         }
         
         @media (max-width: 400px) {
+            .container {
+                padding: 8px;
+            }
+            
+            header {
+                padding: 10px 5px;
+            }
+            
             h1 {
-                font-size: 1.3rem;
+                font-size: 1.1rem;
             }
             
             .controls-panel {
-                padding: 10px 8px;
-            }
-            
-            .nav-btn {
-                font-size: 0.8rem;
-                padding: 8px;
-                min-width: 90px;
-            }
-            
-            .btn {
-                font-size: 0.85rem;
-                padding: 8px 10px;
-            }
-            
-            .bimester-header {
-                padding: 8px 3px;
-                font-size: 0.85rem;
-                height: 44px;
-            }
-            
-            .bimester-content {
                 padding: 10px;
+                top: 50px;
+                height: 140px;
             }
             
             .bimester-card {
-                height: 440px;
+                min-height: 380px;
             }
             
-            .subject-row {
-                min-height: 44px;
-            }
-            
-            .subject-cell, .grade-cell, .faltas-cell {
-                font-size: 0.7rem;
-                height: 44px;
-                min-height: 44px;
-                max-height: 44px;
-                padding: 6px 2px;
-            }
-            
-            .grid-header {
-                font-size: 0.7rem;
-                padding: 8px 2px;
-                min-height: 34px;
+            .bimester-header {
+                font-size: 0.8rem;
+                min-height: 38px;
             }
             
             .subject-cell {
-                font-size: 0.5rem;
+                font-size: 0.6rem;
                 line-height: 0.9;
-                padding: 2px 1px;
             }
+            
+            select.turma-selecionada,
+            select.aluno-selecionado {
+                font-size: 0.9rem;
+            }
+            
+            .nav-btn {
+                padding: 8px 15px;
+                font-size: 0.85rem;
+            }
+            
+            body {
+                padding-top: 190px;
+            }
+        }
+        
+        /* ROLAGEM PERSONALIZADA */
+        .bimester-content::-webkit-scrollbar,
+        .subject-rows-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .bimester-content::-webkit-scrollbar-track,
+        .subject-rows-container::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+        }
+        
+        .bimester-content::-webkit-scrollbar-thumb,
+        .subject-rows-container::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 3px;
+        }
+        
+        .bimester-content::-webkit-scrollbar-thumb:hover,
+        .subject-rows-container::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.4);
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>SISTEMA INTEGRADO CONSELHO DE CLASSE</h1>
-        </header>
-        
-        <div class="controls-panel">
-            <button id="prev-btn" class="nav-btn prev" disabled>← VOLTAR</button>
-            
-            <div class="controls-center">
-                <div class="form-group turma">
-                    <label for="class-select">Selecione a Turma:</label>
-                    <select id="class-select">
-                        <option value="">-- Selecione uma turma --</option>
-                    </select>
+    <header>
+        <h1>SISTEMA INTEGRADO CONSELHO DE CLASSE</h1>
+    </header>
+    
+    <div class="controls-panel">
+        <div class="controls-wrapper">
+            <div class="controls-row">
+                <button id="prev-btn" class="nav-btn prev" disabled>← VOLTAR</button>
+                
+                <div class="controls-center">
+                    <div class="form-group turma">
+                        <label for="class-select">Selecione a Turma:</label>
+                        <select id="class-select">
+                            <option value="">-- Selecione uma turma --</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group aluno">
+                        <label for="student-select">Selecione o Aluno:</label>
+                        <select id="student-select" disabled>
+                            <option value="">-- Primeiro selecione uma turma --</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group btn-container">
+                        <button id="load-data" class="btn" disabled>Carregar Dados</button>
+                    </div>
                 </div>
                 
-                <div class="form-group aluno">
-                    <label for="student-select">Selecione o Aluno:</label>
-                    <select id="student-select" disabled>
-                        <option value="">-- Primeiro selecione uma turma --</option>
-                    </select>
-                </div>
-                
-                <div class="form-group btn-container">
-                    <button id="load-data" class="btn" disabled>Carregar Dados</button>
-                </div>
+                <button id="next-btn" class="nav-btn next" disabled>AVANÇAR →</button>
             </div>
-            
-            <button id="next-btn" class="nav-btn next" disabled>AVANÇAR →</button>
         </div>
-        
+    </div>
+    
+    <div class="container">
         <div id="results" class="results-container">
             <div class="no-data">Selecione uma turma e um aluno para visualizar os dados</div>
         </div>
@@ -1055,10 +1031,17 @@
                 if (turmas.error) throw new Error(turmas.error);
 
                 classSelect.innerHTML = '<option value="">-- Selecione uma turma --</option>';
-                turmas.forEach(turma => {
+                turmas.forEach((turma, index) => {
                     const option = document.createElement('option');
                     option.value = turma;
                     option.textContent = turma;
+                    option.style.textAlign = "center";
+                    // Aplica cores alternadas via JavaScript também
+                    if (index % 2 === 0) {
+                        option.style.backgroundColor = "#d4edda";
+                    } else {
+                        option.style.backgroundColor = "#ffffff";
+                    }
                     classSelect.appendChild(option);
                 });
 
@@ -1073,8 +1056,20 @@
         classSelect.addEventListener('change', async function () {
             const turma = this.value;
 
-            if (turma) classSelect.classList.add('turma-selecionada');
-            else classSelect.classList.remove('turma-selecionada');
+            // Centraliza o texto da turma selecionada
+            if (turma) {
+                classSelect.classList.add('turma-selecionada');
+                classSelect.style.textAlign = "center";
+                classSelect.style.textAlignLast = "center";
+                classSelect.style.webkitTextAlignLast = "center";
+                classSelect.style.mozTextAlignLast = "center";
+            } else {
+                classSelect.classList.remove('turma-selecionada');
+                classSelect.style.textAlign = "left";
+                classSelect.style.textAlignLast = "auto";
+                classSelect.style.webkitTextAlignLast = "auto";
+                classSelect.style.mozTextAlignLast = "auto";
+            }
 
             studentSelect.disabled = true;
             loadButton.disabled = true;
@@ -1083,6 +1078,7 @@
 
             if (!turma) {
                 studentSelect.innerHTML = '<option value="">-- Primeiro selecione uma turma --</option>';
+                studentSelect.classList.remove('aluno-selecionado');
                 showNoData();
                 return;
             }
@@ -1101,10 +1097,17 @@
                 currentStudents = Array.isArray(alunos) ? alunos : [];
                 currentTurma = turma;
 
-                currentStudents.forEach((a) => {
+                currentStudents.forEach((a, index) => {
                     const option = document.createElement('option');
                     option.value = a;
                     option.textContent = a;
+                    option.style.fontWeight = "700";
+                    // Aplica cores alternadas via JavaScript
+                    if (index % 2 === 0) {
+                        option.style.backgroundColor = "#d1ecf1";
+                    } else {
+                        option.style.backgroundColor = "#ffffff";
+                    }
                     studentSelect.appendChild(option);
                 });
 
@@ -1120,8 +1123,14 @@
             const hasStudent = !!this.value;
             loadButton.disabled = !hasStudent;
 
-            if (hasStudent) studentSelect.classList.add('aluno-selecionado');
-            else studentSelect.classList.remove('aluno-selecionado');
+            // Aplica estilo quando aluno selecionado
+            if (hasStudent) {
+                studentSelect.classList.add('aluno-selecionado');
+                studentSelect.style.backgroundImage = "url(\"data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e\")";
+            } else {
+                studentSelect.classList.remove('aluno-selecionado');
+                studentSelect.style.backgroundImage = "url(\"data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23495057' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e\")";
+            }
 
             if (hasStudent) {
                 currentStudentIndex = currentStudents.indexOf(this.value);
@@ -1150,6 +1159,7 @@
 
             studentSelect.value = currentStudents[currentStudentIndex];
             studentSelect.classList.add('aluno-selecionado');
+            studentSelect.style.backgroundImage = "url(\"data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e\")";
 
             // Carrega os dados do aluno automaticamente
             await loadStudentData();
@@ -1251,13 +1261,13 @@
                 const content = document.createElement('div');
                 content.className = "bimester-content";
 
-                // Cria grid para as disciplinas, notas e faltas
-                const grid = document.createElement('div');
-                grid.className = "subject-grid";
+                // Cria grid container
+                const gridContainer = document.createElement('div');
+                gridContainer.className = "subject-grid";
 
                 // Cabeçalhos da grid
                 const headerRow = document.createElement('div');
-                headerRow.className = "subject-row";
+                headerRow.className = "grid-header-row";
                 
                 const header1 = document.createElement("div");
                 header1.className = "grid-header";
@@ -1274,7 +1284,11 @@
                 headerRow.appendChild(header1);
                 headerRow.appendChild(header2);
                 headerRow.appendChild(header3);
-                grid.appendChild(headerRow);
+                gridContainer.appendChild(headerRow);
+
+                // Container para as linhas de disciplinas com scroll
+                const rowsContainer = document.createElement('div');
+                rowsContainer.className = "subject-rows-container";
 
                 // Itera pelas disciplinas
                 for (let i = 0; i < disciplinasCount; i++) {
@@ -1286,7 +1300,7 @@
                     const row = document.createElement('div');
                     row.className = "subject-row";
                     
-                    // Célula do nome da disciplina - COM QUEBRA DE LINHA
+                    // Célula do nome da disciplina
                     const nomeCell = document.createElement("div");
                     nomeCell.className = "subject-cell";
                     
@@ -1378,7 +1392,8 @@
                         const media = medias[i];
                         const faltasDisc = totalFaltasPorDisciplina[i] || 0;
 
-                        // Aplica a cor baseada na média (INTEIRO SEM VÍRGULAS)
+                        // CORREÇÃO: Lógica específica para 5º Conceito
+                        // 5 ou mais: azul, 4 ou abaixo: vermelho
                         if (media !== null && media !== undefined && !isNaN(media)) {
                             if (media >= 5) {
                                 gradeCell.classList.add("nota-alta");
@@ -1400,10 +1415,11 @@
                     row.appendChild(nomeCell);
                     row.appendChild(gradeCell);
                     row.appendChild(faltasCell);
-                    grid.appendChild(row);
+                    rowsContainer.appendChild(row);
                 }
 
-                content.appendChild(grid);
+                gridContainer.appendChild(rowsContainer);
+                content.appendChild(gridContainer);
                 card.appendChild(header);
                 card.appendChild(content);
                 resultsContainer.appendChild(card);
@@ -1485,5 +1501,3 @@
     </script>
 </body>
 </html>
-
-
