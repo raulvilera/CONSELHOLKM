@@ -264,11 +264,17 @@
     @keyframes cardIn { from{opacity:0;transform:translateY(20px);} to{opacity:1;transform:translateY(0);} }
     .bim-card.hidden { display: none; }
 
-    /* CABEÇALHO DO CARD REFORMULADO */
+    /* CABEÇALHO DO CARD - LAYOUT CORRIGIDO */
     .card-header {
-      padding: 16px 18px 14px; display: flex; align-items: flex-start; gap: 12px;
-      cursor: pointer; user-select: none; border-bottom: 1px solid var(--glass-border);
+      padding: 18px 18px 16px; 
+      display: flex; 
+      flex-direction: column;
+      gap: 10px;
+      cursor: pointer; 
+      user-select: none; 
+      border-bottom: 2px solid rgba(255,255,255,0.06);
       background: rgba(255,255,255,0.02);
+      position: relative;
     }
     .card-header::after {
       content: ''; position: absolute; bottom:0; left:18px; right:18px; height:1px;
@@ -276,28 +282,46 @@
     }
     .bim-card.conceito5 .card-header::after { background: linear-gradient(90deg, var(--green-500), transparent); }
 
+    .card-header-top {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
     .card-num {
       width: 40px; height: 40px; border-radius: 12px;
       background: linear-gradient(135deg, var(--navy-700), var(--navy-600));
-      border: 1px solid rgba(240,192,64,0.25); display: flex; align-items: center; justify-content: center;
+      border: 1px solid rgba(240,192,64,0.25); 
+      display: flex; align-items: center; justify-content: center;
       font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700;
-      color: var(--gold-300); flex-shrink: 0; margin-top: 2px;
+      color: var(--gold-300); flex-shrink: 0;
     }
     .bim-card.conceito5 .card-num { border-color: rgba(34,197,94,0.3); color: var(--green-400); }
 
-    .card-title-wrap { flex:1; min-width:0; }
     .card-title {
-      font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 700;
-      color: var(--white); line-height: 1.2; margin-bottom: 6px;
+      font-family: 'Playfair Display', serif; font-size: 1.05rem; font-weight: 700;
+      color: var(--white); line-height: 1.2;
     }
+
     .card-subtitle {
-      font-size: 0.7rem; color: var(--slate-400); letter-spacing: 0.3px;
-      font-weight: 500; background: rgba(255,255,255,0.04); padding: 4px 10px;
-      border-radius: 20px; display: inline-block; border: 1px solid rgba(255,255,255,0.06);
+      font-size: 0.72rem; 
+      color: var(--gold-200); 
+      letter-spacing: 0.5px;
+      font-weight: 600; 
+      background: rgba(240,192,64,0.1); 
+      padding: 6px 12px;
+      border-radius: 8px; 
+      border: 1px solid rgba(240,192,64,0.15);
+      width: fit-content;
+      margin-left: 0;
     }
+
     .card-expand-hint {
-      font-size: 0.7rem; color: var(--slate-400); opacity:0.5;
-      transition: opacity 0.2s; white-space: nowrap; margin-top:4px;
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      font-size: 0.7rem; color: var(--slate-400); opacity:0.4;
+      transition: opacity 0.2s; white-space: nowrap;
     }
     .card-header:hover .card-expand-hint { opacity:1; }
 
@@ -566,100 +590,238 @@
         const d = await r.json();
         if (d.error) throw new Error(d.error);
         if (!Array.isArray(d.disciplinas) || !Array.isArray(d.notas)) throw new Error('Dados inválidos');
-        const disc = d.disciplinas, n = disc.length;
-        const notas = []; for(let b=0;b<4;b++) notas[b]=padArr(Array.isArray(d.notas[b])?d.notas[b]:[],n,null);
-        const faltas = []; for(let b=0;b<4;b++) faltas[b]=padArr(Array.isArray(d.faltas)&&Array.isArray(d.faltas[b])?d.faltas[b]:[],n,0);
+        
+        // FILTRA A LINHA "TOTAL" DAS DISCIPLINAS
+        let disc = d.disciplinas;
+        let n = disc.length;
+        
+        // Remove a última linha se for "Total" ou "TOTAL"
+        if (n > 0) {
+          const lastDisc = disc[n-1];
+          if (lastDisc && typeof lastDisc === 'string' && 
+              (lastDisc.trim().toUpperCase() === 'TOTAL' || 
+               lastDisc.trim().toUpperCase().includes('TOTAL'))) {
+            disc = disc.slice(0, -1);
+            n = disc.length;
+          }
+        }
+        
+        const notas = []; 
+        for(let b=0; b<4; b++) {
+          let rawNotas = Array.isArray(d.notas[b]) ? d.notas[b] : [];
+          // Se houver mais notas que disciplinas (devido ao Total), corta o excesso
+          if (rawNotas.length > n) rawNotas = rawNotas.slice(0, n);
+          notas[b] = padArr(rawNotas, n, null);
+        }
+        
+        const faltas = []; 
+        for(let b=0; b<4; b++) {
+          let rawFaltas = (Array.isArray(d.faltas) && Array.isArray(d.faltas[b])) ? d.faltas[b] : [];
+          if (rawFaltas.length > n) rawFaltas = rawFaltas.slice(0, n);
+          faltas[b] = padArr(rawFaltas, n, 0);
+        }
+        
         let totFaltas;
-        if(Array.isArray(d.totalFaltasPorDisciplina)&&d.totalFaltasPorDisciplina.length===n) totFaltas=d.totalFaltasPorDisciplina.map(toInt);
-        else { totFaltas=[]; for(let di=0;di<n;di++){let s=0;for(let bi=0;bi<4;bi++) s+=toInt(faltas[bi][di]); totFaltas[di]=s; } }
+        if(Array.isArray(d.totalFaltasPorDisciplina) && d.totalFaltasPorDisciplina.length >= n) {
+          totFaltas = d.totalFaltasPorDisciplina.slice(0, n).map(toInt);
+        } else {
+          totFaltas = []; 
+          for(let di=0; di<n; di++) {
+            let s=0;
+            for(let bi=0; bi<4; bi++) s += toInt(faltas[bi][di]);
+            totFaltas[di] = s;
+          }
+        }
+        
         let c5;
-        if(Array.isArray(d.conceito5)&&d.conceito5.length===n) c5=d.conceito5.map(toRound);
-        else { c5=[]; for(let di=0;di<n;di++){let s=0,cnt=0;for(let bi=0;bi<4;bi++){const v=toFloat(notas[bi][di]); if(v!==null){s+=v;cnt++;}} c5[di]=cnt>0?Math.round(s/cnt):null; } }
-        renderCards({disc,notas,faltas,c5,totFaltas,n,aluno:a,turma:t});
-        hlName.textContent = a; hlMeta.innerHTML = `Turma: <strong>${t}</strong> &nbsp;·&nbsp; Aluno ${studentIdx+1} de ${students.length}`;
+        if(Array.isArray(d.conceito5) && d.conceito5.length >= n) {
+          c5 = d.conceito5.slice(0, n).map(toRound);
+        } else {
+          c5 = []; 
+          for(let di=0; di<n; di++) {
+            let s=0, cnt=0;
+            for(let bi=0; bi<4; bi++) {
+              const v = toFloat(notas[bi][di]);
+              if(v !== null) { s += v; cnt++; }
+            }
+            c5[di] = cnt > 0 ? Math.round(s/cnt) : null;
+          }
+        }
+        
+        renderCards({disc, notas, faltas, c5, totFaltas, n, aluno: a, turma: t});
+        hlName.textContent = a; 
+        hlMeta.innerHTML = `Turma: <strong>${t}</strong> &nbsp;·&nbsp; Aluno ${studentIdx+1} de ${students.length}`;
         hlEl.classList.add('visible');
-      } catch(e) { console.error(e); showState('error','Erro ao carregar dados.'); }
+      } catch(e) { 
+        console.error(e); 
+        showState('error','Erro ao carregar dados.'); 
+      }
     }
 
-    function renderCards({disc,notas,faltas,c5,totFaltas,n}) {
+    function renderCards({disc, notas, faltas, c5, totFaltas, n}) {
       grid.innerHTML = '';
       const bimLabels = ['1º Bimestre','2º Bimestre','3º Bimestre','4º Bimestre'];
       const bimSubs = ['Jan – Mar','Abr – Jun','Jul – Set','Out – Dez'];
-      for(let b=0;b<5;b++) {
-        const isC5 = b===4;
+      
+      for(let b=0; b<5; b++) {
+        const isC5 = b === 4;
         const card = document.createElement('div');
-        card.className = 'bim-card'+(isC5?' conceito5':'');
+        card.className = 'bim-card' + (isC5 ? ' conceito5' : '');
+        
         const header = document.createElement('div');
         header.className = 'card-header';
         header.title = 'Duplo clique para ampliar';
-        header.addEventListener('dblclick', ()=>toggleExpand(card));
+        header.addEventListener('dblclick', () => toggleExpand(card));
+        
+        // Nova estrutura do cabeçalho
+        const headerTop = document.createElement('div');
+        headerTop.className = 'card-header-top';
+        
         const numBox = document.createElement('div');
         numBox.className = 'card-num';
-        numBox.textContent = isC5 ? '★' : (b+1);
-        const tw = document.createElement('div');
-        tw.className = 'card-title-wrap';
-        tw.innerHTML = `<div class="card-title">${isC5?'5º Conceito':bimLabels[b]}</div><div class="card-subtitle">${isC5?'Média anual':bimSubs[b]}</div>`;
+        numBox.textContent = isC5 ? '★' : (b + 1);
+        
+        const titleEl = document.createElement('div');
+        titleEl.className = 'card-title';
+        titleEl.textContent = isC5 ? '5º Conceito' : bimLabels[b];
+        
+        headerTop.appendChild(numBox);
+        headerTop.appendChild(titleEl);
+        
+        const subtitle = document.createElement('div');
+        subtitle.className = 'card-subtitle';
+        subtitle.textContent = isC5 ? 'Média anual' : bimSubs[b];
+        
         const hint = document.createElement('div');
         hint.className = 'card-expand-hint';
         hint.textContent = '⤢ ampliar';
-        header.appendChild(numBox); header.appendChild(tw); header.appendChild(hint);
+        
+        header.appendChild(headerTop);
+        header.appendChild(subtitle);
+        header.appendChild(hint);
         card.appendChild(header);
+        
         const body = document.createElement('div');
         body.className = 'card-body';
+        
         const colH = document.createElement('div');
         colH.className = 'col-headers';
-        ['Disciplina','Nota','Faltas'].forEach(txt=>{ const h=document.createElement('div'); h.className='col-hdr'; h.textContent=txt; colH.appendChild(h); });
+        ['Disciplina','Nota','Faltas'].forEach(txt => { 
+          const h = document.createElement('div'); 
+          h.className = 'col-hdr'; 
+          h.textContent = txt; 
+          colH.appendChild(h); 
+        });
         body.appendChild(colH);
+        
         const list = document.createElement('div');
         list.className = 'disc-list';
-        for(let di=0;di<n;di++) {
+        
+        for(let di = 0; di < n; di++) {
           const row = document.createElement('div');
           row.className = 'disc-row';
+          
           const nameEl = document.createElement('div');
           nameEl.className = 'disc-name';
-          const parts = (disc[di]||`Disc.${di+1}`).toUpperCase().trim().split(/\s+/);
-          if(parts.length===1) nameEl.textContent=parts[0];
-          else if(parts.length===2) nameEl.innerHTML=parts[0]+'<br>'+parts[1];
-          else { const m=Math.ceil(parts.length/2); nameEl.innerHTML=parts.slice(0,m).join(' ')+'<br>'+parts.slice(m).join(' '); }
+          const parts = (disc[di] || `Disc.${di+1}`).toUpperCase().trim().split(/\s+/);
+          if(parts.length === 1) nameEl.textContent = parts[0];
+          else if(parts.length === 2) nameEl.innerHTML = parts[0] + '<br>' + parts[1];
+          else { 
+            const m = Math.ceil(parts.length/2); 
+            nameEl.innerHTML = parts.slice(0,m).join(' ') + '<br>' + parts.slice(m).join(' '); 
+          }
+          
           const gradeEl = document.createElement('div');
           gradeEl.className = 'disc-grade';
+          
           const faltaEl = document.createElement('div');
           faltaEl.className = 'disc-falta';
+          
           if(!isC5) {
             const nota = toFloat(notas[b][di]), falta = toInt(faltas[b][di]);
-            if(nota!==null) { gradeEl.classList.add(nota>=5?'alta':'baixa'); gradeEl.textContent=String(Math.round(nota)); }
-            else { gradeEl.classList.add('vazia'); gradeEl.textContent='—'; }
+            if(nota !== null) { 
+              gradeEl.classList.add(nota >= 5 ? 'alta' : 'baixa'); 
+              gradeEl.textContent = String(Math.round(nota)); 
+            } else { 
+              gradeEl.classList.add('vazia'); 
+              gradeEl.textContent = '—'; 
+            }
             faltaEl.textContent = String(falta);
           } else {
-            const media = c5[di], ft = totFaltas[di]??0;
-            if(media!==null && media!==undefined) { gradeEl.classList.add(media>=5?'alta':'baixa'); gradeEl.textContent=String(media); }
-            else { gradeEl.classList.add('vazia'); gradeEl.textContent='—'; }
+            const media = c5[di], ft = totFaltas[di] ?? 0;
+            if(media !== null && media !== undefined) { 
+              gradeEl.classList.add(media >= 5 ? 'alta' : 'baixa'); 
+              gradeEl.textContent = String(media); 
+            } else { 
+              gradeEl.classList.add('vazia'); 
+              gradeEl.textContent = '—'; 
+            }
             faltaEl.textContent = String(ft);
           }
-          row.appendChild(nameEl); row.appendChild(gradeEl); row.appendChild(faltaEl);
+          
+          row.appendChild(nameEl); 
+          row.appendChild(gradeEl); 
+          row.appendChild(faltaEl);
           list.appendChild(row);
         }
-        body.appendChild(list); card.appendChild(body); grid.appendChild(card);
+        
+        body.appendChild(list); 
+        card.appendChild(body); 
+        grid.appendChild(card);
       }
+      
       applyFilter();
     }
 
     function toggleExpand(card) {
-      if(card.classList.contains('expanded')) { card.classList.remove('expanded'); overlay.style.display='none'; expandedCard=null; }
-      else { document.querySelectorAll('.bim-card.expanded').forEach(c=>c.classList.remove('expanded')); card.classList.add('expanded'); overlay.style.display='block'; expandedCard=card; }
+      if(card.classList.contains('expanded')) { 
+        card.classList.remove('expanded'); 
+        overlay.style.display = 'none'; 
+        expandedCard = null; 
+      } else { 
+        document.querySelectorAll('.bim-card.expanded').forEach(c => c.classList.remove('expanded')); 
+        card.classList.add('expanded'); 
+        overlay.style.display = 'block'; 
+        expandedCard = card; 
+      }
     }
-    overlay.addEventListener('click', ()=>{ if(expandedCard){ expandedCard.classList.remove('expanded'); overlay.style.display='none'; expandedCard=null; } });
+    
+    overlay.addEventListener('click', () => { 
+      if(expandedCard) { 
+        expandedCard.classList.remove('expanded'); 
+        overlay.style.display = 'none'; 
+        expandedCard = null; 
+      } 
+    });
 
-    function showState(type,msg) {
-      if(type==='loading') grid.innerHTML='<div class="state-msg"><div class="spinner"></div><div class="text">Carregando dados…</div></div>';
-      else if(type==='error') grid.innerHTML=`<div class="state-msg error"><div class="icon">⚠️</div><div class="text">${msg}</div></div>`;
-      else grid.innerHTML='<div class="state-msg"><div class="icon">📋</div><div class="text">Selecione uma turma e um aluno para visualizar os dados do Conselho de Classe.</div></div>';
+    function showState(type, msg) {
+      if(type === 'loading') grid.innerHTML = '<div class="state-msg"><div class="spinner"></div><div class="text">Carregando dados…</div></div>';
+      else if(type === 'error') grid.innerHTML = `<div class="state-msg error"><div class="icon">⚠️</div><div class="text">${msg}</div></div>`;
+      else grid.innerHTML = '<div class="state-msg"><div class="icon">📋</div><div class="text">Selecione uma turma e um aluno para visualizar os dados do Conselho de Classe.</div></div>';
     }
 
-    function toFloat(v){ if(v===null||v===undefined||v==='')return null; const n=parseFloat(v); return isNaN(n)?null:n; }
-    function toInt(v){ if(v===null||v===undefined||v==='')return 0; const n=parseInt(v,10); return isNaN(n)?0:n; }
-    function toRound(v){ const n=toFloat(v); return n!==null?Math.round(n):null; }
-    function padArr(arr,size,fill){ const r=arr.slice(0,size); while(r.length<size)r.push(fill); return r; }
+    function toFloat(v) { 
+      if(v === null || v === undefined || v === '') return null; 
+      const n = parseFloat(v); 
+      return isNaN(n) ? null : n; 
+    }
+    
+    function toInt(v) { 
+      if(v === null || v === undefined || v === '') return 0; 
+      const n = parseInt(v, 10); 
+      return isNaN(n) ? 0 : n; 
+    }
+    
+    function toRound(v) { 
+      const n = toFloat(v); 
+      return n !== null ? Math.round(n) : null; 
+    }
+    
+    function padArr(arr, size, fill) { 
+      const r = arr.slice(0, size); 
+      while(r.length < size) r.push(fill); 
+      return r; 
+    }
 
     document.addEventListener('DOMContentLoaded', initTurmas);
   })();
