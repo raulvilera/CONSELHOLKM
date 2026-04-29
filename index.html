@@ -3,1501 +3,1345 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel Conselho de Classe</title>
+    <title>Conselho de Classe — Sistema Integrado</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary-color: #2c3e50;
-            --secondary-color: #3498db;
-            --accent-color: #e74c3c;
-            --light-color: #ecf0f1;
-            --dark-color: #34495e;
-            --success-color: #2ecc71;
-            --warning-color: #f39c12;
-            --nota-baixa: #ff5252;
-            --nota-alta: #2196f3;
-            --faltas-cor: #ff9800;
-            --card-bg: #4a5568;
-            --grid-gap: 12px;
-            --turma-selected-bg: #ffeb3b;
-            --aluno-selected-bg: #1565c0;
-            --dropdown-selected-bg: #1976d2;
-            --dropdown-text: #000000;
-            --dropdown-text-selected: #ffffff;
-            --turma-verde: #d4edda;
-            --aluno-azul: #d1ecf1;
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        body {
-            background-color: #f5f7fa;
-            color: #333;
-            line-height: 1.6;
-            min-height: 100vh;
-            overflow-x: hidden;
-            padding-top: 160px; /* Espaço para header + controls-panel */
-        }
-        
-        /* HEADER FIXO - AUMENTADO O Z-INDEX */
-        header {
-            background: linear-gradient(135deg, var(--primary-color), #1a252f);
-            color: white;
-            padding: 15px 10px;
-            text-align: center;
-            border-radius: 0;
-            margin-bottom: 0;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 2000;
-            width: 100%;
-            overflow: hidden;
-            height: auto;
-        }
-        
-        header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--secondary-color), var(--accent-color));
-        }
-        
-        h1 {
-            font-size: clamp(1.3rem, 3vw, 2rem);
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
-            margin: 0;
-            line-height: 1.2;
-            padding: 0 5px;
-        }
-        
-        /* CONTROLS PANEL FIXO - AUMENTADO O Z-INDEX */
-        .controls-panel {
-            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-            padding: 15px;
-            border-radius: 0 0 10px 10px;
-            box-shadow: 
-                0 4px 15px rgba(0,0,0,0.1),
-                0 2px 4px rgba(0,0,0,0.05),
-                inset 0 1px 0 rgba(255,255,255,0.8);
-            position: fixed;
-            top: 60px;
-            left: 0;
-            right: 0;
-            z-index: 1900;
-            width: 100%;
-            border: 1px solid rgba(255,255,255,0.5);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100px;
-        }
-        
-        .controls-wrapper {
-            width: 100%;
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 15px;
-        }
-        
-        .controls-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: nowrap;
-            gap: 20px;
-            width: 100%;
-        }
-        
-        .nav-btn {
-            padding: 10px 20px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            white-space: nowrap;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            height: 42px;
-            min-width: 120px;
-            flex-shrink: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .nav-btn.prev {
-            background: linear-gradient(145deg, #e74c3c, #c0392b);
-            color: white;
-            box-shadow: 
-                0 3px 0 #a93226,
-                0 4px 8px rgba(0,0,0,0.15);
-            order: 1;
-        }
-        
-        .nav-btn.prev:hover {
-            background: linear-gradient(145deg, #ec7063, #e74c3c);
-            transform: translateY(-2px);
-            box-shadow: 
-                0 5px 0 #1a5276,
-                0 6px 12px rgba(0,0,0,0.2);
-        }
-        
-        .nav-btn.next {
-            background: linear-gradient(145deg, #3498db, #2980b9);
-            color: white;
-            box-shadow: 
-                0 3px 0 #1a5276,
-                0 4px 8px rgba(0,0,0,0.15);
-            order: 5;
-        }
-        
-        .nav-btn.next:hover {
-            background: linear-gradient(145deg, #3cb0fd, #3498db);
-            transform: translateY(-2px);
-            box-shadow: 
-                0 5px 0 #1a5276,
-                0 6px 12px rgba(0,0,0,0.2);
-        }
-        
-        .nav-btn:disabled {
-            background: linear-gradient(145deg, #bdc3c7, #95a5a6);
-            box-shadow: 
-                0 2px 0 #7f8c8d,
-                0 3px 6px rgba(0,0,0,0.1);
-            cursor: not-allowed;
-            transform: none;
-        }
-        
-        .controls-center {
-            display: flex;
-            flex: 1;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: nowrap;
-            gap: 20px;
-            min-width: 0;
-            order: 2;
-            max-width: 1000px;
-        }
-        
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            flex-shrink: 0;
-            text-align: center;
-            flex: 1;
-            min-width: 0;
-        }
-        
-        /* TURMA - LARGURA AJUSTÁVEL */
-        .form-group.turma {
-            min-width: 180px;
-            max-width: 250px;
-        }
-        
-        /* ALUNO - LARGURA FLEXÍVEL */
-        .form-group.aluno {
-            min-width: 250px;
-            flex: 2;
-        }
-        
-        /* BOTÃO CARREGAR DADOS */
-        .form-group.btn-container {
-            min-width: 140px;
-            max-width: 160px;
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 6px;
-            font-weight: 700;
-            color: var(--dark-color);
-            font-size: 0.9rem;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            text-align: center;
-        }
-        
-        select {
-            padding: 10px 12px;
-            border: 1px solid #ced4da;
-            border-radius: 6px;
-            font-size: 0.95rem;
-            background: linear-gradient(to bottom, #ffffff, #f8f9fa);
-            transition: all 0.3s ease;
-            box-shadow: 
-                inset 0 1px 3px rgba(0,0,0,0.05),
-                0 1px 2px rgba(0,0,0,0.05);
-            color: #495057;
-            text-align: left;
-            appearance: none;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23495057' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-            background-repeat: no-repeat;
-            background-position: right 10px center;
-            background-size: 16px;
-            padding-right: 35px;
-            width: 100%;
-        }
-        
-        /* TURMA SELECIONADA - TEXTO CENTRALIZADO */
-        select.turma-selecionada {
-            text-align: center !important;
-            background-color: var(--turma-selected-bg) !important;
-            color: #000000 !important;
-            font-weight: 800 !important;
-            border-color: #ffc107 !important;
-            box-shadow: 
-                inset 0 1px 3px rgba(0,0,0,0.1),
-                0 0 0 2px rgba(255, 193, 7, 0.3) !important;
-            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e") !important;
-        }
-        
-        /* CENTRALIZAR TURMA NO CAMPO - IMPORTANTE */
-        #class-select.turma-selecionada {
-            text-align: center !important;
-        }
-        
-        /* Garantir que as opções da turma também fiquem centralizadas quando abertas */
-        #class-select.turma-selecionada option {
-            text-align: center !important;
-        }
-        
-        /* ALUNO SELECIONADO */
-        select.aluno-selecionado {
-            background-color: var(--aluno-selected-bg) !important;
-            color: #ffffff !important;
-            font-weight: 800 !important;
-            border-color: #0d47a1 !important;
-            box-shadow: 
-                inset 0 1px 3px rgba(0,0,0,0.1),
-                0 0 0 2px rgba(13, 71, 161, 0.3) !important;
-            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e") !important;
-        }
-        
-        /* ESTILOS PARA OPTIONS - COM CORES ALTERNADAS */
-        select option {
-            text-align: left !important;
-            padding: 10px 15px !important;
-            font-weight: 700 !important;
-            border-bottom: 1px solid #eee;
-            font-size: 0.9rem;
-        }
-        
-        /* DROPDOWN DE TURMAS - CORES ALTERNADAS VERDE/BRANCO */
-        #class-select option:nth-child(odd):not(:first-child) {
-            background-color: var(--turma-verde) !important;
-            color: #000000 !important;
-        }
-        
-        #class-select option:nth-child(even) {
-            background-color: #ffffff !important;
-            color: #000000 !important;
-        }
-        
-        /* Primeira opção (placeholder) - estilo especial */
-        #class-select option:first-child {
-            background-color: #ffffff !important;
-            color: #6c757d !important;
-            font-style: italic;
-        }
-        
-        /* DROPDOWN DE ALUNOS - CORES ALTERNADAS AZUL CLARO/BRANCO */
-        #student-select option:nth-child(odd):not(:first-child) {
-            background-color: var(--aluno-azul) !important;
-            color: #000000 !important;
-        }
-        
-        #student-select option:nth-child(even) {
-            background-color: #ffffff !important;
-            color: #000000 !important;
-        }
-        
-        /* Primeira opção (placeholder) - estilo especial */
-        #student-select option:first-child {
-            background-color: #ffffff !important;
-            color: #6c757d !important;
-            font-style: italic;
-        }
-        
-        /* OPÇÃO SELECIONADA NO DROPDOWN - DESTAQUE */
-        select option:checked,
-        select option[selected] {
-            background-color: var(--dropdown-selected-bg) !important;
-            color: var(--dropdown-text-selected) !important;
-            font-weight: 800 !important;
-        }
-        
-        /* HOVER NAS OPTIONS */
-        select option:hover,
-        select option:focus {
-            background-color: #e3f2fd !important;
-            color: #1565c0 !important;
-            font-weight: 800 !important;
-        }
-        
-        select:focus {
-            border-color: var(--secondary-color);
-            outline: none;
-            box-shadow: 
-                inset 0 1px 3px rgba(0,0,0,0.05),
-                0 0 0 3px rgba(52, 152, 219, 0.15);
-        }
-        
-        .btn {
-            background: linear-gradient(135deg, var(--secondary-color), #2980b9);
-            color: white;
-            box-shadow: 
-                0 2px 4px rgba(0,0,0,0.1);
-            width: 100%;
-            padding: 10px 15px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            height: 42px;
-        }
-        
-        .btn:hover {
-            background: linear-gradient(135deg, #3cb0fd, #3498db);
-            transform: translateY(-1px);
-            box-shadow: 
-                0 3px 6px rgba(0,0,0,0.15);
-        }
-        
-        /* CONTAINER PRINCIPAL DOS CARDS - REMOVIDA MARGEM SUPERIOR */
-        .container {
-            width: 100%;
-            margin: 0 auto;
-            padding: 15px;
-            max-width: 100%;
-            min-width: 320px;
-            margin-top: 0; /* Removido margin-top pois o padding-top do body já cuida do espaço */
-            position: relative;
-            z-index: 1;
-        }
-        
-        /* CONTAINER PRINCIPAL DOS CARDS - RESPONSIVO */
-        .results-container {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: var(--grid-gap);
-            margin-top: 20px;
-            width: 100%;
-            min-height: 600px;
-            overflow: visible;
-        }
-        
-        /* CARD DE BIMESTRE - RESPONSIVO */
-        .bimester-card {
-            background-color: var(--card-bg);
-            border-radius: 8px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            border: 1px solid rgba(0,0,0,0.05);
-            position: relative;
-            height: 100%;
-            min-height: 500px;
-            transition: transform 0.2s ease;
-        }
-        
-        .bimester-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 15px rgba(0,0,0,0.12);
-        }
-        
-        .bimester-header {
-            background: linear-gradient(135deg, var(--primary-color), var(--dark-color));
-            color: white;
-            padding: 12px 8px;
-            text-align: center;
-            font-weight: 700;
-            font-size: 0.95rem;
-            cursor: pointer;
-            user-select: none;
-            flex-shrink: 0;
-            min-height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s ease;
-            word-wrap: break-word;
-            white-space: normal;
-            line-height: 1.2;
-        }
-        
-        .bimester-content {
-            padding: 10px;
-            overflow-y: auto;
-            flex-grow: 1;
-            min-height: 0;
-        }
-        
-        /* GRID DE DISCIPLINAS - ALTURAS FLEXÍVEIS */
-        .subject-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            height: 100%;
-        }
-        
-        .grid-header-row {
-            display: grid;
-            grid-template-columns: 2fr 0.8fr 0.8fr;
-            gap: 4px;
-            margin-bottom: 4px;
-            flex-shrink: 0;
-        }
-        
-        .subject-rows-container {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            flex-grow: 1;
-            min-height: 0;
-            overflow-y: auto;
-        }
-        
-        .subject-row {
-            display: grid;
-            grid-template-columns: 2fr 0.8fr 0.8fr;
-            gap: 4px;
-            min-height: 40px;
-            align-items: stretch;
-        }
-        
-        .grid-header {
-            background-color: var(--dark-color);
-            color: white;
-            font-weight: bold;
-            font-size: 0.75rem;
-            padding: 8px 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            word-wrap: break-word;
-            min-height: 35px;
-            border-radius: 4px;
-        }
-        
-        .subject-cell, .grade-cell, .faltas-cell {
-            padding: 6px 4px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            font-size: 0.8rem;
-            line-height: 1.1;
-            word-break: break-word;
-            overflow: hidden;
-            border-radius: 4px;
-            min-height: 40px;
-            text-align: center;
-        }
-        
-        .subject-cell {
-            justify-content: center;
-            background-color: rgba(255, 255, 255, 0.1);
-            color: #ffffff;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 4px 2px;
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 0.1px;
-            word-wrap: break-word;
-            hyphens: auto;
-        }
-        
-        .grade-cell {
-            font-weight: 700;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: white;
-            font-family: 'Arial', sans-serif;
-            font-size: 0.9rem;
-            justify-content: center;
-        }
-        
-        .grade-cell.nota-baixa {
-            background-color: var(--nota-baixa);
-        }
-        
-        .grade-cell.nota-alta {
-            background-color: var(--nota-alta);
-        }
-        
-        .grade-cell.sem-nota {
-            background-color: rgba(255, 255, 255, 0.1);
-            color: #ffffff;
-        }
-        
-        .faltas-cell {
-            color: #000000;
-            font-weight: bold;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            background-color: #ffffff;
-            font-size: 0.9rem;
-            font-family: 'Arial', sans-serif;
-            justify-content: center;
-        }
-        
-        .faltas-total-cell {
-            background-color: #ffffff;
-            color: #000000;
-            font-weight: bold;
-        }
-        
-        /* 5º CONCEITO - COR ESPECIAL PARA O CABEÇALHO */
-        .bimester-card.conceito5 .bimester-header {
-            background: linear-gradient(135deg, #27ae60, #2ecc71);
-        }
-        
-        .bimester-card.conceito5 .bimester-header:hover {
-            background: linear-gradient(135deg, #229954, #27ae60);
-        }
-        
-        /* ESTILO ESPECÍFICO PARA NOTAS DO 5º CONCEITO */
-        .bimester-card.conceito5 .grade-cell.nota-alta {
-            background-color: #2196f3 !important; /* Azul para notas 5 ou mais */
-        }
-        
-        .bimester-card.conceito5 .grade-cell.nota-baixa {
-            background-color: #ff5252 !important; /* Vermelho para notas 4 ou abaixo */
-        }
-        
-        /* MODAL EXPANDIDO */
-        .bimester-card.expanded {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 2000;
-            width: 95%;
-            max-width: 1200px;
-            height: 90%;
-            max-height: 90vh;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
-            border-radius: 12px;
-        }
-        
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.6);
-            z-index: 1999;
-            display: none;
-        }
-        
-        .footer {
-            text-align: center;
-            padding: 15px 0 5px;
-            color: #6c757d;
-            font-size: 0.85rem;
-            margin-top: 20px;
-        }
-        
-        .loading, .error, .no-data {
-            text-align: center;
-            padding: 20px;
-            margin: 15px 0;
-            border-radius: 8px;
-            font-size: 0.95rem;
-        }
-        
-        .loading {
-            color: var(--dark-color);
-        }
-        
-        .error {
-            background: linear-gradient(135deg, #ffeaea, #ffdada);
-            color: var(--accent-color);
-            border-left: 4px solid var(--accent-color);
-            font-weight: 600;
-        }
-        
-        .no-data {
-            color: #6c757d;
-            font-style: italic;
-            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-            box-shadow: 0 3px 6px rgba(0,0,0,0.04);
-        }
-        
-        /* RESPONSIVIDADE AVANÇADA */
-        @media (max-width: 1600px) {
-            .results-container {
-                grid-template-columns: repeat(5, minmax(240px, 1fr));
-                gap: 10px;
-            }
-            
-            .subject-cell {
-                font-size: 0.65rem;
-                padding: 3px 1px;
-            }
-            
-            .controls-wrapper {
-                max-width: 1200px;
-            }
-        }
-        
-        @media (max-width: 1400px) {
-            .results-container {
-                grid-template-columns: repeat(5, minmax(220px, 1fr));
-            }
-            
-            .bimester-header {
-                font-size: 0.9rem;
-                padding: 10px 6px;
-            }
-            
-            .form-group.turma {
-                min-width: 150px;
-                max-width: 220px;
-            }
-            
-            .controls-center {
-                gap: 15px;
-            }
-        }
-        
-        @media (max-width: 1200px) {
-            .results-container {
-                grid-template-columns: repeat(5, minmax(200px, 1fr));
-                gap: 8px;
-            }
-            
-            .controls-row {
-                flex-wrap: wrap;
-                gap: 15px;
-            }
-            
-            .nav-btn {
-                max-width: 100%;
-            }
-            
-            .controls-center {
-                order: 3;
-                width: 100%;
-                margin-top: 10px;
-            }
-            
-            .nav-btn.prev, .nav-btn.next {
-                order: unset;
-                flex: 1;
-            }
-            
-            .bimester-header {
-                font-size: 0.85rem;
-                min-height: 45px;
-            }
-            
-            .subject-cell {
-                font-size: 0.6rem;
-                line-height: 1.0;
-            }
-            
-            .form-group.turma {
-                min-width: 140px;
-                max-width: 200px;
-            }
-            
-            body {
-                padding-top: 170px;
-            }
-        }
-        
-        @media (max-width: 992px) {
-            .results-container {
-                grid-template-columns: repeat(3, 1fr);
-                grid-template-rows: repeat(2, auto);
-            }
-            
-            .bimester-card:nth-child(4),
-            .bimester-card:nth-child(5) {
-                grid-column: span 1;
-            }
-            
-            .bimester-card:nth-child(5) {
-                grid-column: 2 / 3;
-                grid-row: 2 / 3;
-            }
-            
-            .form-group.turma {
-                min-width: 130px;
-                max-width: 180px;
-            }
-            
-            body {
-                padding-top: 180px;
-            }
-            
-            .controls-panel {
-                height: 110px;
-            }
-        }
-        
-        @media (max-width: 768px) {
-            .container {
-                padding: 10px;
-            }
-            
-            .results-container {
-                grid-template-columns: repeat(2, 1fr);
-                grid-template-rows: repeat(3, auto);
-                gap: 8px;
-            }
-            
-            .bimester-card {
-                min-height: 450px;
-            }
-            
-            .bimester-card:nth-child(5) {
-                grid-column: 1 / -1;
-                grid-row: 3 / 4;
-            }
-            
-            .controls-center {
-                flex-direction: column;
-                gap: 10px;
-            }
-            
-            .form-group {
-                min-width: 100%;
-                max-width: 100%;
-            }
-            
-            .form-group.turma {
-                min-width: 100%;
-                max-width: 100%;
-            }
-            
-            .form-group.aluno {
-                min-width: 100%;
-            }
-            
-            .form-group.btn-container {
-                min-width: 100%;
-                max-width: 100%;
-            }
-            
-            .bimester-header {
-                font-size: 0.8rem;
-                padding: 8px 4px;
-                min-height: 40px;
-            }
-            
-            .subject-cell {
-                font-size: 0.55rem;
-                line-height: 0.95;
-            }
-            
-            .controls-panel {
-                padding: 12px;
-                height: 120px;
-            }
-            
-            .controls-row {
-                gap: 10px;
-            }
-            
-            body {
-                padding-top: 190px;
-            }
-        }
-        
-        @media (max-width: 576px) {
-            .results-container {
-                grid-template-columns: 1fr;
-                gap: 10px;
-            }
-            
-            .bimester-card {
-                min-height: 400px;
-            }
-            
-            .bimester-card:nth-child(5) {
-                grid-column: 1 / -1;
-                grid-row: 5 / 6;
-            }
-            
-            .nav-btn {
-                min-width: 100%;
-                max-width: 100%;
-            }
-            
-            .bimester-header {
-                font-size: 0.9rem;
-                padding: 10px 5px;
-            }
-            
-            .subject-cell, .grade-cell, .faltas-cell {
-                font-size: 0.75rem;
-                min-height: 35px;
-            }
-            
-            .subject-cell {
-                font-size: 0.7rem;
-                line-height: 1.0;
-            }
-            
-            select {
-                font-size: 0.9rem;
-                padding: 12px 12px 12px 12px;
-            }
-            
-            body {
-                padding-top: 200px;
-            }
-            
-            header {
-                padding: 12px 8px;
-            }
-            
-            .controls-panel {
-                top: 55px;
-                height: 130px;
-            }
-            
-            .controls-wrapper {
-                padding: 0 10px;
-            }
-        }
-        
-        @media (max-width: 400px) {
-            .container {
-                padding: 8px;
-            }
-            
-            header {
-                padding: 10px 5px;
-            }
-            
-            h1 {
-                font-size: 1.1rem;
-            }
-            
-            .controls-panel {
-                padding: 10px;
-                top: 50px;
-                height: 140px;
-            }
-            
-            .bimester-card {
-                min-height: 380px;
-            }
-            
-            .bimester-header {
-                font-size: 0.8rem;
-                min-height: 38px;
-            }
-            
-            .subject-cell {
-                font-size: 0.6rem;
-                line-height: 0.9;
-            }
-            
-            select.turma-selecionada,
-            select.aluno-selecionado {
-                font-size: 0.9rem;
-            }
-            
-            .nav-btn {
-                padding: 8px 15px;
-                font-size: 0.85rem;
-            }
-            
-            body {
-                padding-top: 190px;
-            }
-        }
-        
-        /* ROLAGEM PERSONALIZADA */
-        .bimester-content::-webkit-scrollbar,
-        .subject-rows-container::-webkit-scrollbar {
-            width: 6px;
-        }
-        
-        .bimester-content::-webkit-scrollbar-track,
-        .subject-rows-container::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 3px;
-        }
-        
-        .bimester-content::-webkit-scrollbar-thumb,
-        .subject-rows-container::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 3px;
-        }
-        
-        .bimester-content::-webkit-scrollbar-thumb:hover,
-        .subject-rows-container::-webkit-scrollbar-thumb:hover {
-            background: rgba(255, 255, 255, 0.4);
-        }
+    /* ═══════════════════════════════════════════════
+       TOKENS & RESET
+    ═══════════════════════════════════════════════ */
+    :root {
+        --navy-950: #080d1a;
+        --navy-900: #0d1526;
+        --navy-800: #131e35;
+        --navy-700: #1a2847;
+        --navy-600: #223058;
+        --navy-500: #2d3f6e;
+        --gold-400:  #f0c040;
+        --gold-300:  #f5d270;
+        --gold-200:  #fae8a8;
+        --gold-500:  #c9960a;
+        --teal-400:  #38bdf8;
+        --teal-300:  #7dd3fc;
+        --red-400:   #f87171;
+        --red-500:   #ef4444;
+        --green-400: #4ade80;
+        --green-500: #22c55e;
+        --slate-400: #94a3b8;
+        --slate-300: #cbd5e1;
+        --white:     #ffffff;
+        --glass-bg:  rgba(255,255,255,0.04);
+        --glass-border: rgba(255,255,255,0.08);
+        --shadow-card: 0 8px 32px rgba(0,0,0,0.45), 0 2px 8px rgba(0,0,0,0.3);
+        --shadow-panel: 0 4px 24px rgba(0,0,0,0.5);
+        --radius-card: 14px;
+        --radius-sm: 8px;
+        --transition: all 0.25s cubic-bezier(.4,0,.2,1);
+        --header-h: 68px;
+        --panel-h:  105px;
+    }
+
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+        background: var(--navy-950);
+        color: var(--slate-300);
+        font-family: 'DM Sans', sans-serif;
+        font-weight: 400;
+        min-height: 100vh;
+        overflow-x: hidden;
+        padding-top: calc(var(--header-h) + var(--panel-h) + 24px);
+        /* Subtle noise texture via SVG */
+        background-image:
+            radial-gradient(ellipse 80% 60% at 20% -10%, rgba(45,63,110,0.45) 0%, transparent 60%),
+            radial-gradient(ellipse 60% 40% at 80% 110%, rgba(56,189,248,0.08) 0%, transparent 55%),
+            url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+        background-attachment: fixed;
+    }
+
+    /* ═══════════════════════════════════════════════
+       HEADER
+    ═══════════════════════════════════════════════ */
+    header {
+        position: fixed;
+        inset: 0 0 auto 0;
+        height: var(--header-h);
+        background: var(--navy-900);
+        border-bottom: 1px solid var(--glass-border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 32px;
+        z-index: 2000;
+        box-shadow: var(--shadow-panel);
+    }
+
+    /* Gold accent line at top */
+    header::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, var(--gold-500), var(--gold-300), var(--teal-400), transparent);
+    }
+
+    .header-brand {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+
+    .header-icon {
+        width: 38px; height: 38px;
+        background: linear-gradient(135deg, var(--gold-400), var(--gold-500));
+        border-radius: 10px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1.1rem;
+        box-shadow: 0 0 16px rgba(240,192,64,0.3);
+        flex-shrink: 0;
+    }
+
+    .header-titles { display: flex; flex-direction: column; }
+
+    .header-subtitle {
+        font-size: 0.65rem;
+        font-weight: 600;
+        letter-spacing: 2.5px;
+        text-transform: uppercase;
+        color: var(--gold-400);
+        line-height: 1;
+        margin-bottom: 3px;
+    }
+
+    h1 {
+        font-family: 'Playfair Display', serif;
+        font-size: clamp(0.95rem, 2vw, 1.35rem);
+        font-weight: 700;
+        color: var(--white);
+        line-height: 1;
+        letter-spacing: 0.3px;
+    }
+
+    .header-right {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .live-badge {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(34,197,94,0.1);
+        border: 1px solid rgba(34,197,94,0.25);
+        border-radius: 20px;
+        padding: 5px 12px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        color: var(--green-400);
+        letter-spacing: 0.5px;
+    }
+
+    .live-dot {
+        width: 6px; height: 6px;
+        background: var(--green-400);
+        border-radius: 50%;
+        animation: pulse-dot 1.8s ease-in-out infinite;
+    }
+
+    @keyframes pulse-dot {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50%       { opacity: 0.4; transform: scale(0.7); }
+    }
+
+    /* ═══════════════════════════════════════════════
+       PAINEL DE CONTROLES
+    ═══════════════════════════════════════════════ */
+    .controls-panel {
+        position: fixed;
+        top: var(--header-h);
+        inset-inline: 0;
+        z-index: 1900;
+        background: var(--navy-900);
+        border-bottom: 1px solid var(--glass-border);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    }
+
+    .controls-inner {
+        max-width: 1600px;
+        margin: 0 auto;
+        padding: 14px 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    /* Linha principal */
+    .controls-main {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: nowrap;
+    }
+
+    /* Seletores */
+    .field-group {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        flex: 1;
+        min-width: 0;
+    }
+
+    .field-group.turma { max-width: 220px; flex: 0 0 220px; }
+    .field-group.aluno { flex: 2; min-width: 220px; }
+    .field-group.action { flex: 0 0 auto; }
+
+    .field-label {
+        font-size: 0.65rem;
+        font-weight: 700;
+        letter-spacing: 1.8px;
+        text-transform: uppercase;
+        color: var(--gold-400);
+        padding-left: 2px;
+    }
+
+    .field-select {
+        height: 40px;
+        padding: 0 34px 0 12px;
+        background: var(--navy-800);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: var(--radius-sm);
+        color: var(--slate-300);
+        font-family: 'DM Sans', sans-serif;
+        font-size: 0.875rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: var(--transition);
+        appearance: none;
+        -webkit-appearance: none;
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right 10px center;
+        background-size: 14px;
+        width: 100%;
+    }
+
+    .field-select:focus {
+        outline: none;
+        border-color: var(--gold-400);
+        box-shadow: 0 0 0 2px rgba(240,192,64,0.18);
+        color: var(--white);
+    }
+
+    .field-select:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .field-select.is-selected-turma {
+        background-color: rgba(240,192,64,0.12) !important;
+        border-color: var(--gold-400) !important;
+        color: var(--gold-300) !important;
+        font-weight: 700;
+    }
+
+    .field-select.is-selected-aluno {
+        background-color: rgba(56,189,248,0.1) !important;
+        border-color: var(--teal-400) !important;
+        color: var(--teal-300) !important;
+        font-weight: 700;
+    }
+
+    /* Options styling */
+    .field-select option { background: var(--navy-800); color: var(--white); }
+
+    /* Botão carregar */
+    .btn-load {
+        height: 40px;
+        padding: 0 22px;
+        background: linear-gradient(135deg, var(--gold-400), var(--gold-500));
+        color: var(--navy-950);
+        font-family: 'DM Sans', sans-serif;
+        font-size: 0.8rem;
+        font-weight: 700;
+        letter-spacing: 0.8px;
+        text-transform: uppercase;
+        border: none;
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        transition: var(--transition);
+        white-space: nowrap;
+        box-shadow: 0 2px 12px rgba(240,192,64,0.25);
+    }
+
+    .btn-load:hover:not(:disabled) {
+        background: linear-gradient(135deg, var(--gold-300), var(--gold-400));
+        transform: translateY(-1px);
+        box-shadow: 0 4px 20px rgba(240,192,64,0.4);
+    }
+
+    .btn-load:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
+
+    /* Botões de navegação */
+    .btn-nav {
+        height: 40px;
+        padding: 0 16px;
+        background: var(--navy-700);
+        border: 1px solid var(--glass-border);
+        border-radius: var(--radius-sm);
+        color: var(--slate-300);
+        font-family: 'DM Sans', sans-serif;
+        font-size: 0.8rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: var(--transition);
+        white-space: nowrap;
+        display: flex; align-items: center; gap: 6px;
+        flex-shrink: 0;
+    }
+
+    .btn-nav:hover:not(:disabled) {
+        background: var(--navy-600);
+        border-color: rgba(255,255,255,0.18);
+        color: var(--white);
+        transform: translateY(-1px);
+    }
+
+    .btn-nav:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
+
+    .nav-arrow { font-size: 0.9rem; }
+
+    /* Badge de posição do aluno */
+    .student-pos {
+        font-size: 0.7rem;
+        color: var(--slate-400);
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        white-space: nowrap;
+    }
+
+    /* ─── Linha dos filtros de bimestre ─── */
+    .filter-row {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-wrap: wrap;
+    }
+
+    .filter-label-text {
+        font-size: 0.62rem;
+        font-weight: 700;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        color: var(--slate-400);
+        margin-right: 4px;
+        white-space: nowrap;
+    }
+
+    .filter-chip {
+        height: 28px;
+        padding: 0 13px;
+        border-radius: 20px;
+        border: 1px solid rgba(255,255,255,0.1);
+        background: transparent;
+        color: var(--slate-400);
+        font-family: 'DM Sans', sans-serif;
+        font-size: 0.72rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: var(--transition);
+        white-space: nowrap;
+        letter-spacing: 0.3px;
+    }
+
+    .filter-chip:hover { border-color: rgba(255,255,255,0.25); color: var(--white); }
+
+    .filter-chip.active {
+        background: var(--navy-600);
+        border-color: var(--gold-400);
+        color: var(--gold-300);
+        box-shadow: 0 0 12px rgba(240,192,64,0.15);
+    }
+
+    .filter-chip.active.chip-c5 {
+        border-color: var(--green-400);
+        color: var(--green-400);
+        background: rgba(34,197,94,0.1);
+        box-shadow: 0 0 12px rgba(34,197,94,0.15);
+    }
+
+    .filter-chip.active.chip-all {
+        border-color: var(--teal-400);
+        color: var(--teal-300);
+        background: rgba(56,189,248,0.1);
+        box-shadow: 0 0 12px rgba(56,189,248,0.12);
+    }
+
+    /* ═══════════════════════════════════════════════
+       CONTAINER PRINCIPAL
+    ═══════════════════════════════════════════════ */
+    .page-container {
+        max-width: 1700px;
+        margin: 0 auto;
+        padding: 0 20px 40px;
+    }
+
+    /* ─── NOME DO ALUNO ATIVO ─── */
+    .student-headline {
+        display: none;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 20px;
+        padding: 14px 20px;
+        background: var(--glass-bg);
+        border: 1px solid var(--glass-border);
+        border-radius: var(--radius-card);
+        animation: fadeSlideIn 0.35s ease;
+    }
+
+    .student-headline.visible { display: flex; }
+
+    .student-avatar {
+        width: 40px; height: 40px;
+        border-radius: 10px;
+        background: linear-gradient(135deg, var(--navy-600), var(--navy-500));
+        border: 1px solid var(--glass-border);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1.1rem;
+        flex-shrink: 0;
+    }
+
+    .student-info-name {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.05rem;
+        font-weight: 600;
+        color: var(--white);
+    }
+
+    .student-info-meta {
+        font-size: 0.75rem;
+        color: var(--slate-400);
+        margin-top: 1px;
+    }
+
+    .student-info-meta strong { color: var(--gold-300); }
+
+    /* ═══════════════════════════════════════════════
+       GRID DE CARDS
+    ═══════════════════════════════════════════════ */
+    .cards-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 14px;
+    }
+
+    .cards-grid.single-mode {
+        grid-template-columns: minmax(300px, 560px);
+        justify-content: center;
+    }
+
+    /* ─── CARD ─── */
+    .bim-card {
+        background: var(--navy-800);
+        border: 1px solid var(--glass-border);
+        border-radius: var(--radius-card);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        min-height: 520px;
+        box-shadow: var(--shadow-card);
+        transition: var(--transition);
+        animation: cardIn 0.4s ease both;
+        position: relative;
+    }
+
+    .bim-card::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(160deg, rgba(255,255,255,0.025) 0%, transparent 50%);
+        pointer-events: none;
+        border-radius: var(--radius-card);
+    }
+
+    .bim-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 16px 48px rgba(0,0,0,0.55), 0 4px 12px rgba(0,0,0,0.35);
+        border-color: rgba(255,255,255,0.12);
+    }
+
+    /* stagger animation */
+    .bim-card:nth-child(1) { animation-delay: 0.04s; }
+    .bim-card:nth-child(2) { animation-delay: 0.08s; }
+    .bim-card:nth-child(3) { animation-delay: 0.12s; }
+    .bim-card:nth-child(4) { animation-delay: 0.16s; }
+    .bim-card:nth-child(5) { animation-delay: 0.20s; }
+
+    @keyframes cardIn {
+        from { opacity: 0; transform: translateY(18px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .bim-card.hidden { display: none; }
+
+    /* ─── Cabeçalho do card ─── */
+    .card-header {
+        padding: 14px 16px 12px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        position: relative;
+        cursor: pointer;
+        user-select: none;
+        /* Gold bottom border */
+        border-bottom: 1px solid var(--glass-border);
+    }
+
+    .card-header::after {
+        content: '';
+        position: absolute;
+        bottom: 0; left: 16px; right: 16px;
+        height: 1px;
+        background: linear-gradient(90deg, var(--gold-500), transparent);
+    }
+
+    .bim-card.conceito5 .card-header::after {
+        background: linear-gradient(90deg, var(--green-500), transparent);
+    }
+
+    .card-num {
+        width: 36px; height: 36px;
+        border-radius: 9px;
+        background: linear-gradient(135deg, var(--navy-700), var(--navy-600));
+        border: 1px solid rgba(240,192,64,0.2);
+        display: flex; align-items: center; justify-content: center;
+        font-family: 'Playfair Display', serif;
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--gold-300);
+        flex-shrink: 0;
+    }
+
+    .bim-card.conceito5 .card-num {
+        border-color: rgba(34,197,94,0.25);
+        color: var(--green-400);
+    }
+
+    .card-title-wrap { flex: 1; min-width: 0; }
+
+    .card-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: var(--white);
+        line-height: 1.1;
+    }
+
+    .card-subtitle {
+        font-size: 0.62rem;
+        color: var(--slate-400);
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        font-weight: 500;
+        margin-top: 1px;
+    }
+
+    .card-expand-hint {
+        font-size: 0.65rem;
+        color: var(--slate-400);
+        opacity: 0.5;
+        transition: opacity 0.2s;
+        white-space: nowrap;
+    }
+
+    .card-header:hover .card-expand-hint { opacity: 1; }
+
+    /* ─── Conteúdo do card ─── */
+    .card-body {
+        padding: 12px;
+        flex: 1;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Cabeçalhos das colunas */
+    .col-headers {
+        display: grid;
+        grid-template-columns: 1fr 44px 44px;
+        gap: 4px;
+        margin-bottom: 6px;
+        flex-shrink: 0;
+    }
+
+    .col-hdr {
+        font-size: 0.6rem;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        color: var(--slate-400);
+        text-align: center;
+        padding: 4px 2px;
+        border-bottom: 1px solid var(--glass-border);
+    }
+
+    .col-hdr:first-child { text-align: left; padding-left: 6px; }
+
+    /* Linhas de disciplinas */
+    .disc-list {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+        overflow-y: auto;
+        flex: 1;
+    }
+
+    .disc-row {
+        display: grid;
+        grid-template-columns: 1fr 44px 44px;
+        gap: 4px;
+        min-height: 34px;
+        align-items: stretch;
+    }
+
+    .disc-name {
+        display: flex;
+        align-items: center;
+        padding: 4px 6px;
+        background: rgba(255,255,255,0.03);
+        border: 1px solid rgba(255,255,255,0.05);
+        border-radius: 5px;
+        font-size: 0.62rem;
+        font-weight: 600;
+        letter-spacing: 0.2px;
+        color: var(--slate-300);
+        text-transform: uppercase;
+        line-height: 1.15;
+        word-break: break-word;
+        hyphens: auto;
+        transition: background 0.15s;
+    }
+
+    .disc-row:hover .disc-name { background: rgba(255,255,255,0.06); }
+
+    .disc-grade, .disc-falta {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 5px;
+        font-family: 'Playfair Display', serif;
+        font-size: 1rem;
+        font-weight: 700;
+        min-height: 34px;
+        transition: var(--transition);
+    }
+
+    /* Nota alta */
+    .disc-grade.alta {
+        background: rgba(33,150,243,0.18);
+        color: #7dd3fc;
+        border: 1px solid rgba(33,150,243,0.3);
+    }
+
+    /* Nota baixa */
+    .disc-grade.baixa {
+        background: rgba(248,113,113,0.18);
+        color: #fca5a5;
+        border: 1px solid rgba(248,113,113,0.3);
+    }
+
+    /* Sem nota */
+    .disc-grade.vazia {
+        background: rgba(255,255,255,0.03);
+        color: var(--slate-400);
+        border: 1px solid rgba(255,255,255,0.06);
+        font-family: 'DM Sans', sans-serif;
+        font-size: 0.75rem;
+    }
+
+    /* Faltas */
+    .disc-falta {
+        background: rgba(255,255,255,0.06);
+        border: 1px solid rgba(255,255,255,0.08);
+        font-family: 'DM Sans', sans-serif;
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: var(--slate-300);
+    }
+
+    .disc-falta.falta-alta { color: #fbbf24; background: rgba(251,191,36,0.12); border-color: rgba(251,191,36,0.2); }
+    .disc-falta.falta-critica { color: #f87171; background: rgba(248,113,113,0.12); border-color: rgba(248,113,113,0.2); }
+
+    /* 5º Conceito — notas com cor gold para alta */
+    .bim-card.conceito5 .disc-grade.alta {
+        background: rgba(34,197,94,0.15);
+        color: #86efac;
+        border-color: rgba(34,197,94,0.3);
+    }
+
+    .bim-card.conceito5 .disc-grade.baixa {
+        background: rgba(248,113,113,0.15);
+        color: #fca5a5;
+        border-color: rgba(248,113,113,0.25);
+    }
+
+    /* ─── Scrollbar do disc-list ─── */
+    .disc-list::-webkit-scrollbar { width: 4px; }
+    .disc-list::-webkit-scrollbar-track { background: transparent; }
+    .disc-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 2px; }
+    .disc-list::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.22); }
+
+    /* ═══════════════════════════════════════════════
+       MODAL EXPANDIDO
+    ═══════════════════════════════════════════════ */
+    .bim-card.expanded {
+        position: fixed;
+        top: 50%; left: 50%;
+        transform: translate(-50%, -50%) !important;
+        z-index: 3000;
+        width: min(95vw, 1200px);
+        height: min(90vh, 850px);
+        box-shadow: 0 32px 80px rgba(0,0,0,0.7);
+        border-color: rgba(240,192,64,0.25);
+        animation: none;
+    }
+
+    .bim-card.expanded .disc-list { overflow-y: auto; }
+
+    .overlay {
+        position: fixed; inset: 0;
+        background: rgba(8,13,26,0.75);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+        z-index: 2999;
+        display: none;
+    }
+
+    /* ═══════════════════════════════════════════════
+       MENSAGENS DE ESTADO
+    ═══════════════════════════════════════════════ */
+    .state-msg {
+        grid-column: 1 / -1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        padding: 60px 20px;
+        text-align: center;
+    }
+
+    .state-msg .icon { font-size: 2rem; opacity: 0.5; }
+
+    .state-msg .text {
+        font-size: 0.9rem;
+        color: var(--slate-400);
+        font-weight: 500;
+        max-width: 360px;
+        line-height: 1.5;
+    }
+
+    .state-msg.error .icon { opacity: 0.8; }
+    .state-msg.error .text { color: #fca5a5; }
+
+    /* Spinner */
+    .spinner {
+        width: 36px; height: 36px;
+        border: 3px solid rgba(255,255,255,0.08);
+        border-top-color: var(--gold-400);
+        border-radius: 50%;
+        animation: spin 0.75s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ═══════════════════════════════════════════════
+       FOOTER
+    ═══════════════════════════════════════════════ */
+    footer {
+        text-align: center;
+        margin-top: 32px;
+        padding-bottom: 24px;
+        font-size: 0.72rem;
+        color: var(--navy-500);
+        letter-spacing: 0.5px;
+    }
+
+    footer strong { color: var(--navy-600); font-weight: 600; }
+
+    /* ═══════════════════════════════════════════════
+       ANIMAÇÕES GERAIS
+    ═══════════════════════════════════════════════ */
+    @keyframes fadeSlideIn {
+        from { opacity: 0; transform: translateY(-8px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ═══════════════════════════════════════════════
+       RESPONSIVIDADE
+    ═══════════════════════════════════════════════ */
+    @media (max-width: 1400px) {
+        .cards-grid { grid-template-columns: repeat(5, minmax(200px, 1fr)); gap: 10px; }
+    }
+
+    @media (max-width: 1100px) {
+        .cards-grid { grid-template-columns: repeat(3, 1fr); }
+        .cards-grid.single-mode { grid-template-columns: minmax(280px, 500px); }
+        :root { --panel-h: 115px; }
+    }
+
+    @media (max-width: 820px) {
+        :root { --header-h: 58px; --panel-h: 140px; }
+        .controls-main { flex-wrap: wrap; }
+        .field-group.turma { max-width: 100%; flex: 1 1 140px; }
+        .field-group.aluno { flex: 1 1 200px; }
+        .cards-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        header { padding: 0 18px; }
+    }
+
+    @media (max-width: 580px) {
+        :root { --header-h: 56px; --panel-h: 165px; }
+        .cards-grid { grid-template-columns: 1fr; }
+        .cards-grid.single-mode { grid-template-columns: 1fr; }
+        .btn-nav .nav-label { display: none; }
+        .filter-chip { padding: 0 10px; font-size: 0.68rem; }
+        header { padding: 0 14px; }
+        .controls-inner { padding: 12px 14px; }
+        .header-subtitle { display: none; }
+    }
     </style>
 </head>
 <body>
-    <header>
-        <h1>SISTEMA INTEGRADO CONSELHO DE CLASSE</h1>
-    </header>
-    
-    <div class="controls-panel">
-        <div class="controls-wrapper">
-            <div class="controls-row">
-                <button id="prev-btn" class="nav-btn prev" disabled>← VOLTAR</button>
-                
-                <div class="controls-center">
-                    <div class="form-group turma">
-                        <label for="class-select">SELECIONE A TURMA:</label>
-                        <select id="class-select">
-                            <option value="">-- SELECIONE UMA TURMA --</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group aluno">
-                        <label for="student-select">SELECIONE O ALUNO:</label>
-                        <select id="student-select" disabled>
-                            <option value="">-- Primeiro selecione uma turma --</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group btn-container">
-                        <button id="load-data" class="btn" disabled>Carregar Dados</button>
-                    </div>
-                </div>
-                
-                <button id="next-btn" class="nav-btn next" disabled>AVANÇAR →</button>
+
+<!-- ════════════════ HEADER ════════════════ -->
+<header>
+    <div class="header-brand">
+        <div class="header-icon">🎓</div>
+        <div class="header-titles">
+            <span class="header-subtitle">E.E. Profª Wanda Mascagni de Sá</span>
+            <h1>Conselho de Classe</h1>
+        </div>
+    </div>
+    <div class="header-right">
+        <div class="live-badge">
+            <div class="live-dot"></div>
+            Online
+        </div>
+    </div>
+</header>
+
+<!-- ════════════════ PAINEL DE CONTROLES ════════════════ -->
+<div class="controls-panel" id="controls-panel">
+    <div class="controls-inner">
+
+        <!-- Linha 1: Seletores e navegação -->
+        <div class="controls-main">
+            <button id="prev-btn" class="btn-nav" disabled title="Aluno anterior">
+                <span class="nav-arrow">←</span>
+                <span class="nav-label">Anterior</span>
+            </button>
+
+            <div class="field-group turma">
+                <span class="field-label">Turma</span>
+                <select id="class-select" class="field-select">
+                    <option value="">— Selecione —</option>
+                </select>
             </div>
+
+            <div class="field-group aluno">
+                <span class="field-label">Aluno</span>
+                <select id="student-select" class="field-select" disabled>
+                    <option value="">— Selecione a turma —</option>
+                </select>
+            </div>
+
+            <div class="field-group action">
+                <span class="field-label">&nbsp;</span>
+                <button id="load-btn" class="btn-load" disabled>Carregar Dados</button>
+            </div>
+
+            <span class="student-pos" id="student-pos"></span>
+
+            <button id="next-btn" class="btn-nav" disabled title="Próximo aluno">
+                <span class="nav-label">Próximo</span>
+                <span class="nav-arrow">→</span>
+            </button>
+        </div>
+
+        <!-- Linha 2: Filtro de bimestre -->
+        <div class="filter-row">
+            <span class="filter-label-text">Visualizar:</span>
+            <button class="filter-chip chip-all active" data-f="all">Todos os Bimestres</button>
+            <button class="filter-chip" data-f="0">1º Bimestre</button>
+            <button class="filter-chip" data-f="1">2º Bimestre</button>
+            <button class="filter-chip" data-f="2">3º Bimestre</button>
+            <button class="filter-chip" data-f="3">4º Bimestre</button>
+            <button class="filter-chip chip-c5" data-f="4">5º Conceito</button>
+        </div>
+
+    </div>
+</div>
+
+<!-- ════════════════ CONTEÚDO PRINCIPAL ════════════════ -->
+<div class="page-container">
+
+    <!-- Headline do aluno -->
+    <div class="student-headline" id="student-headline">
+        <div class="student-avatar">👤</div>
+        <div>
+            <div class="student-info-name" id="hl-name">—</div>
+            <div class="student-info-meta" id="hl-meta">—</div>
         </div>
     </div>
-    
-    <div class="container">
-        <div id="results" class="results-container">
-            <div class="no-data">Selecione uma turma e um aluno para visualizar os dados</div>
-        </div>
-        
-        <div class="footer">
-            <p>Sistema de Acompanhamento Escolar &copy; 2025</p>
+
+    <!-- Grade de cards -->
+    <div class="cards-grid" id="cards-grid">
+        <div class="state-msg">
+            <div class="icon">📋</div>
+            <div class="text">Selecione uma turma e um aluno para visualizar os dados do Conselho de Classe.</div>
         </div>
     </div>
 
-    <div class="overlay" id="overlay"></div>
+    <footer>
+        <strong>Sistema de Acompanhamento Escolar</strong> &mdash; &copy; 2025 &mdash; SEDUC-SP
+    </footer>
+</div>
 
-    <script>
-        // URL DO WEB APP
-        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyYjhjDwc66t9EWyKMFvjQWHq6r7c0oNvf1QNDXNIXYA_WR__pBSkAnTGLMW9aRPbga/exec';
+<div class="overlay" id="overlay"></div>
 
-        // Elementos DOM
-        const classSelect = document.getElementById('class-select');
-        const studentSelect = document.getElementById('student-select');
-        const loadButton = document.getElementById('load-data');
-        const resultsContainer = document.getElementById('results');
-        const prevBtn = document.getElementById('prev-btn');
-        const nextBtn = document.getElementById('next-btn');
-        const overlay = document.getElementById('overlay');
+<script>
+/* ================================================================
+   CONFIGURAÇÃO
+================================================================ */
+const API = 'https://script.google.com/macros/s/AKfycbyYjhjDwc66t9EWyKMFvjQWHq6r7c0oNvf1QNDXNIXYA_WR__pBSkAnTGLMW9aRPbga/exec';
 
-        // Variáveis globais para navegação
-        let currentStudents = [];
-        let currentStudentIndex = -1;
-        let currentTurma = '';
-        let currentExpandedCard = null;
+/* ================================================================
+   ELEMENTOS
+================================================================ */
+const classEl   = document.getElementById('class-select');
+const studentEl = document.getElementById('student-select');
+const loadBtn   = document.getElementById('load-btn');
+const prevBtn   = document.getElementById('prev-btn');
+const nextBtn   = document.getElementById('next-btn');
+const grid      = document.getElementById('cards-grid');
+const overlay   = document.getElementById('overlay');
+const posEl     = document.getElementById('student-pos');
+const hlEl      = document.getElementById('student-headline');
+const hlName    = document.getElementById('hl-name');
+const hlMeta    = document.getElementById('hl-meta');
 
-        /* ===================== CARREGAR TURMAS ===================== */
-        async function populateClassSelect() {
-            try {
-                showLoading('Carregando turmas...');
+/* ================================================================
+   ESTADO
+================================================================ */
+let students    = [];
+let studentIdx  = -1;
+let turma       = '';
+let activeFilter = 'all';
+let expandedCard = null;
 
-                const response = await fetch(`${WEB_APP_URL}?action=getTurmas`);
-                const turmas = await response.json();
+/* ================================================================
+   FILTRO DE BIMESTRE
+================================================================ */
+document.querySelectorAll('.filter-chip').forEach(btn => {
+    btn.addEventListener('click', function() {
+        document.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        activeFilter = this.dataset.f;
+        applyFilter();
+    });
+});
 
-                if (turmas.error) throw new Error(turmas.error);
-
-                classSelect.innerHTML = '<option value="">-- Selecione uma turma --</option>';
-                turmas.forEach((turma, index) => {
-                    const option = document.createElement('option');
-                    option.value = turma;
-                    option.textContent = turma;
-                    option.style.textAlign = "center";
-                    // Aplica cores alternadas via JavaScript também
-                    if (index % 2 === 0) {
-                        option.style.backgroundColor = "#d4edda";
-                    } else {
-                        option.style.backgroundColor = "#ffffff";
-                    }
-                    classSelect.appendChild(option);
-                });
-
-                hideLoading();
-            } catch (err) {
-                showError("Erro ao carregar turmas.");
-                console.error(err);
-            }
-        }
-
-        /* ===================== CARREGAR ALUNOS ===================== */
-        classSelect.addEventListener('change', async function () {
-            const turma = this.value;
-
-            // Centraliza o texto da turma selecionada
-            if (turma) {
-                classSelect.classList.add('turma-selecionada');
-                classSelect.style.textAlign = "center";
-                classSelect.style.textAlignLast = "center";
-                classSelect.style.webkitTextAlignLast = "center";
-                classSelect.style.mozTextAlignLast = "center";
-            } else {
-                classSelect.classList.remove('turma-selecionada');
-                classSelect.style.textAlign = "left";
-                classSelect.style.textAlignLast = "auto";
-                classSelect.style.webkitTextAlignLast = "auto";
-                classSelect.style.mozTextAlignLast = "auto";
-            }
-
-            studentSelect.disabled = true;
-            loadButton.disabled = true;
-            prevBtn.disabled = true;
-            nextBtn.disabled = true;
-
-            if (!turma) {
-                studentSelect.innerHTML = '<option value="">-- Primeiro selecione uma turma --</option>';
-                studentSelect.classList.remove('aluno-selecionado');
-                showNoData();
-                return;
-            }
-
-            studentSelect.innerHTML = '<option>Carregando alunos...</option>';
-
-            try {
-                const response = await fetch(`${WEB_APP_URL}?action=getAlunos&turma=${encodeURIComponent(turma)}`);
-                const alunos = await response.json();
-
-                if (alunos.error) throw new Error(alunos.error);
-
-                studentSelect.innerHTML = '<option value="">-- Selecione um aluno --</option>';
-
-                // Armazena a lista de alunos para navegação
-                currentStudents = Array.isArray(alunos) ? alunos : [];
-                currentTurma = turma;
-
-                currentStudents.forEach((a, index) => {
-                    const option = document.createElement('option');
-                    option.value = a;
-                    option.textContent = a;
-                    option.style.fontWeight = "700";
-                    // Aplica cores alternadas via JavaScript
-                    if (index % 2 === 0) {
-                        option.style.backgroundColor = "#d1ecf1";
-                    } else {
-                        option.style.backgroundColor = "#ffffff";
-                    }
-                    studentSelect.appendChild(option);
-                });
-
-                studentSelect.disabled = false;
-            } catch (err) {
-                studentSelect.innerHTML = '<option value="">Erro ao carregar alunos</option>';
-                console.error(err);
-            }
+function applyFilter() {
+    const cards = grid.querySelectorAll('.bim-card');
+    if (activeFilter === 'all') {
+        cards.forEach(c => c.classList.remove('hidden'));
+        grid.classList.remove('single-mode');
+    } else {
+        cards.forEach((c, i) => {
+            c.classList.toggle('hidden', String(i) !== activeFilter);
         });
+        grid.classList.add('single-mode');
+    }
+}
 
-        /* Habilitar botão quando aluno for selecionado */
-        studentSelect.addEventListener('change', function () {
-            const hasStudent = !!this.value;
-            loadButton.disabled = !hasStudent;
-
-            // Aplica estilo quando aluno selecionado
-            if (hasStudent) {
-                studentSelect.classList.add('aluno-selecionado');
-                studentSelect.style.backgroundImage = "url(\"data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e\")";
-            } else {
-                studentSelect.classList.remove('aluno-selecionado');
-                studentSelect.style.backgroundImage = "url(\"data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23495057' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e\")";
-            }
-
-            if (hasStudent) {
-                currentStudentIndex = currentStudents.indexOf(this.value);
-                updateNavigationButtons();
-            } else {
-                currentStudentIndex = -1;
-                prevBtn.disabled = true;
-                nextBtn.disabled = true;
-            }
+/* ================================================================
+   CARREGAR TURMAS
+================================================================ */
+async function initTurmas() {
+    showState('loading');
+    try {
+        const r = await fetch(`${API}?action=getTurmas`);
+        const data = await r.json();
+        if (data.error) throw new Error(data.error);
+        classEl.innerHTML = '<option value="">— Selecione —</option>';
+        data.forEach(t => {
+            const o = document.createElement('option');
+            o.value = o.textContent = t;
+            classEl.appendChild(o);
         });
+        showState('empty');
+    } catch(e) {
+        console.error(e);
+        showState('error', 'Erro ao carregar turmas. Verifique a conexão com o servidor.');
+    }
+}
 
-        /* ===================== NAVEGAÇÃO ENTRE ALUNOS ===================== */
-        function updateNavigationButtons() {
-            prevBtn.disabled = currentStudentIndex <= 0;
-            nextBtn.disabled = currentStudentIndex >= currentStudents.length - 1 || currentStudents.length === 0;
+/* ================================================================
+   CARREGAR ALUNOS
+================================================================ */
+classEl.addEventListener('change', async function() {
+    turma = this.value;
+    students = [];
+    studentIdx = -1;
+    posEl.textContent = '';
+    studentEl.classList.remove('is-selected-aluno');
+    loadBtn.disabled = prevBtn.disabled = nextBtn.disabled = true;
+    studentEl.disabled = true;
+    hlEl.classList.remove('visible');
+
+    classEl.classList.toggle('is-selected-turma', !!turma);
+
+    if (!turma) {
+        studentEl.innerHTML = '<option value="">— Selecione a turma —</option>';
+        showState('empty');
+        return;
+    }
+
+    studentEl.innerHTML = '<option value="">Carregando…</option>';
+
+    try {
+        const r = await fetch(`${API}?action=getAlunos&turma=${encodeURIComponent(turma)}`);
+        const data = await r.json();
+        if (data.error) throw new Error(data.error);
+        students = Array.isArray(data) ? data : [];
+        studentEl.innerHTML = '<option value="">— Selecione um aluno —</option>';
+        students.forEach(a => {
+            const o = document.createElement('option');
+            o.value = o.textContent = a;
+            studentEl.appendChild(o);
+        });
+        studentEl.disabled = false;
+    } catch(e) {
+        console.error(e);
+        studentEl.innerHTML = '<option value="">Erro ao carregar alunos</option>';
+    }
+});
+
+studentEl.addEventListener('change', function() {
+    const has = !!this.value;
+    loadBtn.disabled = !has;
+    studentEl.classList.toggle('is-selected-aluno', has);
+    if (has) {
+        studentIdx = students.indexOf(this.value);
+        posEl.textContent = `${studentIdx + 1} / ${students.length}`;
+        updateNav();
+    } else {
+        studentIdx = -1;
+        posEl.textContent = '';
+        prevBtn.disabled = nextBtn.disabled = true;
+    }
+});
+
+/* ================================================================
+   NAVEGAÇÃO
+================================================================ */
+function updateNav() {
+    prevBtn.disabled = studentIdx <= 0;
+    nextBtn.disabled = studentIdx >= students.length - 1;
+}
+
+async function navigate(dir) {
+    if (dir < 0 && studentIdx > 0) studentIdx--;
+    else if (dir > 0 && studentIdx < students.length - 1) studentIdx++;
+    else return;
+    studentEl.value = students[studentIdx];
+    studentEl.classList.add('is-selected-aluno');
+    posEl.textContent = `${studentIdx + 1} / ${students.length}`;
+    await loadData();
+    updateNav();
+}
+
+prevBtn.addEventListener('click', () => navigate(-1));
+nextBtn.addEventListener('click', () => navigate(+1));
+loadBtn.addEventListener('click', loadData);
+
+/* ================================================================
+   CARREGAR DADOS DO ALUNO
+================================================================ */
+async function loadData() {
+    const t = classEl.value;
+    const a = studentEl.value;
+    if (!t || !a) return;
+
+    studentIdx = students.indexOf(a);
+    posEl.textContent = studentIdx >= 0 ? `${studentIdx + 1} / ${students.length}` : '';
+    updateNav();
+
+    showState('loading');
+    hlEl.classList.remove('visible');
+
+    try {
+        const r = await fetch(`${API}?action=getDadosAluno&turma=${encodeURIComponent(t)}&aluno=${encodeURIComponent(a)}`);
+        const d = await r.json();
+        if (d.error) throw new Error(d.error);
+        if (!Array.isArray(d.disciplinas) || !Array.isArray(d.notas)) {
+            console.error('Estrutura inesperada:', d);
+            showState('error', 'Estrutura de dados inválida recebida do servidor.');
+            return;
         }
 
-        async function navigateStudents(direction) {
-            if (direction === 'prev' && currentStudentIndex > 0) {
-                currentStudentIndex--;
-            } else if (direction === 'next' && currentStudentIndex < currentStudents.length - 1) {
-                currentStudentIndex++;
+        const disc  = d.disciplinas;
+        const n     = disc.length;
+
+        // Normaliza notas (4 bimestres)
+        const notas = [];
+        for (let b = 0; b < 4; b++) {
+            notas[b] = padArr(Array.isArray(d.notas[b]) ? d.notas[b] : [], n, null);
+        }
+
+        // Normaliza faltas (4 bimestres)
+        const faltas = [];
+        for (let b = 0; b < 4; b++) {
+            const raw = Array.isArray(d.faltas) && Array.isArray(d.faltas[b]) ? d.faltas[b] : [];
+            faltas[b] = padArr(raw, n, 0);
+        }
+
+        // Faltas totais por disciplina
+        let totFaltas;
+        if (Array.isArray(d.totalFaltasPorDisciplina) && d.totalFaltasPorDisciplina.length === n) {
+            totFaltas = d.totalFaltasPorDisciplina.map(toInt);
+        } else {
+            totFaltas = [];
+            for (let di = 0; di < n; di++) {
+                let s = 0;
+                for (let bi = 0; bi < 4; bi++) s += toInt(faltas[bi][di]);
+                totFaltas[di] = s;
+            }
+        }
+
+        // 5º Conceito
+        let c5;
+        if (Array.isArray(d.conceito5) && d.conceito5.length === n) {
+            c5 = d.conceito5.map(toRound);
+        } else {
+            c5 = [];
+            for (let di = 0; di < n; di++) {
+                let s = 0, cnt = 0;
+                for (let bi = 0; bi < 4; bi++) {
+                    const v = toFloat(notas[bi][di]);
+                    if (v !== null) { s += v; cnt++; }
+                }
+                c5[di] = cnt > 0 ? Math.round(s / cnt) : null;
+            }
+        }
+
+        renderCards({ disc, notas, faltas, c5, totFaltas, n, aluno: a, turma: t });
+
+        // Headline
+        hlName.textContent = a;
+        hlMeta.innerHTML   = `Turma: <strong>${t}</strong> &nbsp;·&nbsp; Aluno ${studentIdx + 1} de ${students.length}`;
+        hlEl.classList.add('visible');
+
+    } catch(e) {
+        console.error(e);
+        showState('error', 'Erro ao carregar dados do aluno. Tente novamente.');
+    }
+}
+
+/* ================================================================
+   RENDERIZAR CARDS
+================================================================ */
+function renderCards({ disc, notas, faltas, c5, totFaltas, n }) {
+    grid.innerHTML = '';
+
+    const bimLabels = ['1º Bimestre','2º Bimestre','3º Bimestre','4º Bimestre'];
+    const bimSubs   = ['Jan – Mar','Abr – Jun','Jul – Set','Out – Dez'];
+
+    for (let b = 0; b < 5; b++) {
+        const isC5 = b === 4;
+        const card = document.createElement('div');
+        card.className = 'bim-card' + (isC5 ? ' conceito5' : '');
+
+        /* Cabeçalho */
+        const header = document.createElement('div');
+        header.className = 'card-header';
+        header.title = 'Duplo clique para ampliar';
+        header.addEventListener('dblclick', () => toggleExpand(card));
+
+        const numBox = document.createElement('div');
+        numBox.className = 'card-num';
+        numBox.textContent = isC5 ? '★' : (b + 1);
+
+        const tw = document.createElement('div');
+        tw.className = 'card-title-wrap';
+        tw.innerHTML = `<div class="card-title">${isC5 ? '5º Conceito' : bimLabels[b]}</div>
+                        <div class="card-subtitle">${isC5 ? 'Média anual' : bimSubs[b]}</div>`;
+
+        const hint = document.createElement('div');
+        hint.className = 'card-expand-hint';
+        hint.textContent = '⤢ ampliar';
+
+        header.appendChild(numBox);
+        header.appendChild(tw);
+        header.appendChild(hint);
+        card.appendChild(header);
+
+        /* Corpo */
+        const body = document.createElement('div');
+        body.className = 'card-body';
+
+        /* Cabeçalhos das colunas */
+        const colH = document.createElement('div');
+        colH.className = 'col-headers';
+        ['Disciplina','Nota','Faltas'].forEach((txt, ci) => {
+            const h = document.createElement('div');
+            h.className = 'col-hdr';
+            h.textContent = txt;
+            colH.appendChild(h);
+        });
+        body.appendChild(colH);
+
+        /* Lista de disciplinas */
+        const list = document.createElement('div');
+        list.className = 'disc-list';
+
+        for (let di = 0; di < n; di++) {
+            const row = document.createElement('div');
+            row.className = 'disc-row';
+
+            /* Nome */
+            const nameEl = document.createElement('div');
+            nameEl.className = 'disc-name';
+            const parts = (disc[di] || `Disciplina ${di+1}`).toUpperCase().trim().split(/\s+/);
+            if (parts.length === 1) {
+                nameEl.textContent = parts[0];
+            } else if (parts.length === 2) {
+                nameEl.innerHTML = parts[0] + '<br>' + parts[1];
             } else {
-                return;
+                const m = Math.ceil(parts.length / 2);
+                nameEl.innerHTML = parts.slice(0,m).join(' ') + '<br>' + parts.slice(m).join(' ');
             }
 
-            studentSelect.value = currentStudents[currentStudentIndex];
-            studentSelect.classList.add('aluno-selecionado');
-            studentSelect.style.backgroundImage = "url(\"data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e\")";
+            /* Nota */
+            const gradeEl = document.createElement('div');
+            gradeEl.className = 'disc-grade';
 
-            // Carrega os dados do aluno automaticamente
-            await loadStudentData();
-            updateNavigationButtons();
-        }
+            /* Faltas */
+            const faltaEl = document.createElement('div');
+            faltaEl.className = 'disc-falta';
 
-        prevBtn.addEventListener('click', () => navigateStudents('prev'));
-        nextBtn.addEventListener('click', () => navigateStudents('next'));
+            if (!isC5) {
+                const nota  = toFloat(notas[b][di]);
+                const falta = toInt(faltas[b][di]);
 
-        /* ===================== CARREGAR DADOS DO ALUNO ===================== */
-        loadButton.addEventListener('click', loadStudentData);
-
-        async function loadStudentData() {
-            const turma = classSelect.value;
-            const aluno = studentSelect.value;
-
-            currentStudentIndex = currentStudents.indexOf(aluno);
-            updateNavigationButtons();
-
-            showLoading("Carregando dados...");
-
-            try {
-                const response = await fetch(`${WEB_APP_URL}?action=getDadosAluno&turma=${encodeURIComponent(turma)}&aluno=${encodeURIComponent(aluno)}`);
-                const dados = await response.json();
-
-                if (dados.error) throw new Error(dados.error);
-
-                // Verifica estrutura mínima esperada
-                const hasNotas = Array.isArray(dados.notas) && dados.notas.length >= 1;
-                const hasDisciplinas = Array.isArray(dados.disciplinas);
-                if (!hasNotas || !hasDisciplinas) {
-                    console.error("Resposta do backend:", dados);
-                    showError("Estrutura de dados inválida.");
-                    return;
-                }
-
-                // normalize shape: garantir indices 0..3 (bimestres)
-                const notas = Array.isArray(dados.notas) ? dados.notas : [];
-                const faltas = Array.isArray(dados.faltas) ? dados.faltas : [[],[],[],[]];
-                const disciplinas = Array.isArray(dados.disciplinas) ? dados.disciplinas : [];
-                const conceito5 = Array.isArray(dados.conceito5) ? dados.conceito5 : [];
-                const coresConceito5 = Array.isArray(dados.coresConceito5) ? dados.coresConceito5 : [];
-                const totalFaltasPorDisciplina = Array.isArray(dados.totalFaltasPorDisciplina) ? dados.totalFaltasPorDisciplina : [];
-                const faltasTotal = typeof dados.faltasTotal === 'number' ? dados.faltasTotal : (totalFaltasPorDisciplina.reduce((a,b)=>a+(b||0),0) || 0);
-
-                displayStudentData({ disciplinas, notas, faltas, conceito5, coresConceito5, totalFaltasPorDisciplina, faltasTotal, bimestres: dados.bimestres || {} });
-            } catch (err) {
-                showError("Erro ao carregar dados do aluno.");
-                console.error(err);
-            }
-        }
-
-        /* ===================== EXIBIR DADOS DO ALUNO ===================== */
-        function displayStudentData(dados) {
-            resultsContainer.innerHTML = "";
-
-            // Valida
-            if (!dados || !Array.isArray(dados.disciplinas) || !Array.isArray(dados.notas)) {
-                showError("Estrutura de dados inválida.");
-                return;
-            }
-
-            const disciplinas = dados.disciplinas;
-            const disciplinasCount = disciplinas.length || 0;
-
-            // Ensure notas and faltas are arrays of 4 arrays
-            const notas = [];
-            const faltas = [];
-            for (let b = 0; b < 4; b++) {
-                notas[b] = Array.isArray(dados.notas[b]) ? dados.notas[b] : new Array(disciplinasCount).fill(null);
-                faltas[b] = Array.isArray(dados.faltas[b]) ? dados.faltas[b] : new Array(disciplinasCount).fill(0);
-                // if shorter, pad
-                if (notas[b].length < disciplinasCount) notas[b] = notas[b].concat(new Array(disciplinasCount - notas[b].length).fill(null));
-                if (faltas[b].length < disciplinasCount) faltas[b] = faltas[b].concat(new Array(disciplinasCount - faltas[b].length).fill(0));
-            }
-
-            // Cria cards para cada bimestre (1..4) e 5º conceito
-            for (let b = 0; b < 5; b++) {
-                const card = document.createElement('div');
-                card.className = "bimester-card";
-                if (b === 4) {
-                    card.classList.add("conceito5");
-                }
-
-                const header = document.createElement('div');
-                header.className = "bimester-header";
-                
-                if (b < 4) {
-                    header.textContent = `${b+1}º Bimestre`;
+                if (nota !== null) {
+                    gradeEl.classList.add(nota >= 5 ? 'alta' : 'baixa');
+                    gradeEl.textContent = String(Math.round(nota));
                 } else {
-                    header.textContent = "5º CONCEITO";
+                    gradeEl.classList.add('vazia');
+                    gradeEl.textContent = '—';
                 }
 
-                // Adiciona funcionalidade de duplo clique para expandir
-                header.addEventListener('dblclick', function() {
-                    toggleCardExpansion(card);
-                });
+                faltaEl.textContent = String(falta);
+                if (falta >= 6)  faltaEl.classList.add('falta-alta');
+                if (falta >= 10) faltaEl.classList.add('falta-critica');
 
-                const content = document.createElement('div');
-                content.className = "bimester-content";
-
-                // Cria grid container
-                const gridContainer = document.createElement('div');
-                gridContainer.className = "subject-grid";
-
-                // Cabeçalhos da grid
-                const headerRow = document.createElement('div');
-                headerRow.className = "grid-header-row";
-                
-                const header1 = document.createElement("div");
-                header1.className = "grid-header";
-                header1.textContent = "Disciplina";
-                
-                const header2 = document.createElement("div");
-                header2.className = "grid-header";
-                header2.textContent = "Nota";
-                
-                const header3 = document.createElement("div");
-                header3.className = "grid-header";
-                header3.textContent = "Faltas";
-                
-                headerRow.appendChild(header1);
-                headerRow.appendChild(header2);
-                headerRow.appendChild(header3);
-                gridContainer.appendChild(headerRow);
-
-                // Container para as linhas de disciplinas com scroll
-                const rowsContainer = document.createElement('div');
-                rowsContainer.className = "subject-rows-container";
-
-                // Itera pelas disciplinas
-                for (let i = 0; i < disciplinasCount; i++) {
-                    const nomeDisc = disciplinas[i] || (`Disciplina ${i+1}`);
-                    
-                    // Formata o nome da disciplina para quebras adequadas
-                    let displayNome = formatDisciplinaNome(nomeDisc);
-                    
-                    const row = document.createElement('div');
-                    row.className = "subject-row";
-                    
-                    // Célula do nome da disciplina
-                    const nomeCell = document.createElement("div");
-                    nomeCell.className = "subject-cell";
-                    
-                    // Se o nome formatado contém <br>, usamos innerHTML
-                    if (displayNome.includes('<br>')) {
-                        nomeCell.innerHTML = displayNome;
-                    } else {
-                        nomeCell.textContent = displayNome;
-                    }
-
-                    // Célula da nota
-                    const gradeCell = document.createElement("div");
-                    gradeCell.className = "grade-cell";
-
-                    // Célula das faltas
-                    const faltasCell = document.createElement("div");
-                    faltasCell.className = "faltas-cell";
-
-                    if (b < 4) {
-                        // Bimestres 1-4 - NOTAS INTEIRAS
-                        const notaRaw = notas[b][i];
-                        const faltaRaw = faltas[b][i];
-
-                        let nota = null;
-                        if (notaRaw !== null && notaRaw !== undefined && notaRaw !== "") {
-                            const parsed = parseFloat(notaRaw);
-                            nota = isNaN(parsed) ? null : parsed;
-                        }
-
-                        const falta = (faltaRaw === null || faltaRaw === undefined || faltaRaw === "") ? 0 : (parseInt(faltaRaw) || 0);
-
-                        // Aplica a cor baseada na nota (NOTAS INTEIRAS)
-                        if (nota !== null) {
-                            if (nota >= 5) {
-                                gradeCell.classList.add("nota-alta");
-                            } else {
-                                gradeCell.classList.add("nota-baixa");
-                            }
-                            // Exibe como número inteiro SEM VÍRGULAS
-                            gradeCell.textContent = Math.round(nota);
-                        } else {
-                            gradeCell.classList.add("sem-nota");
-                            gradeCell.textContent = "--";
-                        }
-
-                        // Preenche a célula de faltas
-                        faltasCell.textContent = falta;
-                    } else {
-                        // 5º Conceito (médias e totais) - INTEIROS SEM VÍRGULAS
-                        let medias = Array.isArray(dados.conceito5) && dados.conceito5.length >= disciplinasCount ? 
-                            dados.conceito5.slice(0, disciplinasCount) : null;
-                        
-                        if (!medias) {
-                            // Calcula as médias se não vierem do backend
-                            medias = new Array(disciplinasCount).fill(null);
-                            for (let i = 0; i < disciplinasCount; i++) {
-                                let soma = 0, cont = 0;
-                                for (let b = 0; b < 4; b++) {
-                                    const n = notas[b][i];
-                                    if (n !== null && n !== undefined && n !== "" && !isNaN(parseFloat(n))) { 
-                                        soma += parseFloat(n); 
-                                        cont++; 
-                                    }
-                                }
-                                
-                                // Cálculo da média com arredondamento para inteiro
-                                if (cont > 0) {
-                                    const mediaCalculada = soma / cont;
-                                    medias[i] = Math.round(mediaCalculada);
-                                } else {
-                                    medias[i] = null;
-                                }
-                            }
-                        }
-
-                        const totalFaltasPorDisciplina = Array.isArray(dados.totalFaltasPorDisciplina) && dados.totalFaltasPorDisciplina.length >= disciplinasCount
-                            ? dados.totalFaltasPorDisciplina
-                            : (function() {
-                                // calcula somando faltas por disciplina
-                                const totals = new Array(disciplinasCount).fill(0);
-                                for (let i = 0; i < disciplinasCount; i++) {
-                                    let tot = 0;
-                                    for (let b = 0; b < 4; b++) tot += (parseInt(faltas[b][i]) || 0);
-                                    totals[i] = tot;
-                                }
-                                return totals;
-                            })();
-
-                        const media = medias[i];
-                        const faltasDisc = totalFaltasPorDisciplina[i] || 0;
-
-                        // CORREÇÃO: Lógica específica para 5º Conceito
-                        // 5 ou mais: azul, 4 ou abaixo: vermelho
-                        if (media !== null && media !== undefined && !isNaN(media)) {
-                            if (media >= 5) {
-                                gradeCell.classList.add("nota-alta");
-                            } else {
-                                gradeCell.classList.add("nota-baixa");
-                            }
-                            // Exibe como número inteiro SEM VÍRGULAS
-                            gradeCell.textContent = Math.round(media);
-                        } else {
-                            gradeCell.classList.add("sem-nota");
-                            gradeCell.textContent = "--";
-                        }
-
-                        // Preenche a célula de faltas totais com estilo específico
-                        faltasCell.textContent = faltasDisc;
-                        faltasCell.classList.add("faltas-total-cell");
-                    }
-
-                    row.appendChild(nomeCell);
-                    row.appendChild(gradeCell);
-                    row.appendChild(faltasCell);
-                    rowsContainer.appendChild(row);
-                }
-
-                gridContainer.appendChild(rowsContainer);
-                content.appendChild(gridContainer);
-                card.appendChild(header);
-                card.appendChild(content);
-                resultsContainer.appendChild(card);
-            }
-        }
-
-        /* ===================== FUNÇÃO PARA FORMATAR NOME DA DISCIPLINA ===================== */
-        function formatDisciplinaNome(nome) {
-            // Converte para maiúsculas e remove espaços extras
-            let nomeFormatado = nome.toUpperCase().trim();
-            
-            // Se já tiver duas palavras, coloca uma embaixo da outra
-            const palavras = nomeFormatado.split(/\s+/);
-            
-            if (palavras.length === 2) {
-                // Duas palavras: uma embaixo da outra
-                return palavras[0] + '<br>' + palavras[1];
-            } else if (palavras.length > 2) {
-                // Mais de duas palavras: tenta agrupar de forma equilibrada
-                const meio = Math.ceil(palavras.length / 2);
-                const primeiraLinha = palavras.slice(0, meio).join(' ');
-                const segundaLinha = palavras.slice(meio).join(' ');
-                return primeiraLinha + '<br>' + segundaLinha;
-            }
-            
-            // Uma palavra apenas
-            return nomeFormatado;
-        }
-
-        /* ===================== FUNÇÃO PARA EXPANDIR/RETRAIR CARD ===================== */
-        function toggleCardExpansion(card) {
-            // Se o card já está expandido, retrai
-            if (card.classList.contains('expanded')) {
-                card.classList.remove('expanded');
-                overlay.style.display = 'none';
-                currentExpandedCard = null;
             } else {
-                // Remove a classe expanded de todos os cards
-                document.querySelectorAll('.bimester-card').forEach(c => {
-                    c.classList.remove('expanded');
-                });
-                
-                // Adiciona a classe expanded no card clicado
-                card.classList.add('expanded');
-                overlay.style.display = 'block';
-                currentExpandedCard = card;
+                const media = c5[di];
+                const ft    = totFaltas[di] ?? 0;
+
+                if (media !== null && media !== undefined) {
+                    gradeEl.classList.add(media >= 5 ? 'alta' : 'baixa');
+                    gradeEl.textContent = String(media);
+                } else {
+                    gradeEl.classList.add('vazia');
+                    gradeEl.textContent = '—';
+                }
+
+                faltaEl.textContent = String(ft);
+                if (ft >= 15) faltaEl.classList.add('falta-alta');
+                if (ft >= 25) faltaEl.classList.add('falta-critica');
             }
+
+            row.appendChild(nameEl);
+            row.appendChild(gradeEl);
+            row.appendChild(faltaEl);
+            list.appendChild(row);
         }
 
-        // Fechar card expandido ao clicar no overlay
-        overlay.addEventListener('click', function() {
-            if (currentExpandedCard) {
-                currentExpandedCard.classList.remove('expanded');
-                overlay.style.display = 'none';
-                currentExpandedCard = null;
-            }
-        });
+        body.appendChild(list);
+        card.appendChild(body);
+        grid.appendChild(card);
+    }
 
-        /* ===================== FUNÇÕES DE AUXÍLIO ===================== */
-        function showLoading(msg) {
-            resultsContainer.innerHTML = `<div class="loading">${msg}</div>`;
-        }
+    applyFilter();
+}
 
-        function hideLoading() {
-            const loading = resultsContainer.querySelector('.loading');
-            if (loading) loading.remove();
-        }
+/* ================================================================
+   EXPANDIR / RECOLHER
+================================================================ */
+function toggleExpand(card) {
+    if (card.classList.contains('expanded')) {
+        card.classList.remove('expanded');
+        overlay.style.display = 'none';
+        expandedCard = null;
+    } else {
+        document.querySelectorAll('.bim-card.expanded').forEach(c => c.classList.remove('expanded'));
+        card.classList.add('expanded');
+        overlay.style.display = 'block';
+        expandedCard = card;
+    }
+}
 
-        function showError(msg) {
-            resultsContainer.innerHTML = `<div class="error">${msg}</div>`;
-        }
+overlay.addEventListener('click', () => {
+    if (expandedCard) {
+        expandedCard.classList.remove('expanded');
+        overlay.style.display = 'none';
+        expandedCard = null;
+    }
+});
 
-        function showNoData() {
-            resultsContainer.innerHTML = '<div class="no-data">Selecione uma turma e um aluno para visualizar os dados</div>';
-        }
+/* ================================================================
+   MENSAGENS DE ESTADO
+================================================================ */
+function showState(type, msg) {
+    if (type === 'loading') {
+        grid.innerHTML = `<div class="state-msg"><div class="spinner"></div><div class="text">Carregando dados…</div></div>`;
+    } else if (type === 'error') {
+        grid.innerHTML = `<div class="state-msg error"><div class="icon">⚠️</div><div class="text">${msg}</div></div>`;
+    } else {
+        grid.innerHTML = `<div class="state-msg"><div class="icon">📋</div><div class="text">Selecione uma turma e um aluno para visualizar os dados do Conselho de Classe.</div></div>`;
+    }
+}
 
-        /* ===================== INICIAR ===================== */
-        document.addEventListener("DOMContentLoaded", populateClassSelect);
-    </script>
+/* ================================================================
+   UTILITÁRIOS
+================================================================ */
+function toFloat(v) {
+    if (v === null || v === undefined || v === '') return null;
+    const n = parseFloat(v);
+    return isNaN(n) ? null : n;
+}
+function toInt(v) {
+    if (v === null || v === undefined || v === '') return 0;
+    const n = parseInt(v, 10);
+    return isNaN(n) ? 0 : n;
+}
+function toRound(v) {
+    const n = toFloat(v);
+    return n !== null ? Math.round(n) : null;
+}
+function padArr(arr, size, fill) {
+    const r = arr.slice(0, size);
+    while (r.length < size) r.push(fill);
+    return r;
+}
+
+/* ================================================================
+   INICIAR
+================================================================ */
+document.addEventListener('DOMContentLoaded', initTurmas);
+</script>
 </body>
 </html>
