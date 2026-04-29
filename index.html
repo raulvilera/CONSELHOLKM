@@ -1,1397 +1,668 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Conselho de Classe — Sistema Integrado</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-    /* ═══════════════════════════════════════════════
-       TOKENS & RESET
-    ═══════════════════════════════════════════════ */
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Conselho de Classe · EE Profª Wanda Mascagni</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
     :root {
-        --navy-950: #080d1a;
-        --navy-900: #0d1526;
-        --navy-800: #131e35;
-        --navy-700: #1a2847;
-        --navy-600: #223058;
-        --navy-500: #2d3f6e;
-        --gold-400:  #f0c040;
-        --gold-300:  #f5d270;
-        --gold-200:  #fae8a8;
-        --gold-500:  #c9960a;
-        --teal-400:  #38bdf8;
-        --teal-300:  #7dd3fc;
-        --red-400:   #f87171;
-        --red-500:   #ef4444;
-        --green-400: #4ade80;
-        --green-500: #22c55e;
-        --slate-400: #94a3b8;
-        --slate-300: #cbd5e1;
-        --white:     #ffffff;
-        --glass-bg:  rgba(255,255,255,0.04);
-        --glass-border: rgba(255,255,255,0.08);
-        --shadow-card: 0 8px 32px rgba(0,0,0,0.45), 0 2px 8px rgba(0,0,0,0.3);
-        --shadow-panel: 0 4px 24px rgba(0,0,0,0.5);
-        --radius-card: 14px;
-        --radius-sm: 8px;
-        --transition: all 0.25s cubic-bezier(.4,0,.2,1);
-        --header-h: 68px;
-        --panel-h:  105px;
+      --navy-950: #080d1a;
+      --navy-900: #0d1526;
+      --navy-800: #131e35;
+      --navy-700: #1a2847;
+      --navy-600: #223058;
+      --navy-500: #2d3f6e;
+      --gold-400: #f0c040;
+      --gold-300: #f5d270;
+      --gold-200: #fae8a8;
+      --gold-500: #c9960a;
+      --teal-400: #38bdf8;
+      --teal-300: #7dd3fc;
+      --red-400: #f87171;
+      --red-500: #ef4444;
+      --green-400: #4ade80;
+      --green-500: #22c55e;
+      --slate-400: #94a3b8;
+      --slate-300: #cbd5e1;
+      --white: #ffffff;
+      --glass-bg: rgba(255,255,255,0.04);
+      --glass-border: rgba(255,255,255,0.08);
+      --shadow-card: 0 12px 32px rgba(0,0,0,0.5), 0 4px 12px rgba(0,0,0,0.4);
+      --shadow-panel: 0 10px 30px rgba(0,0,0,0.6);
+      --radius-card: 18px;
+      --radius-sm: 10px;
+      --transition: all 0.25s cubic-bezier(0.4,0,0.2,1);
+      --header-h: 72px;
+      --panel-h: 112px;
     }
 
-    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
-
+    * { margin:0; padding:0; box-sizing:border-box; }
     html { scroll-behavior: smooth; }
 
     body {
-        background: var(--navy-950);
-        color: var(--slate-300);
-        font-family: 'DM Sans', sans-serif;
-        font-weight: 400;
-        min-height: 100vh;
-        overflow-x: hidden;
-        padding-top: calc(var(--header-h) + var(--panel-h) + 24px);
-        /* Subtle noise texture via SVG */
-        background-image:
-            radial-gradient(ellipse 80% 60% at 20% -10%, rgba(45,63,110,0.45) 0%, transparent 60%),
-            radial-gradient(ellipse 60% 40% at 80% 110%, rgba(56,189,248,0.08) 0%, transparent 55%),
-            url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
-        background-attachment: fixed;
+      background: var(--navy-950);
+      color: var(--slate-300);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 400;
+      min-height: 100vh;
+      padding-top: calc(var(--header-h) + var(--panel-h) + 28px);
+      background-image:
+        radial-gradient(ellipse 70% 50% at 20% -5%, rgba(45,63,110,0.5) 0%, transparent 60%),
+        radial-gradient(ellipse 55% 35% at 85% 105%, rgba(56,189,248,0.06) 0%, transparent 55%),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='280' height='280'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.78' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='280' height='280' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      background-attachment: fixed;
     }
 
-    /* ═══════════════════════════════════════════════
-       HEADER
-    ═══════════════════════════════════════════════ */
+    /* HEADER */
     header {
-        position: fixed;
-        inset: 0 0 auto 0;
-        height: var(--header-h);
-        background: var(--navy-900);
-        border-bottom: 1px solid var(--glass-border);
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 0 32px;
-        z-index: 2000;
-        box-shadow: var(--shadow-panel);
+      position: fixed; inset: 0 0 auto 0; height: var(--header-h);
+      background: rgba(13,21,38,0.85); backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--glass-border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 28px; z-index: 2000; box-shadow: var(--shadow-panel);
     }
-
-    /* Gold accent line at top */
     header::before {
-        content: '';
-        position: absolute;
-        top: 0; left: 0; right: 0;
-        height: 2px;
-        background: linear-gradient(90deg, var(--gold-500), var(--gold-300), var(--teal-400), transparent);
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, var(--gold-500), var(--gold-300), var(--teal-400), transparent);
     }
-
-    .header-brand {
-        display: flex;
-        align-items: center;
-        gap: 14px;
-    }
-
+    .header-brand { display: flex; align-items: center; gap: 14px; }
     .header-icon {
-        width: 38px; height: 38px;
-        background: linear-gradient(135deg, var(--gold-400), var(--gold-500));
-        border-radius: 10px;
-        display: flex; align-items: center; justify-content: center;
-        font-size: 1.1rem;
-        box-shadow: 0 0 16px rgba(240,192,64,0.3);
-        flex-shrink: 0;
+      width: 40px; height: 40px; background: linear-gradient(135deg, var(--gold-400), var(--gold-500));
+      border-radius: 12px; display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem; box-shadow: 0 0 18px rgba(240,192,64,0.35); flex-shrink: 0;
     }
-
     .header-titles { display: flex; flex-direction: column; }
-
     .header-subtitle {
-        font-size: 0.65rem;
-        font-weight: 600;
-        letter-spacing: 2.5px;
-        text-transform: uppercase;
-        color: var(--gold-400);
-        line-height: 1;
-        margin-bottom: 3px;
+      font-size: 0.7rem; font-weight: 600; letter-spacing: 2.5px;
+      text-transform: uppercase; color: var(--gold-400); line-height: 1; margin-bottom: 4px;
     }
-
     h1 {
-        font-family: 'Playfair Display', serif;
-        font-size: clamp(0.95rem, 2vw, 1.35rem);
-        font-weight: 700;
-        color: var(--white);
-        line-height: 1;
-        letter-spacing: 0.3px;
+      font-family: 'Playfair Display', serif; font-size: clamp(1rem, 2.2vw, 1.45rem);
+      font-weight: 700; color: var(--white); line-height: 1; letter-spacing: 0.4px;
     }
-
-    .header-right {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-
     .live-badge {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        background: rgba(34,197,94,0.1);
-        border: 1px solid rgba(34,197,94,0.25);
-        border-radius: 20px;
-        padding: 5px 12px;
-        font-size: 0.7rem;
-        font-weight: 600;
-        color: var(--green-400);
-        letter-spacing: 0.5px;
+      display: flex; align-items: center; gap: 7px;
+      background: rgba(34,197,94,0.12); border: 1px solid rgba(34,197,94,0.3);
+      border-radius: 24px; padding: 6px 16px; font-size: 0.75rem; font-weight: 600;
+      color: var(--green-400); letter-spacing: 0.5px;
     }
-
     .live-dot {
-        width: 6px; height: 6px;
-        background: var(--green-400);
-        border-radius: 50%;
-        animation: pulse-dot 1.8s ease-in-out infinite;
+      width: 8px; height: 8px; background: var(--green-400); border-radius: 50%;
+      animation: pulse-dot 1.8s ease-in-out infinite;
     }
-
     @keyframes pulse-dot {
-        0%, 100% { opacity: 1; transform: scale(1); }
-        50%       { opacity: 0.4; transform: scale(0.7); }
+      0%,100%{ opacity:1; transform:scale(1); }
+      50%{ opacity:0.4; transform:scale(0.7); }
     }
 
-    /* ═══════════════════════════════════════════════
-       PAINEL DE CONTROLES
-    ═══════════════════════════════════════════════ */
+    /* PAINEL DE CONTROLES */
     .controls-panel {
-        position: fixed;
-        top: var(--header-h);
-        inset-inline: 0;
-        z-index: 1900;
-        background: var(--navy-900);
-        border-bottom: 1px solid var(--glass-border);
-        box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+      position: fixed; top: var(--header-h); inset-inline: 0; z-index: 1900;
+      background: rgba(13,21,38,0.9); backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--glass-border);
+      box-shadow: 0 12px 24px rgba(0,0,0,0.5);
     }
-
     .controls-inner {
-        max-width: 1600px;
-        margin: 0 auto;
-        padding: 14px 24px;
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
+      max-width: 1700px; margin: 0 auto; padding: 14px 24px;
+      display: flex; flex-direction: column; gap: 12px;
     }
-
-    /* Linha principal */
     .controls-main {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        flex-wrap: nowrap;
+      display: flex; align-items: center; gap: 12px; flex-wrap: nowrap;
     }
-
-    /* Seletores */
-    .field-group {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-        flex: 1;
-        min-width: 0;
-    }
-
-    .field-group.turma { max-width: 220px; flex: 0 0 220px; }
-    .field-group.aluno { flex: 2; min-width: 220px; }
-    .field-group.action { flex: 0 0 auto; }
-
+    .field-group { display: flex; flex-direction: column; gap: 4px; flex:1; min-width:0; }
+    .field-group.turma { max-width: 230px; flex:0 0 230px; }
+    .field-group.aluno { flex:2; min-width: 200px; }
+    .field-group.action { flex:0 0 auto; }
     .field-label {
-        font-size: 0.65rem;
-        font-weight: 700;
-        letter-spacing: 1.8px;
-        text-transform: uppercase;
-        color: var(--gold-400);
-        padding-left: 2px;
+      font-size: 0.68rem; font-weight: 700; letter-spacing: 1.8px;
+      text-transform: uppercase; color: var(--gold-400); padding-left: 2px;
     }
-
     .field-select {
-        height: 40px;
-        padding: 0 34px 0 12px;
-        background: var(--navy-800);
-        border: 1px solid rgba(255,255,255,0.1);
-        border-radius: var(--radius-sm);
-        color: var(--slate-300);
-        font-family: 'DM Sans', sans-serif;
-        font-size: 0.875rem;
-        font-weight: 500;
-        cursor: pointer;
-        transition: var(--transition);
-        appearance: none;
-        -webkit-appearance: none;
-        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-        background-repeat: no-repeat;
-        background-position: right 10px center;
-        background-size: 14px;
-        width: 100%;
+      height: 42px; padding: 0 34px 0 14px;
+      background: var(--navy-800); border: 1px solid rgba(255,255,255,0.12);
+      border-radius: var(--radius-sm); color: var(--slate-300);
+      font-family: 'DM Sans', sans-serif; font-size: 0.9rem; font-weight: 500;
+      cursor: pointer; transition: var(--transition);
+      appearance: none; -webkit-appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+      background-repeat: no-repeat; background-position: right 10px center; background-size: 16px;
+      width: 100%;
     }
-
     .field-select:focus {
-        outline: none;
-        border-color: var(--gold-400);
-        box-shadow: 0 0 0 2px rgba(240,192,64,0.18);
-        color: var(--white);
+      outline: none; border-color: var(--gold-400);
+      box-shadow: 0 0 0 3px rgba(240,192,64,0.25); color: var(--white);
     }
-
-    .field-select:disabled { opacity: 0.4; cursor: not-allowed; }
-
+    .field-select:disabled { opacity:0.4; cursor:not-allowed; }
     .field-select.is-selected-turma {
-        background-color: rgba(240,192,64,0.12) !important;
-        border-color: var(--gold-400) !important;
-        color: var(--gold-300) !important;
-        font-weight: 700;
+      background-color: rgba(240,192,64,0.12) !important; border-color: var(--gold-400) !important;
+      color: var(--gold-300) !important; font-weight: 700;
     }
-
     .field-select.is-selected-aluno {
-        background-color: rgba(56,189,248,0.1) !important;
-        border-color: var(--teal-400) !important;
-        color: var(--teal-300) !important;
-        font-weight: 700;
+      background-color: rgba(56,189,248,0.15) !important; border-color: var(--teal-400) !important;
+      color: var(--teal-300) !important; font-weight: 700;
     }
-
-    /* Options styling */
     .field-select option { background: var(--navy-800); color: var(--white); }
 
-    /* Botão carregar */
     .btn-load {
-        height: 40px;
-        padding: 0 22px;
-        background: linear-gradient(135deg, var(--gold-400), var(--gold-500));
-        color: var(--navy-950);
-        font-family: 'DM Sans', sans-serif;
-        font-size: 0.8rem;
-        font-weight: 700;
-        letter-spacing: 0.8px;
-        text-transform: uppercase;
-        border: none;
-        border-radius: var(--radius-sm);
-        cursor: pointer;
-        transition: var(--transition);
-        white-space: nowrap;
-        box-shadow: 0 2px 12px rgba(240,192,64,0.25);
+      height: 42px; padding: 0 24px;
+      background: linear-gradient(135deg, var(--gold-400), var(--gold-500));
+      color: var(--navy-950); font-family: 'DM Sans', sans-serif; font-size: 0.82rem;
+      font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase;
+      border: none; border-radius: var(--radius-sm); cursor: pointer;
+      transition: var(--transition); white-space: nowrap;
+      box-shadow: 0 4px 14px rgba(240,192,64,0.35);
     }
-
     .btn-load:hover:not(:disabled) {
-        background: linear-gradient(135deg, var(--gold-300), var(--gold-400));
-        transform: translateY(-1px);
-        box-shadow: 0 4px 20px rgba(240,192,64,0.4);
+      background: linear-gradient(135deg, var(--gold-300), var(--gold-400));
+      transform: translateY(-2px); box-shadow: 0 8px 22px rgba(240,192,64,0.5);
     }
+    .btn-load:disabled { opacity:0.4; cursor:not-allowed; transform:none; }
 
-    .btn-load:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
-
-    /* Botões de navegação */
     .btn-nav {
-        height: 40px;
-        padding: 0 16px;
-        background: var(--navy-700);
-        border: 1px solid var(--glass-border);
-        border-radius: var(--radius-sm);
-        color: var(--slate-300);
-        font-family: 'DM Sans', sans-serif;
-        font-size: 0.8rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: var(--transition);
-        white-space: nowrap;
-        display: flex; align-items: center; gap: 6px;
-        flex-shrink: 0;
+      height: 42px; padding: 0 18px;
+      background: var(--navy-700); border: 1px solid var(--glass-border);
+      border-radius: var(--radius-sm); color: var(--slate-300);
+      font-family: 'DM Sans', sans-serif; font-size: 0.82rem; font-weight: 600;
+      cursor: pointer; transition: var(--transition); white-space: nowrap;
+      display: flex; align-items: center; gap: 6px; flex-shrink: 0;
     }
-
     .btn-nav:hover:not(:disabled) {
-        background: var(--navy-600);
-        border-color: rgba(255,255,255,0.18);
-        color: var(--white);
-        transform: translateY(-1px);
+      background: var(--navy-600); border-color: rgba(255,255,255,0.2);
+      color: var(--white); transform: translateY(-1px);
     }
+    .btn-nav:disabled { opacity:0.35; cursor:not-allowed; transform:none; }
 
-    .btn-nav:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
-
-    .nav-arrow { font-size: 0.9rem; }
-
-    /* Badge de posição do aluno */
     .student-pos {
-        font-size: 0.7rem;
-        color: var(--slate-400);
-        font-weight: 600;
-        letter-spacing: 0.5px;
-        white-space: nowrap;
+      font-size: 0.78rem; color: var(--slate-400); font-weight: 600;
+      letter-spacing: 0.4px; white-space: nowrap; margin: 0 4px;
     }
 
-    /* ─── Linha dos filtros de bimestre ─── */
-    .filter-row {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        flex-wrap: wrap;
-    }
-
+    .filter-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
     .filter-label-text {
-        font-size: 0.62rem;
-        font-weight: 700;
-        letter-spacing: 2px;
-        text-transform: uppercase;
-        color: var(--slate-400);
-        margin-right: 4px;
-        white-space: nowrap;
+      font-size: 0.65rem; font-weight: 700; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--slate-400); margin-right: 6px; white-space: nowrap;
     }
-
     .filter-chip {
-        height: 28px;
-        padding: 0 13px;
-        border-radius: 20px;
-        border: 1px solid rgba(255,255,255,0.1);
-        background: transparent;
-        color: var(--slate-400);
-        font-family: 'DM Sans', sans-serif;
-        font-size: 0.72rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: var(--transition);
-        white-space: nowrap;
-        letter-spacing: 0.3px;
+      height: 30px; padding: 0 15px; border-radius: 24px;
+      border: 1px solid rgba(255,255,255,0.12); background: transparent;
+      color: var(--slate-400); font-family: 'DM Sans', sans-serif; font-size: 0.74rem;
+      font-weight: 600; cursor: pointer; transition: var(--transition); white-space: nowrap;
     }
-
-    .filter-chip:hover { border-color: rgba(255,255,255,0.25); color: var(--white); }
-
+    .filter-chip:hover { border-color: rgba(255,255,255,0.3); color: var(--white); }
     .filter-chip.active {
-        background: var(--navy-600);
-        border-color: var(--gold-400);
-        color: var(--gold-300);
-        box-shadow: 0 0 12px rgba(240,192,64,0.15);
+      background: var(--navy-600); border-color: var(--gold-400);
+      color: var(--gold-300); box-shadow: 0 0 14px rgba(240,192,64,0.2);
     }
-
     .filter-chip.active.chip-c5 {
-        border-color: var(--green-400);
-        color: var(--green-400);
-        background: rgba(34,197,94,0.1);
-        box-shadow: 0 0 12px rgba(34,197,94,0.15);
+      border-color: var(--green-400); color: var(--green-400);
+      background: rgba(34,197,94,0.12); box-shadow: 0 0 14px rgba(34,197,94,0.2);
     }
-
     .filter-chip.active.chip-all {
-        border-color: var(--teal-400);
-        color: var(--teal-300);
-        background: rgba(56,189,248,0.1);
-        box-shadow: 0 0 12px rgba(56,189,248,0.12);
+      border-color: var(--teal-400); color: var(--teal-300);
+      background: rgba(56,189,248,0.12); box-shadow: 0 0 12px rgba(56,189,248,0.15);
     }
-
-    /* Indicador de contagem de filtros ativos */
     .filter-count {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 16px; height: 16px;
-        border-radius: 50%;
-        background: var(--gold-400);
-        color: var(--navy-950);
-        font-size: 0.58rem;
-        font-weight: 800;
-        margin-left: 4px;
-        line-height: 1;
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 18px; height: 18px; border-radius: 50%; background: var(--gold-400);
+      color: var(--navy-950); font-size: 0.6rem; font-weight: 800; margin-left: 4px;
     }
 
-    /* ═══════════════════════════════════════════════
-       CONTAINER PRINCIPAL
-    ═══════════════════════════════════════════════ */
-    .page-container {
-        max-width: 1700px;
-        margin: 0 auto;
-        padding: 0 20px 40px;
-    }
+    /* CONTAINER */
+    .page-container { max-width: 1800px; margin: 0 auto; padding: 0 24px 40px; }
 
-    /* ─── NOME DO ALUNO ATIVO ─── */
     .student-headline {
-        display: none;
-        align-items: center;
-        gap: 14px;
-        margin-bottom: 20px;
-        padding: 14px 20px;
-        background: var(--glass-bg);
-        border: 1px solid var(--glass-border);
-        border-radius: var(--radius-card);
-        animation: fadeSlideIn 0.35s ease;
+      display: none; align-items: center; gap: 16px; margin-bottom: 24px;
+      padding: 16px 22px; background: var(--glass-bg);
+      border: 1px solid var(--glass-border); border-radius: var(--radius-card);
+      animation: fadeSlideIn 0.4s ease;
     }
-
     .student-headline.visible { display: flex; }
-
     .student-avatar {
-        width: 40px; height: 40px;
-        border-radius: 10px;
-        background: linear-gradient(135deg, var(--navy-600), var(--navy-500));
-        border: 1px solid var(--glass-border);
-        display: flex; align-items: center; justify-content: center;
-        font-size: 1.1rem;
-        flex-shrink: 0;
+      width: 44px; height: 44px; border-radius: 12px;
+      background: linear-gradient(135deg, var(--navy-600), var(--navy-500));
+      border: 1px solid var(--glass-border);
+      display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
     }
-
     .student-info-name {
-        font-family: 'Playfair Display', serif;
-        font-size: 1.05rem;
-        font-weight: 600;
-        color: var(--white);
+      font-family: 'Playfair Display', serif; font-size: 1.15rem; font-weight: 700; color: var(--white);
     }
-
-    .student-info-meta {
-        font-size: 0.75rem;
-        color: var(--slate-400);
-        margin-top: 1px;
-    }
-
+    .student-info-meta { font-size: 0.8rem; color: var(--slate-400); margin-top: 4px; }
     .student-info-meta strong { color: var(--gold-300); }
 
-    /* ═══════════════════════════════════════════════
-       GRID DE CARDS
-    ═══════════════════════════════════════════════ */
+    /* GRID DE CARDS */
     .cards-grid {
-        display: grid;
-        grid-template-columns: repeat(5, 1fr);
-        gap: 14px;
+      display: grid; grid-template-columns: repeat(5, 1fr); gap: 18px;
     }
+    .cards-grid.single-mode { grid-template-columns: minmax(320px, 600px); justify-content: center; }
 
-    .cards-grid.single-mode {
-        grid-template-columns: minmax(300px, 560px);
-        justify-content: center;
-    }
-
-    /* ─── CARD ─── */
     .bim-card {
-        background: var(--navy-800);
-        border: 1px solid var(--glass-border);
-        border-radius: var(--radius-card);
-        overflow: hidden;
-        display: flex;
-        flex-direction: column;
-        min-height: 520px;
-        box-shadow: var(--shadow-card);
-        transition: var(--transition);
-        animation: cardIn 0.4s ease both;
-        position: relative;
+      background: var(--navy-800); border: 1px solid var(--glass-border);
+      border-radius: var(--radius-card); overflow: hidden;
+      display: flex; flex-direction: column; min-height: 480px;
+      box-shadow: var(--shadow-card); transition: var(--transition);
+      animation: cardIn 0.4s ease both; position: relative;
     }
-
     .bim-card::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(160deg, rgba(255,255,255,0.025) 0%, transparent 50%);
-        pointer-events: none;
-        border-radius: var(--radius-card);
+      content: ''; position: absolute; inset:0;
+      background: linear-gradient(160deg, rgba(255,255,255,0.03) 0%, transparent 50%);
+      pointer-events: none; border-radius: var(--radius-card);
     }
-
     .bim-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 16px 48px rgba(0,0,0,0.55), 0 4px 12px rgba(0,0,0,0.35);
-        border-color: rgba(255,255,255,0.12);
+      transform: translateY(-5px);
+      box-shadow: 0 22px 48px rgba(0,0,0,0.6); border-color: rgba(255,255,255,0.15);
     }
-
-    /* stagger animation */
-    .bim-card:nth-child(1) { animation-delay: 0.04s; }
-    .bim-card:nth-child(2) { animation-delay: 0.08s; }
-    .bim-card:nth-child(3) { animation-delay: 0.12s; }
-    .bim-card:nth-child(4) { animation-delay: 0.16s; }
-    .bim-card:nth-child(5) { animation-delay: 0.20s; }
-
-    @keyframes cardIn {
-        from { opacity: 0; transform: translateY(18px); }
-        to   { opacity: 1; transform: translateY(0); }
-    }
-
+    .bim-card:nth-child(1){animation-delay:0.04s;}
+    .bim-card:nth-child(2){animation-delay:0.08s;}
+    .bim-card:nth-child(3){animation-delay:0.12s;}
+    .bim-card:nth-child(4){animation-delay:0.16s;}
+    .bim-card:nth-child(5){animation-delay:0.20s;}
+    @keyframes cardIn { from{opacity:0;transform:translateY(20px);} to{opacity:1;transform:translateY(0);} }
     .bim-card.hidden { display: none; }
 
-    /* ─── Cabeçalho do card ─── */
+    /* CABEÇALHO DO CARD REFORMULADO */
     .card-header {
-        padding: 14px 16px 12px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        position: relative;
-        cursor: pointer;
-        user-select: none;
-        /* Gold bottom border */
-        border-bottom: 1px solid var(--glass-border);
+      padding: 16px 18px 14px; display: flex; align-items: flex-start; gap: 12px;
+      cursor: pointer; user-select: none; border-bottom: 1px solid var(--glass-border);
+      background: rgba(255,255,255,0.02);
     }
-
     .card-header::after {
-        content: '';
-        position: absolute;
-        bottom: 0; left: 16px; right: 16px;
-        height: 1px;
-        background: linear-gradient(90deg, var(--gold-500), transparent);
+      content: ''; position: absolute; bottom:0; left:18px; right:18px; height:1px;
+      background: linear-gradient(90deg, var(--gold-500), transparent);
     }
-
-    .bim-card.conceito5 .card-header::after {
-        background: linear-gradient(90deg, var(--green-500), transparent);
-    }
+    .bim-card.conceito5 .card-header::after { background: linear-gradient(90deg, var(--green-500), transparent); }
 
     .card-num {
-        width: 36px; height: 36px;
-        border-radius: 9px;
-        background: linear-gradient(135deg, var(--navy-700), var(--navy-600));
-        border: 1px solid rgba(240,192,64,0.2);
-        display: flex; align-items: center; justify-content: center;
-        font-family: 'Playfair Display', serif;
-        font-size: 1rem;
-        font-weight: 700;
-        color: var(--gold-300);
-        flex-shrink: 0;
+      width: 40px; height: 40px; border-radius: 12px;
+      background: linear-gradient(135deg, var(--navy-700), var(--navy-600));
+      border: 1px solid rgba(240,192,64,0.25); display: flex; align-items: center; justify-content: center;
+      font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700;
+      color: var(--gold-300); flex-shrink: 0; margin-top: 2px;
     }
+    .bim-card.conceito5 .card-num { border-color: rgba(34,197,94,0.3); color: var(--green-400); }
 
-    .bim-card.conceito5 .card-num {
-        border-color: rgba(34,197,94,0.25);
-        color: var(--green-400);
-    }
-
-    .card-title-wrap { flex: 1; min-width: 0; }
-
+    .card-title-wrap { flex:1; min-width:0; }
     .card-title {
-        font-family: 'Playfair Display', serif;
-        font-size: 0.9rem;
-        font-weight: 700;
-        color: var(--white);
-        line-height: 1.1;
+      font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 700;
+      color: var(--white); line-height: 1.2; margin-bottom: 6px;
     }
-
     .card-subtitle {
-        font-size: 0.62rem;
-        color: var(--slate-400);
-        letter-spacing: 0.5px;
-        text-transform: uppercase;
-        font-weight: 500;
-        margin-top: 1px;
+      font-size: 0.7rem; color: var(--slate-400); letter-spacing: 0.3px;
+      font-weight: 500; background: rgba(255,255,255,0.04); padding: 4px 10px;
+      border-radius: 20px; display: inline-block; border: 1px solid rgba(255,255,255,0.06);
     }
-
     .card-expand-hint {
-        font-size: 0.65rem;
-        color: var(--slate-400);
-        opacity: 0.5;
-        transition: opacity 0.2s;
-        white-space: nowrap;
+      font-size: 0.7rem; color: var(--slate-400); opacity:0.5;
+      transition: opacity 0.2s; white-space: nowrap; margin-top:4px;
     }
+    .card-header:hover .card-expand-hint { opacity:1; }
 
-    .card-header:hover .card-expand-hint { opacity: 1; }
+    .card-body { padding: 12px 14px; flex:1; overflow:hidden; display:flex; flex-direction:column; }
 
-    /* ─── Conteúdo do card ─── */
-    .card-body {
-        padding: 12px;
-        flex: 1;
-        overflow: hidden;
-        display: flex;
-        flex-direction: column;
-    }
-
-    /* Cabeçalhos das colunas */
     .col-headers {
-        display: grid;
-        grid-template-columns: 1fr 44px 44px;
-        gap: 4px;
-        margin-bottom: 6px;
-        flex-shrink: 0;
+      display: grid; grid-template-columns: 1fr 50px 50px; gap: 6px;
+      margin-bottom: 8px; flex-shrink: 0;
     }
-
     .col-hdr {
-        font-size: 0.6rem;
-        font-weight: 700;
-        letter-spacing: 1.5px;
-        text-transform: uppercase;
-        color: var(--slate-400);
-        text-align: center;
-        padding: 4px 2px;
-        border-bottom: 1px solid var(--glass-border);
+      font-size: 0.62rem; font-weight: 700; letter-spacing: 1.5px;
+      text-transform: uppercase; color: var(--slate-400); text-align: center;
+      padding: 5px 2px; border-bottom: 1px solid var(--glass-border);
     }
-
     .col-hdr:first-child { text-align: left; padding-left: 6px; }
 
-    /* Linhas de disciplinas */
-    .disc-list {
-        display: flex;
-        flex-direction: column;
-        gap: 3px;
-        overflow-y: auto;
-        flex: 1;
-    }
+    .disc-list { display: flex; flex-direction: column; gap: 4px; overflow-y: auto; flex:1; }
 
     .disc-row {
-        display: grid;
-        grid-template-columns: 1fr 44px 44px;
-        gap: 4px;
-        min-height: 34px;
-        align-items: stretch;
+      display: grid; grid-template-columns: 1fr 50px 50px; gap: 6px;
+      min-height: 32px; align-items: stretch;
     }
-
     .disc-name {
-        display: flex;
-        align-items: center;
-        padding: 4px 6px;
-        background: rgba(255,255,255,0.03);
-        border: 1px solid rgba(255,255,255,0.05);
-        border-radius: 5px;
-        font-size: 0.62rem;
-        font-weight: 600;
-        letter-spacing: 0.2px;
-        color: var(--slate-300);
-        text-transform: uppercase;
-        line-height: 1.15;
-        word-break: break-word;
-        hyphens: auto;
-        transition: background 0.15s;
+      display: flex; align-items: center; padding: 5px 8px;
+      background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 6px; font-size: 0.65rem; font-weight: 600; letter-spacing: 0.2px;
+      color: var(--slate-300); text-transform: uppercase; line-height: 1.3;
+      word-break: break-word; hyphens: auto;
     }
-
-    .disc-row:hover .disc-name { background: rgba(255,255,255,0.06); }
+    .disc-row:hover .disc-name { background: rgba(255,255,255,0.07); }
 
     .disc-grade, .disc-falta {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 5px;
-        font-family: 'Playfair Display', serif;
-        font-size: 1rem;
-        font-weight: 700;
-        min-height: 34px;
-        transition: var(--transition);
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 6px; font-family: 'Playfair Display', serif;
+      font-size: 1rem; font-weight: 700; min-height: 32px;
     }
-
-    /* Nota alta: 5–10 → azul sólido */
-    .disc-grade.alta {
-        background: #1565c0;
-        color: #ffffff;
-        border: 1px solid #1976d2;
-    }
-
-    /* Nota baixa: 0–4 → vermelho sólido */
-    .disc-grade.baixa {
-        background: #c62828;
-        color: #ffffff;
-        border: 1px solid #e53935;
-    }
-
-    /* Sem nota */
+    .disc-grade.alta { background: #1565c0; color: #ffffff; border: 1px solid #1976d2; }
+    .disc-grade.baixa { background: #c62828; color: #ffffff; border: 1px solid #e53935; }
     .disc-grade.vazia {
-        background: rgba(255,255,255,0.03);
-        color: var(--slate-400);
-        border: 1px solid rgba(255,255,255,0.06);
-        font-family: 'DM Sans', sans-serif;
-        font-size: 0.75rem;
+      background: rgba(255,255,255,0.03); color: var(--slate-400);
+      border: 1px solid rgba(255,255,255,0.06); font-family: 'DM Sans', sans-serif; font-size: 0.8rem;
     }
-
-    /* Faltas */
     .disc-falta {
-        background: rgba(255,255,255,0.06);
-        border: 1px solid rgba(255,255,255,0.08);
-        font-family: 'DM Sans', sans-serif;
-        font-size: 0.85rem;
-        font-weight: 700;
-        color: var(--slate-300);
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08);
+      font-family: 'DM Sans', sans-serif; font-size: 0.85rem; font-weight: 700; color: var(--slate-300);
     }
 
-    /* faltas — sem cor por política da gestão */
-
-    /* 5º Conceito — mesmas cores sólidas */
-    .bim-card.conceito5 .disc-grade.alta {
-        background: #1565c0;
-        color: #ffffff;
-        border-color: #1976d2;
-    }
-
-    .bim-card.conceito5 .disc-grade.baixa {
-        background: #c62828;
-        color: #ffffff;
-        border-color: #e53935;
-    }
-
-    /* ─── Scrollbar do disc-list ─── */
     .disc-list::-webkit-scrollbar { width: 4px; }
     .disc-list::-webkit-scrollbar-track { background: transparent; }
-    .disc-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 2px; }
-    .disc-list::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.22); }
+    .disc-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 4px; }
 
-    /* ═══════════════════════════════════════════════
-       MODAL EXPANDIDO
-    ═══════════════════════════════════════════════ */
+    /* MODAL EXPANDIDO */
     .bim-card.expanded {
-        position: fixed;
-        top: 50%; left: 50%;
-        transform: translate(-50%, -50%) !important;
-        z-index: 3000;
-        width: min(95vw, 1200px);
-        height: min(90vh, 850px);
-        box-shadow: 0 32px 80px rgba(0,0,0,0.7);
-        border-color: rgba(240,192,64,0.25);
-        animation: none;
+      position: fixed; top:50%; left:50%; transform:translate(-50%,-50%)!important;
+      z-index:3000; width:min(96vw, 1300px); height:min(92vh, 850px);
+      box-shadow: 0 40px 80px rgba(0,0,0,0.8); border-color:rgba(240,192,64,0.35);
     }
-
-    .bim-card.expanded .disc-list { overflow-y: auto; }
-
     .overlay {
-        position: fixed; inset: 0;
-        background: rgba(8,13,26,0.75);
-        backdrop-filter: blur(6px);
-        -webkit-backdrop-filter: blur(6px);
-        z-index: 2999;
-        display: none;
+      position:fixed; inset:0; background:rgba(8,13,26,0.8); backdrop-filter:blur(8px);
+      -webkit-backdrop-filter:blur(8px); z-index:2999; display:none;
     }
 
-    /* ═══════════════════════════════════════════════
-       MENSAGENS DE ESTADO
-    ═══════════════════════════════════════════════ */
     .state-msg {
-        grid-column: 1 / -1;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 12px;
-        padding: 60px 20px;
-        text-align: center;
+      grid-column:1/-1; display:flex; flex-direction:column; align-items:center;
+      justify-content:center; gap:16px; padding:70px 20px; text-align:center;
     }
-
-    .state-msg .icon { font-size: 2rem; opacity: 0.5; }
-
-    .state-msg .text {
-        font-size: 0.9rem;
-        color: var(--slate-400);
-        font-weight: 500;
-        max-width: 360px;
-        line-height: 1.5;
-    }
-
-    .state-msg.error .icon { opacity: 0.8; }
-    .state-msg.error .text { color: #fca5a5; }
-
-    /* Spinner */
     .spinner {
-        width: 36px; height: 36px;
-        border: 3px solid rgba(255,255,255,0.08);
-        border-top-color: var(--gold-400);
-        border-radius: 50%;
-        animation: spin 0.75s linear infinite;
+      width:40px; height:40px; border:3px solid rgba(255,255,255,0.08);
+      border-top-color:var(--gold-400); border-radius:50%; animation:spin 0.8s linear infinite;
     }
+    @keyframes spin { to{transform:rotate(360deg);} }
 
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    /* ═══════════════════════════════════════════════
-       FOOTER
-    ═══════════════════════════════════════════════ */
     footer {
-        text-align: center;
-        margin-top: 32px;
-        padding-bottom: 24px;
-        font-size: 0.72rem;
-        color: var(--navy-500);
-        letter-spacing: 0.5px;
+      text-align:center; margin-top:36px; padding-bottom:28px;
+      font-size:0.75rem; color:var(--navy-500); letter-spacing:0.5px;
     }
 
-    footer strong { color: var(--navy-600); font-weight: 600; }
-
-    /* ═══════════════════════════════════════════════
-       ANIMAÇÕES GERAIS
-    ═══════════════════════════════════════════════ */
-    @keyframes fadeSlideIn {
-        from { opacity: 0; transform: translateY(-8px); }
-        to   { opacity: 1; transform: translateY(0); }
+    @media (max-width:1400px) { .cards-grid{grid-template-columns:repeat(5,minmax(190px,1fr));} }
+    @media (max-width:1100px) {
+      .cards-grid{grid-template-columns:repeat(3,1fr);}
+      .cards-grid.single-mode{grid-template-columns:minmax(280px,500px);}
+      :root{--panel-h:125px;}
     }
-
-    /* ═══════════════════════════════════════════════
-       RESPONSIVIDADE
-    ═══════════════════════════════════════════════ */
-    @media (max-width: 1400px) {
-        .cards-grid { grid-template-columns: repeat(5, minmax(200px, 1fr)); gap: 10px; }
+    @media (max-width:820px) {
+      :root{--header-h:62px;--panel-h:148px;}
+      .controls-main{flex-wrap:wrap;}
+      .field-group.turma{max-width:100%;flex:1 1 150px;}
+      .cards-grid{grid-template-columns:repeat(2,1fr);}
     }
-
-    @media (max-width: 1100px) {
-        .cards-grid { grid-template-columns: repeat(3, 1fr); }
-        .cards-grid.single-mode { grid-template-columns: minmax(280px, 500px); }
-        :root { --panel-h: 115px; }
+    @media (max-width:580px) {
+      :root{--header-h:60px;--panel-h:175px;}
+      .cards-grid{grid-template-columns:1fr;}
+      .cards-grid.single-mode{grid-template-columns:1fr;}
+      .btn-nav .nav-label{display:none;}
+      .filter-chip{padding:0 12px;font-size:0.7rem;}
     }
-
-    @media (max-width: 820px) {
-        :root { --header-h: 58px; --panel-h: 140px; }
-        .controls-main { flex-wrap: wrap; }
-        .field-group.turma { max-width: 100%; flex: 1 1 140px; }
-        .field-group.aluno { flex: 1 1 200px; }
-        .cards-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-        header { padding: 0 18px; }
-    }
-
-    @media (max-width: 580px) {
-        :root { --header-h: 56px; --panel-h: 165px; }
-        .cards-grid { grid-template-columns: 1fr; }
-        .cards-grid.single-mode { grid-template-columns: 1fr; }
-        .btn-nav .nav-label { display: none; }
-        .filter-chip { padding: 0 10px; font-size: 0.68rem; }
-        header { padding: 0 14px; }
-        .controls-inner { padding: 12px 14px; }
-        .header-subtitle { display: none; }
-    }
-    </style>
+  </style>
 </head>
 <body>
-
-<!-- ════════════════ HEADER ════════════════ -->
 <header>
-    <div class="header-brand">
-        <div class="header-icon">🎓</div>
-        <div class="header-titles">
-            <span class="header-subtitle">E.E. Profª Wanda Mascagni de Sá</span>
-            <h1>Conselho de Classe</h1>
-        </div>
+  <div class="header-brand">
+    <div class="header-icon">🎓</div>
+    <div class="header-titles">
+      <span class="header-subtitle">E.E. Profª Wanda Mascagni de Sá</span>
+      <h1>Conselho de Classe</h1>
     </div>
-    <div class="header-right">
-        <div class="live-badge">
-            <div class="live-dot"></div>
-            Online
-        </div>
-    </div>
+  </div>
+  <div class="header-right">
+    <div class="live-badge"><div class="live-dot"></div>Online</div>
+  </div>
 </header>
 
-<!-- ════════════════ PAINEL DE CONTROLES ════════════════ -->
 <div class="controls-panel" id="controls-panel">
-    <div class="controls-inner">
-
-        <!-- Linha 1: Seletores e navegação -->
-        <div class="controls-main">
-            <button id="prev-btn" class="btn-nav" disabled title="Aluno anterior">
-                <span class="nav-arrow">←</span>
-                <span class="nav-label">Anterior</span>
-            </button>
-
-            <div class="field-group turma">
-                <span class="field-label">Turma</span>
-                <select id="class-select" class="field-select">
-                    <option value="">— Selecione —</option>
-                </select>
-            </div>
-
-            <div class="field-group aluno">
-                <span class="field-label">Aluno</span>
-                <select id="student-select" class="field-select" disabled>
-                    <option value="">— Selecione a turma —</option>
-                </select>
-            </div>
-
-            <div class="field-group action">
-                <span class="field-label">&nbsp;</span>
-                <button id="load-btn" class="btn-load" disabled>Carregar Dados</button>
-            </div>
-
-            <span class="student-pos" id="student-pos"></span>
-
-            <button id="next-btn" class="btn-nav" disabled title="Próximo aluno">
-                <span class="nav-label">Próximo</span>
-                <span class="nav-arrow">→</span>
-            </button>
-        </div>
-
-        <!-- Linha 2: Filtro de bimestre -->
-        <div class="filter-row">
-            <span class="filter-label-text">Visualizar: <span id="filter-count-badge"></span></span>
-            <button class="filter-chip chip-all active" data-f="all">Todos os Bimestres</button>
-            <button class="filter-chip" data-f="0">1º Bimestre</button>
-            <button class="filter-chip" data-f="1">2º Bimestre</button>
-            <button class="filter-chip" data-f="2">3º Bimestre</button>
-            <button class="filter-chip" data-f="3">4º Bimestre</button>
-            <button class="filter-chip chip-c5" data-f="4">5º Conceito</button>
-        </div>
-
+  <div class="controls-inner">
+    <div class="controls-main">
+      <button id="prev-btn" class="btn-nav" disabled><span class="nav-arrow">←</span><span class="nav-label">Anterior</span></button>
+      <div class="field-group turma">
+        <span class="field-label">Turma</span>
+        <select id="class-select" class="field-select"><option value="">— Selecione —</option></select>
+      </div>
+      <div class="field-group aluno">
+        <span class="field-label">Aluno</span>
+        <select id="student-select" class="field-select" disabled><option value="">— Selecione a turma —</option></select>
+      </div>
+      <div class="field-group action">
+        <span class="field-label">&nbsp;</span>
+        <button id="load-btn" class="btn-load" disabled>Carregar Dados</button>
+      </div>
+      <span class="student-pos" id="student-pos"></span>
+      <button id="next-btn" class="btn-nav" disabled><span class="nav-label">Próximo</span><span class="nav-arrow">→</span></button>
     </div>
+    <div class="filter-row">
+      <span class="filter-label-text">Visualizar: <span id="filter-count-badge"></span></span>
+      <button class="filter-chip chip-all active" data-f="all">Todos os Bimestres</button>
+      <button class="filter-chip" data-f="0">1º Bimestre</button>
+      <button class="filter-chip" data-f="1">2º Bimestre</button>
+      <button class="filter-chip" data-f="2">3º Bimestre</button>
+      <button class="filter-chip" data-f="3">4º Bimestre</button>
+      <button class="filter-chip chip-c5" data-f="4">5º Conceito</button>
+    </div>
+  </div>
 </div>
 
-<!-- ════════════════ CONTEÚDO PRINCIPAL ════════════════ -->
 <div class="page-container">
-
-    <!-- Headline do aluno -->
-    <div class="student-headline" id="student-headline">
-        <div class="student-avatar">👤</div>
-        <div>
-            <div class="student-info-name" id="hl-name">—</div>
-            <div class="student-info-meta" id="hl-meta">—</div>
-        </div>
+  <div class="student-headline" id="student-headline">
+    <div class="student-avatar">👤</div>
+    <div>
+      <div class="student-info-name" id="hl-name">—</div>
+      <div class="student-info-meta" id="hl-meta">—</div>
     </div>
-
-    <!-- Grade de cards -->
-    <div class="cards-grid" id="cards-grid">
-        <div class="state-msg">
-            <div class="icon">📋</div>
-            <div class="text">Selecione uma turma e um aluno para visualizar os dados do Conselho de Classe.</div>
-        </div>
-    </div>
-
-    <footer>
-        <strong>Sistema de Acompanhamento Escolar</strong> &mdash; &copy; 2025 &mdash; SEDUC-SP
-    </footer>
+  </div>
+  <div class="cards-grid" id="cards-grid">
+    <div class="state-msg"><div class="icon">📋</div><div class="text">Selecione uma turma e um aluno para visualizar os dados do Conselho de Classe.</div></div>
+  </div>
+  <footer><strong>Sistema de Acompanhamento Escolar</strong> &mdash; &copy; 2025 &mdash; SEDUC-SP</footer>
 </div>
-
 <div class="overlay" id="overlay"></div>
 
 <script>
-/* ================================================================
-   CONFIGURAÇÃO
-================================================================ */
-const API = 'https://script.google.com/macros/s/AKfycbyYjhjDwc66t9EWyKMFvjQWHq6r7c0oNvf1QNDXNIXYA_WR__pBSkAnTGLMW9aRPbga/exec';
+  (function() {
+    const API = 'https://script.google.com/macros/s/AKfycbyYjhjDwc66t9EWyKMFvjQWHq6r7c0oNvf1QNDXNIXYA_WR__pBSkAnTGLMW9aRPbga/exec';
 
-/* ================================================================
-   ELEMENTOS
-================================================================ */
-const classEl   = document.getElementById('class-select');
-const studentEl = document.getElementById('student-select');
-const loadBtn   = document.getElementById('load-btn');
-const prevBtn   = document.getElementById('prev-btn');
-const nextBtn   = document.getElementById('next-btn');
-const grid      = document.getElementById('cards-grid');
-const overlay   = document.getElementById('overlay');
-const posEl     = document.getElementById('student-pos');
-const hlEl      = document.getElementById('student-headline');
-const hlName    = document.getElementById('hl-name');
-const hlMeta    = document.getElementById('hl-meta');
+    const classEl = document.getElementById('class-select');
+    const studentEl = document.getElementById('student-select');
+    const loadBtn = document.getElementById('load-btn');
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const grid = document.getElementById('cards-grid');
+    const overlay = document.getElementById('overlay');
+    const posEl = document.getElementById('student-pos');
+    const hlEl = document.getElementById('student-headline');
+    const hlName = document.getElementById('hl-name');
+    const hlMeta = document.getElementById('hl-meta');
 
-/* ================================================================
-   ESTADO
-================================================================ */
-let students    = [];
-let studentIdx  = -1;
-let turma       = '';
-let expandedCard = null;
+    let students = [], studentIdx = -1, turma = '', expandedCard = null;
+    let activeFilters = new Set(['all']);
 
-let activeFilters = new Set(['all']); // 'all' | '0'..'4'
-
-/* ================================================================
-   FILTRO DE BIMESTRE — SELEÇÃO MÚLTIPLA
-================================================================ */
-document.querySelectorAll('.filter-chip').forEach(btn => {
-    btn.addEventListener('click', function () {
+    document.querySelectorAll('.filter-chip').forEach(btn => {
+      btn.addEventListener('click', function() {
         const f = this.dataset.f;
-
-        if (f === 'all') {
-            // "Todos" limpa tudo e ativa só "all"
-            activeFilters.clear();
-            activeFilters.add('all');
-        } else {
-            // Remove "todos" se estava ativo
-            activeFilters.delete('all');
-
-            if (activeFilters.has(f)) {
-                activeFilters.delete(f);
-                // Se ficou vazio, volta para "Todos"
-                if (activeFilters.size === 0) activeFilters.add('all');
-            } else {
-                activeFilters.add(f);
-            }
+        if (f === 'all') { activeFilters.clear(); activeFilters.add('all'); }
+        else {
+          activeFilters.delete('all');
+          if (activeFilters.has(f)) activeFilters.delete(f);
+          else activeFilters.add(f);
+          if (activeFilters.size === 0) activeFilters.add('all');
         }
-
-        // Atualiza visual dos chips
-        document.querySelectorAll('.filter-chip').forEach(b => {
-            b.classList.toggle('active', activeFilters.has(b.dataset.f));
-        });
-
+        document.querySelectorAll('.filter-chip').forEach(b => b.classList.toggle('active', activeFilters.has(b.dataset.f)));
         applyFilter();
-    });
-});
-
-function applyFilter() {
-    const cards = grid.querySelectorAll('.bim-card');
-    const showAll = activeFilters.has('all');
-
-    cards.forEach((c, i) => {
-        c.classList.toggle('hidden', !showAll && !activeFilters.has(String(i)));
+      });
     });
 
-    // Conta visíveis
-    const visibleCount = showAll ? 5 : activeFilters.size;
-
-    // Grid layout adaptativo
-    grid.classList.remove('single-mode');
-    if (!showAll) {
-        if (visibleCount === 1) {
-            grid.classList.add('single-mode');
-        }
-        // 2-4 cards: deixa o CSS de 5 colunas encolher naturalmente (os cards hidden somem)
+    function applyFilter() {
+      const cards = grid.querySelectorAll('.bim-card');
+      const showAll = activeFilters.has('all');
+      cards.forEach((c,i) => c.classList.toggle('hidden', !showAll && !activeFilters.has(String(i))));
+      const visibleCount = showAll ? 5 : activeFilters.size;
+      grid.classList.remove('single-mode');
+      if (!showAll && visibleCount === 1) grid.classList.add('single-mode');
+      const badge = document.getElementById('filter-count-badge');
+      if (badge) badge.innerHTML = (!showAll && visibleCount>0) ? `<span class="filter-count">${visibleCount}</span>` : '';
     }
 
-    // Badge de contagem
-    const badge = document.getElementById('filter-count-badge');
-    if (badge) {
-        if (!showAll && visibleCount > 0) {
-            badge.innerHTML = `<span class="filter-count">${visibleCount}</span>`;
-        } else {
-            badge.innerHTML = '';
-        }
-    }
-}
-
-/* ================================================================
-   CARREGAR TURMAS
-================================================================ */
-async function initTurmas() {
-    showState('loading');
-    try {
+    async function initTurmas() {
+      showState('loading');
+      try {
         const r = await fetch(`${API}?action=getTurmas`);
         const data = await r.json();
         if (data.error) throw new Error(data.error);
         classEl.innerHTML = '<option value="">— Selecione —</option>';
-        data.forEach(t => {
-            const o = document.createElement('option');
-            o.value = o.textContent = t;
-            classEl.appendChild(o);
-        });
+        data.forEach(t => { const o = document.createElement('option'); o.value = o.textContent = t; classEl.appendChild(o); });
         showState('empty');
-    } catch(e) {
-        console.error(e);
-        showState('error', 'Erro ao carregar turmas. Verifique a conexão com o servidor.');
-    }
-}
-
-/* ================================================================
-   CARREGAR ALUNOS
-================================================================ */
-classEl.addEventListener('change', async function() {
-    turma = this.value;
-    students = [];
-    studentIdx = -1;
-    posEl.textContent = '';
-    studentEl.classList.remove('is-selected-aluno');
-    loadBtn.disabled = prevBtn.disabled = nextBtn.disabled = true;
-    studentEl.disabled = true;
-    hlEl.classList.remove('visible');
-
-    classEl.classList.toggle('is-selected-turma', !!turma);
-
-    if (!turma) {
-        studentEl.innerHTML = '<option value="">— Selecione a turma —</option>';
-        showState('empty');
-        return;
+      } catch(e) { console.error(e); showState('error','Erro ao carregar turmas.'); }
     }
 
-    studentEl.innerHTML = '<option value="">Carregando…</option>';
-
-    try {
+    classEl.addEventListener('change', async function() {
+      turma = this.value; students = []; studentIdx = -1;
+      posEl.textContent = ''; studentEl.classList.remove('is-selected-aluno');
+      loadBtn.disabled = prevBtn.disabled = nextBtn.disabled = true;
+      studentEl.disabled = true; hlEl.classList.remove('visible');
+      classEl.classList.toggle('is-selected-turma', !!turma);
+      if (!turma) { studentEl.innerHTML = '<option value="">— Selecione a turma —</option>'; showState('empty'); return; }
+      studentEl.innerHTML = '<option value="">Carregando…</option>';
+      try {
         const r = await fetch(`${API}?action=getAlunos&turma=${encodeURIComponent(turma)}`);
         const data = await r.json();
         if (data.error) throw new Error(data.error);
         students = Array.isArray(data) ? data : [];
         studentEl.innerHTML = '<option value="">— Selecione um aluno —</option>';
-        students.forEach(a => {
-            const o = document.createElement('option');
-            o.value = o.textContent = a;
-            studentEl.appendChild(o);
-        });
+        students.forEach(a => { const o = document.createElement('option'); o.value = o.textContent = a; studentEl.appendChild(o); });
         studentEl.disabled = false;
-    } catch(e) {
-        console.error(e);
-        studentEl.innerHTML = '<option value="">Erro ao carregar alunos</option>';
+      } catch(e) { studentEl.innerHTML = '<option value="">Erro ao carregar alunos</option>'; }
+    });
+
+    studentEl.addEventListener('change', function() {
+      const has = !!this.value;
+      loadBtn.disabled = !has;
+      studentEl.classList.toggle('is-selected-aluno', has);
+      if (has) { studentIdx = students.indexOf(this.value); posEl.textContent = `${studentIdx+1}/${students.length}`; updateNav(); }
+      else { studentIdx = -1; posEl.textContent = ''; prevBtn.disabled = nextBtn.disabled = true; }
+    });
+
+    function updateNav() { prevBtn.disabled = studentIdx <= 0; nextBtn.disabled = studentIdx >= students.length-1; }
+
+    async function navigate(dir) {
+      if (dir<0 && studentIdx>0) studentIdx--;
+      else if (dir>0 && studentIdx<students.length-1) studentIdx++;
+      else return;
+      studentEl.value = students[studentIdx];
+      studentEl.classList.add('is-selected-aluno');
+      posEl.textContent = `${studentIdx+1}/${students.length}`;
+      await loadData(); updateNav();
     }
-});
+    prevBtn.addEventListener('click', ()=>navigate(-1));
+    nextBtn.addEventListener('click', ()=>navigate(+1));
+    loadBtn.addEventListener('click', loadData);
 
-studentEl.addEventListener('change', function() {
-    const has = !!this.value;
-    loadBtn.disabled = !has;
-    studentEl.classList.toggle('is-selected-aluno', has);
-    if (has) {
-        studentIdx = students.indexOf(this.value);
-        posEl.textContent = `${studentIdx + 1} / ${students.length}`;
-        updateNav();
-    } else {
-        studentIdx = -1;
-        posEl.textContent = '';
-        prevBtn.disabled = nextBtn.disabled = true;
-    }
-});
-
-/* ================================================================
-   NAVEGAÇÃO
-================================================================ */
-function updateNav() {
-    prevBtn.disabled = studentIdx <= 0;
-    nextBtn.disabled = studentIdx >= students.length - 1;
-}
-
-async function navigate(dir) {
-    if (dir < 0 && studentIdx > 0) studentIdx--;
-    else if (dir > 0 && studentIdx < students.length - 1) studentIdx++;
-    else return;
-    studentEl.value = students[studentIdx];
-    studentEl.classList.add('is-selected-aluno');
-    posEl.textContent = `${studentIdx + 1} / ${students.length}`;
-    await loadData();
-    updateNav();
-}
-
-prevBtn.addEventListener('click', () => navigate(-1));
-nextBtn.addEventListener('click', () => navigate(+1));
-loadBtn.addEventListener('click', loadData);
-
-/* ================================================================
-   CARREGAR DADOS DO ALUNO
-================================================================ */
-async function loadData() {
-    const t = classEl.value;
-    const a = studentEl.value;
-    if (!t || !a) return;
-
-    studentIdx = students.indexOf(a);
-    posEl.textContent = studentIdx >= 0 ? `${studentIdx + 1} / ${students.length}` : '';
-    updateNav();
-
-    showState('loading');
-    hlEl.classList.remove('visible');
-
-    try {
+    async function loadData() {
+      const t = classEl.value, a = studentEl.value;
+      if (!t || !a) return;
+      studentIdx = students.indexOf(a);
+      posEl.textContent = studentIdx>=0 ? `${studentIdx+1}/${students.length}` : '';
+      updateNav(); showState('loading'); hlEl.classList.remove('visible');
+      try {
         const r = await fetch(`${API}?action=getDadosAluno&turma=${encodeURIComponent(t)}&aluno=${encodeURIComponent(a)}`);
         const d = await r.json();
         if (d.error) throw new Error(d.error);
-        if (!Array.isArray(d.disciplinas) || !Array.isArray(d.notas)) {
-            console.error('Estrutura inesperada:', d);
-            showState('error', 'Estrutura de dados inválida recebida do servidor.');
-            return;
-        }
-
-        const disc  = d.disciplinas;
-        const n     = disc.length;
-
-        // Normaliza notas (4 bimestres)
-        const notas = [];
-        for (let b = 0; b < 4; b++) {
-            notas[b] = padArr(Array.isArray(d.notas[b]) ? d.notas[b] : [], n, null);
-        }
-
-        // Normaliza faltas (4 bimestres)
-        const faltas = [];
-        for (let b = 0; b < 4; b++) {
-            const raw = Array.isArray(d.faltas) && Array.isArray(d.faltas[b]) ? d.faltas[b] : [];
-            faltas[b] = padArr(raw, n, 0);
-        }
-
-        // Faltas totais por disciplina
+        if (!Array.isArray(d.disciplinas) || !Array.isArray(d.notas)) throw new Error('Dados inválidos');
+        const disc = d.disciplinas, n = disc.length;
+        const notas = []; for(let b=0;b<4;b++) notas[b]=padArr(Array.isArray(d.notas[b])?d.notas[b]:[],n,null);
+        const faltas = []; for(let b=0;b<4;b++) faltas[b]=padArr(Array.isArray(d.faltas)&&Array.isArray(d.faltas[b])?d.faltas[b]:[],n,0);
         let totFaltas;
-        if (Array.isArray(d.totalFaltasPorDisciplina) && d.totalFaltasPorDisciplina.length === n) {
-            totFaltas = d.totalFaltasPorDisciplina.map(toInt);
-        } else {
-            totFaltas = [];
-            for (let di = 0; di < n; di++) {
-                let s = 0;
-                for (let bi = 0; bi < 4; bi++) s += toInt(faltas[bi][di]);
-                totFaltas[di] = s;
-            }
-        }
-
-        // 5º Conceito
+        if(Array.isArray(d.totalFaltasPorDisciplina)&&d.totalFaltasPorDisciplina.length===n) totFaltas=d.totalFaltasPorDisciplina.map(toInt);
+        else { totFaltas=[]; for(let di=0;di<n;di++){let s=0;for(let bi=0;bi<4;bi++) s+=toInt(faltas[bi][di]); totFaltas[di]=s; } }
         let c5;
-        if (Array.isArray(d.conceito5) && d.conceito5.length === n) {
-            c5 = d.conceito5.map(toRound);
-        } else {
-            c5 = [];
-            for (let di = 0; di < n; di++) {
-                let s = 0, cnt = 0;
-                for (let bi = 0; bi < 4; bi++) {
-                    const v = toFloat(notas[bi][di]);
-                    if (v !== null) { s += v; cnt++; }
-                }
-                c5[di] = cnt > 0 ? Math.round(s / cnt) : null;
-            }
-        }
-
-        renderCards({ disc, notas, faltas, c5, totFaltas, n, aluno: a, turma: t });
-
-        // Headline
-        hlName.textContent = a;
-        hlMeta.innerHTML   = `Turma: <strong>${t}</strong> &nbsp;·&nbsp; Aluno ${studentIdx + 1} de ${students.length}`;
+        if(Array.isArray(d.conceito5)&&d.conceito5.length===n) c5=d.conceito5.map(toRound);
+        else { c5=[]; for(let di=0;di<n;di++){let s=0,cnt=0;for(let bi=0;bi<4;bi++){const v=toFloat(notas[bi][di]); if(v!==null){s+=v;cnt++;}} c5[di]=cnt>0?Math.round(s/cnt):null; } }
+        renderCards({disc,notas,faltas,c5,totFaltas,n,aluno:a,turma:t});
+        hlName.textContent = a; hlMeta.innerHTML = `Turma: <strong>${t}</strong> &nbsp;·&nbsp; Aluno ${studentIdx+1} de ${students.length}`;
         hlEl.classList.add('visible');
-
-    } catch(e) {
-        console.error(e);
-        showState('error', 'Erro ao carregar dados do aluno. Tente novamente.');
+      } catch(e) { console.error(e); showState('error','Erro ao carregar dados.'); }
     }
-}
 
-/* ================================================================
-   RENDERIZAR CARDS
-================================================================ */
-function renderCards({ disc, notas, faltas, c5, totFaltas, n }) {
-    grid.innerHTML = '';
-
-    const bimLabels = ['1º Bimestre','2º Bimestre','3º Bimestre','4º Bimestre'];
-    const bimSubs   = ['Jan – Mar','Abr – Jun','Jul – Set','Out – Dez'];
-
-    for (let b = 0; b < 5; b++) {
-        const isC5 = b === 4;
+    function renderCards({disc,notas,faltas,c5,totFaltas,n}) {
+      grid.innerHTML = '';
+      const bimLabels = ['1º Bimestre','2º Bimestre','3º Bimestre','4º Bimestre'];
+      const bimSubs = ['Jan – Mar','Abr – Jun','Jul – Set','Out – Dez'];
+      for(let b=0;b<5;b++) {
+        const isC5 = b===4;
         const card = document.createElement('div');
-        card.className = 'bim-card' + (isC5 ? ' conceito5' : '');
-
-        /* Cabeçalho */
+        card.className = 'bim-card'+(isC5?' conceito5':'');
         const header = document.createElement('div');
         header.className = 'card-header';
         header.title = 'Duplo clique para ampliar';
-        header.addEventListener('dblclick', () => toggleExpand(card));
-
+        header.addEventListener('dblclick', ()=>toggleExpand(card));
         const numBox = document.createElement('div');
         numBox.className = 'card-num';
-        numBox.textContent = isC5 ? '★' : (b + 1);
-
+        numBox.textContent = isC5 ? '★' : (b+1);
         const tw = document.createElement('div');
         tw.className = 'card-title-wrap';
-        tw.innerHTML = `<div class="card-title">${isC5 ? '5º Conceito' : bimLabels[b]}</div>
-                        <div class="card-subtitle">${isC5 ? 'Média anual' : bimSubs[b]}</div>`;
-
+        tw.innerHTML = `<div class="card-title">${isC5?'5º Conceito':bimLabels[b]}</div><div class="card-subtitle">${isC5?'Média anual':bimSubs[b]}</div>`;
         const hint = document.createElement('div');
         hint.className = 'card-expand-hint';
         hint.textContent = '⤢ ampliar';
-
-        header.appendChild(numBox);
-        header.appendChild(tw);
-        header.appendChild(hint);
+        header.appendChild(numBox); header.appendChild(tw); header.appendChild(hint);
         card.appendChild(header);
-
-        /* Corpo */
         const body = document.createElement('div');
         body.className = 'card-body';
-
-        /* Cabeçalhos das colunas */
         const colH = document.createElement('div');
         colH.className = 'col-headers';
-        ['Disciplina','Nota','Faltas'].forEach((txt, ci) => {
-            const h = document.createElement('div');
-            h.className = 'col-hdr';
-            h.textContent = txt;
-            colH.appendChild(h);
-        });
+        ['Disciplina','Nota','Faltas'].forEach(txt=>{ const h=document.createElement('div'); h.className='col-hdr'; h.textContent=txt; colH.appendChild(h); });
         body.appendChild(colH);
-
-        /* Lista de disciplinas */
         const list = document.createElement('div');
         list.className = 'disc-list';
-
-        for (let di = 0; di < n; di++) {
-            const row = document.createElement('div');
-            row.className = 'disc-row';
-
-            /* Nome */
-            const nameEl = document.createElement('div');
-            nameEl.className = 'disc-name';
-            const parts = (disc[di] || `Disciplina ${di+1}`).toUpperCase().trim().split(/\s+/);
-            if (parts.length === 1) {
-                nameEl.textContent = parts[0];
-            } else if (parts.length === 2) {
-                nameEl.innerHTML = parts[0] + '<br>' + parts[1];
-            } else {
-                const m = Math.ceil(parts.length / 2);
-                nameEl.innerHTML = parts.slice(0,m).join(' ') + '<br>' + parts.slice(m).join(' ');
-            }
-
-            /* Nota */
-            const gradeEl = document.createElement('div');
-            gradeEl.className = 'disc-grade';
-
-            /* Faltas */
-            const faltaEl = document.createElement('div');
-            faltaEl.className = 'disc-falta';
-
-            if (!isC5) {
-                const nota  = toFloat(notas[b][di]);
-                const falta = toInt(faltas[b][di]);
-
-                if (nota !== null) {
-                    gradeEl.classList.add(nota >= 5 ? 'alta' : 'baixa');
-                    gradeEl.textContent = String(Math.round(nota));
-                } else {
-                    gradeEl.classList.add('vazia');
-                    gradeEl.textContent = '—';
-                }
-
-                faltaEl.textContent = String(falta);
-
-            } else {
-                const media = c5[di];
-                const ft    = totFaltas[di] ?? 0;
-
-                if (media !== null && media !== undefined) {
-                    gradeEl.classList.add(media >= 5 ? 'alta' : 'baixa');
-                    gradeEl.textContent = String(media);
-                } else {
-                    gradeEl.classList.add('vazia');
-                    gradeEl.textContent = '—';
-                }
-
-                faltaEl.textContent = String(ft);
-            }
-
-            row.appendChild(nameEl);
-            row.appendChild(gradeEl);
-            row.appendChild(faltaEl);
-            list.appendChild(row);
+        for(let di=0;di<n;di++) {
+          const row = document.createElement('div');
+          row.className = 'disc-row';
+          const nameEl = document.createElement('div');
+          nameEl.className = 'disc-name';
+          const parts = (disc[di]||`Disc.${di+1}`).toUpperCase().trim().split(/\s+/);
+          if(parts.length===1) nameEl.textContent=parts[0];
+          else if(parts.length===2) nameEl.innerHTML=parts[0]+'<br>'+parts[1];
+          else { const m=Math.ceil(parts.length/2); nameEl.innerHTML=parts.slice(0,m).join(' ')+'<br>'+parts.slice(m).join(' '); }
+          const gradeEl = document.createElement('div');
+          gradeEl.className = 'disc-grade';
+          const faltaEl = document.createElement('div');
+          faltaEl.className = 'disc-falta';
+          if(!isC5) {
+            const nota = toFloat(notas[b][di]), falta = toInt(faltas[b][di]);
+            if(nota!==null) { gradeEl.classList.add(nota>=5?'alta':'baixa'); gradeEl.textContent=String(Math.round(nota)); }
+            else { gradeEl.classList.add('vazia'); gradeEl.textContent='—'; }
+            faltaEl.textContent = String(falta);
+          } else {
+            const media = c5[di], ft = totFaltas[di]??0;
+            if(media!==null && media!==undefined) { gradeEl.classList.add(media>=5?'alta':'baixa'); gradeEl.textContent=String(media); }
+            else { gradeEl.classList.add('vazia'); gradeEl.textContent='—'; }
+            faltaEl.textContent = String(ft);
+          }
+          row.appendChild(nameEl); row.appendChild(gradeEl); row.appendChild(faltaEl);
+          list.appendChild(row);
         }
-
-        body.appendChild(list);
-        card.appendChild(body);
-        grid.appendChild(card);
+        body.appendChild(list); card.appendChild(body); grid.appendChild(card);
+      }
+      applyFilter();
     }
 
-    applyFilter();
-}
-
-/* ================================================================
-   EXPANDIR / RECOLHER
-================================================================ */
-function toggleExpand(card) {
-    if (card.classList.contains('expanded')) {
-        card.classList.remove('expanded');
-        overlay.style.display = 'none';
-        expandedCard = null;
-    } else {
-        document.querySelectorAll('.bim-card.expanded').forEach(c => c.classList.remove('expanded'));
-        card.classList.add('expanded');
-        overlay.style.display = 'block';
-        expandedCard = card;
+    function toggleExpand(card) {
+      if(card.classList.contains('expanded')) { card.classList.remove('expanded'); overlay.style.display='none'; expandedCard=null; }
+      else { document.querySelectorAll('.bim-card.expanded').forEach(c=>c.classList.remove('expanded')); card.classList.add('expanded'); overlay.style.display='block'; expandedCard=card; }
     }
-}
+    overlay.addEventListener('click', ()=>{ if(expandedCard){ expandedCard.classList.remove('expanded'); overlay.style.display='none'; expandedCard=null; } });
 
-overlay.addEventListener('click', () => {
-    if (expandedCard) {
-        expandedCard.classList.remove('expanded');
-        overlay.style.display = 'none';
-        expandedCard = null;
+    function showState(type,msg) {
+      if(type==='loading') grid.innerHTML='<div class="state-msg"><div class="spinner"></div><div class="text">Carregando dados…</div></div>';
+      else if(type==='error') grid.innerHTML=`<div class="state-msg error"><div class="icon">⚠️</div><div class="text">${msg}</div></div>`;
+      else grid.innerHTML='<div class="state-msg"><div class="icon">📋</div><div class="text">Selecione uma turma e um aluno para visualizar os dados do Conselho de Classe.</div></div>';
     }
-});
 
-/* ================================================================
-   MENSAGENS DE ESTADO
-================================================================ */
-function showState(type, msg) {
-    if (type === 'loading') {
-        grid.innerHTML = `<div class="state-msg"><div class="spinner"></div><div class="text">Carregando dados…</div></div>`;
-    } else if (type === 'error') {
-        grid.innerHTML = `<div class="state-msg error"><div class="icon">⚠️</div><div class="text">${msg}</div></div>`;
-    } else {
-        grid.innerHTML = `<div class="state-msg"><div class="icon">📋</div><div class="text">Selecione uma turma e um aluno para visualizar os dados do Conselho de Classe.</div></div>`;
-    }
-}
+    function toFloat(v){ if(v===null||v===undefined||v==='')return null; const n=parseFloat(v); return isNaN(n)?null:n; }
+    function toInt(v){ if(v===null||v===undefined||v==='')return 0; const n=parseInt(v,10); return isNaN(n)?0:n; }
+    function toRound(v){ const n=toFloat(v); return n!==null?Math.round(n):null; }
+    function padArr(arr,size,fill){ const r=arr.slice(0,size); while(r.length<size)r.push(fill); return r; }
 
-/* ================================================================
-   UTILITÁRIOS
-================================================================ */
-function toFloat(v) {
-    if (v === null || v === undefined || v === '') return null;
-    const n = parseFloat(v);
-    return isNaN(n) ? null : n;
-}
-function toInt(v) {
-    if (v === null || v === undefined || v === '') return 0;
-    const n = parseInt(v, 10);
-    return isNaN(n) ? 0 : n;
-}
-function toRound(v) {
-    const n = toFloat(v);
-    return n !== null ? Math.round(n) : null;
-}
-function padArr(arr, size, fill) {
-    const r = arr.slice(0, size);
-    while (r.length < size) r.push(fill);
-    return r;
-}
-
-/* ================================================================
-   INICIAR
-================================================================ */
-document.addEventListener('DOMContentLoaded', initTurmas);
+    document.addEventListener('DOMContentLoaded', initTurmas);
+  })();
 </script>
 </body>
 </html>
